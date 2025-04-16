@@ -1,4 +1,14 @@
 workbench-smp {
+
+    .smp-box {
+        padding: 10px;
+        border-radius: 5px;
+        color: var(--twd-accent-600);
+        &.active-tab, &:hover {
+            background-color: var(--twd-accent-300);
+        }
+    }
+
     .polling-btn.enabled {
         background: lightgrey !important;
     }
@@ -19,9 +29,9 @@ workbench-smp {
     }
 
     .wsmp-open {
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-        margin: 10px auto;
-        height: calc(100% - 20px);
+        // box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        // margin: 10px auto;
+        height: 100%;
         border-radius: 10px !important;
         overflow: hidden;
     }
@@ -100,7 +110,7 @@ workbench-smp {
                     font-size: 20px;
                     height: 20px;
                     min-width: 0 !important;
-                    width: 12px;
+                    // width: 12px;
                 }
             }
 
@@ -143,6 +153,7 @@ workbench-smp {
             cursor: pointer;
             max-height: 50px;
             overflow: hidden;
+            border-radius: 5px;
 
             .dropdown-header {
                 min-height: 40px;
@@ -303,8 +314,8 @@ workbench-smp {
 
 .post-list {
     display: flex;
-    align-items: stretch;
-    justify-content: space-between;
+    align-items: center;
+    // justify-content: space-between;
     height: fit-content;
     max-height: 90px;
     min-height: 75px;
@@ -316,15 +327,15 @@ workbench-smp {
 
     .author-info {
         height: 100%;
-        width: 30px;
+        width: 40px;
         display: flex;
         align-items: flex-start;
         justify-content: center;
 
         .name-bubble {
-            width: 30px;
-            height: 30px;
-            border-radius: 50px;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -364,6 +375,7 @@ workbench-smp {
                 h4 {
                     font-size: 14px;
                     font-weight: 500;
+                    margin: 0;
                 }
 
                 .date-holder {
@@ -404,6 +416,7 @@ workbench-smp {
                     font-size: 14px;
                     font-weight: 500;
                     max-width: 80px;
+                    margin: 0;
                 }
 
                 mat-icon {
@@ -422,13 +435,15 @@ workbench-smp {
 
             .comment-icon {
                 position: absolute;
-                bottom: 7px;
-                right: 5px;
+                bottom: 0px;
+                right: 0px;
                 font-size: 18px;
-                min-width: 0px !important;
-                width: 14px;
-                height: 10px;
-                min-height: 0px !important;
+                display: flex;
+                align-items: flex-end;
+                // min-width: 0px !important;
+                // width: 14px;
+                // height: 10px;
+                // min-height: 0px !important;
             }
 
             .not-rimg {
@@ -443,8 +458,10 @@ workbench-smp {
 }
 
 .smp-workbench.custom-theme-default {
-    .wbsmp-left {
-        border-right: 2px solid #ebecf0 !important;
+    .wbsmp-left, .wsmp-open {
+        // border-right: 2px solid #ebecf0 !important;
+        background: #fafafa;
+        border-radius: 10px;
     }
 
     .edit-item {
@@ -478,7 +495,8 @@ workbench-smp {
 
                         .author-info {
                             .name-bubble {
-                                background: #f1f4fd;
+                                background: var(--twd-primary-400);
+                                color: #fff;
                             }
                         }
 
@@ -486,6 +504,7 @@ workbench-smp {
                             .mc-top {
                                 p {
                                     color: #6e737d;
+                                    margin: 0;
                                 }
 
                                 .name-date-flex {
@@ -512,7 +531,7 @@ workbench-smp {
 
                         .author-info .name-bubble,
                         .main-content .mc-top .name-date-flex .date-holder {
-                            background: #fff;
+                            // background: #fff;
                         }
                     }
                 }
@@ -591,7 +610,7 @@ workbench-smp {
 
                         .author-info .name-bubble,
                         .main-content .mc-top .name-date-flex .date-holder {
-                            background: #fff;
+                            // background: #fff;
                         }
                     }
                 }

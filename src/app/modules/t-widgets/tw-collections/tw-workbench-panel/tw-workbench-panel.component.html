@@ -12,19 +12,26 @@
         } as customFuse"
     >
         <div class="tw-static-panel twd-w-full twd-h-full twd-relative">
-            <mat-tab-group #workbenchTabGroup class="twd-absolute twd-h-full twd-w-full twd-top-0 twd-left-0" animationDuration="0ms">
+            <mat-tab-group
+                #workbenchTabGroup
+                class="twd-absolute twd-h-full twd-w-full twd-top-0 twd-left-0"
+                animationDuration="0ms"
+            >
                 <mat-tab *ngFor="let channel of channels" [label]="channel.Type" #tab>
                     <ng-template mat-tab-label>
-                        <div *transloco="let locale"
-                            class="tab-header"
+                        <div
+                            *transloco="let locale"
+                            class="tab-header twd-flex twd-items-center twd-gap-2"
                             [ngClass]="
                                 tab.isActive
-                                    ? customFuse.anchor?.body || customFuse.widget?.body
-                                    : customFuse.anchor?.content || customFuse.widget?.content
+                                    ? customFuse.anchor?.body || customFuse.widget?.body + ' twd-opacity-100'
+                                    : customFuse.anchor?.content || customFuse.widget?.content + ' twd-opacity-50'
                             "
                         >
                             <mat-icon>{{ channel.Icon }}</mat-icon>
-                           <span class="ml-4"> {{locale('widgets.workbench.' + channel.Type) !== 'widgets.workbench.' + channel.Type ? locale('widgets.workbench.' + channel.Type) : channel.Type ? channel.Type : 'Widget'}} </span>
+                            <span>
+                                {{ channel.Type ? channel.Type : 'Widget' }}
+                            </span>
                         </div>
                     </ng-template>
                     <ng-container [ngSwitch]="channel.Type | lowercase">
