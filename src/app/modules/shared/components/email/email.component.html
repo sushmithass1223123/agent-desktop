@@ -84,7 +84,7 @@
         </div> -->
             <form class="twd-mb-2" novalidate>
                 <div
-                class="border-primary border-radius-20 w-100-p p-12"
+                    class="border-primary border-radius-20 w-100-p p-12"
                     [ngClass]="{ 'twd-hidden': mode === 'quick-reply' }"
                 >
                     <div [formGroup]="_addressFG">
@@ -200,8 +200,8 @@
                     mat-raised-button
                     mat-icon-button
                     color="primary"
+                    class="mx-4 border-radius-20"
                     [disabled]="state !== 'loaded'"
-                    class="mx-4"
                     [matTooltip]="locale('sharedComponents.email.attachFile')"
                     (click)="attachFileRef.click()"
                 >

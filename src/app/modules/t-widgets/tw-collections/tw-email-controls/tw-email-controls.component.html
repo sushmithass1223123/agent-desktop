@@ -77,8 +77,7 @@
                         <button
                             *ngIf="emailComponentMode !== 'preview'"
                             mat-raised-button
-                            color="primary"
-                            class="border-radius-5"
+                            class="border-radius-20"
                             [disabled]="
                                 (draftPollDuration && !currentInteraction.CurrOutSessionId) ||
                                 sendingEmailAsMaker ||
@@ -91,7 +90,7 @@
                         </button>
                         <button
                             mat-raised-button
-                            class="border-radius-5"
+                            class="border-radius-20"
                             color="warn"
                             (click)="closeEditor(closeBtn, true)"
                             #closeBtn
@@ -414,8 +413,7 @@
                             <button
                                 *ngIf="data.Data?.InteractionCommentAllowed"
                                 mat-raised-button
-                                color="primary"
-                                class="border-radius-5"
+                                class="border-radius-20"
                                 [matTooltip]="locale('interactionComponent.interactionComment')"
                                 (click)="saveInteractionComments()"
                             >
