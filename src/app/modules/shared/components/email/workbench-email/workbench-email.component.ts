@@ -1011,8 +1011,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @method pullEmail
      */
     async pullEmails(emails: Mail[]): Promise<void> {
-        let archivedAttachments = emails.find((e) => {
-            let filesInArchive = e.Files.find((f) => {
+        let archivedAttachments = emails?.find((e) => {
+            let filesInArchive = e.Files?.find((f) => {
                 return f.ArchiveStatus || f.FileError;
             });
             if (filesInArchive) {

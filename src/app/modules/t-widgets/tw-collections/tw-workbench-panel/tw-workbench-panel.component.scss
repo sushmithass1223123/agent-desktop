@@ -5,10 +5,10 @@ tw-workbench-panel {
 
     .mat-mdc-tab-body-wrapper {
         height: 100%;
-        border-bottom-left-radius: 20px;
-        border-bottom-right-radius: 20px;
-        border-top-right-radius: 20px;
-        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+        // border-bottom-left-radius: 20px;
+        // border-bottom-right-radius: 20px;
+        // border-top-right-radius: 20px;
+        // box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
     }
 
     .mat-mdc-tab-label {
@@ -50,6 +50,19 @@ tw-workbench-panel {
 
             .mat-mdc-tab-body-wrapper {
                 border-radius: 0px !important;
+            }
+        }
+    }
+
+    mat-card-content {
+        border: none !important;
+
+        .mat-mdc-form-field-infix {
+            padding: 0 !important;
+            min-height: 40px !important;
+    
+            input {
+                padding: 10px;
             }
         }
     }

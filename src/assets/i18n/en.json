@@ -606,7 +606,8 @@
             "startTime":"Start Time",
             "interactionDuration": "Interaction Duration",
             "sessionId": "Session ID",
-            "intent":"Intent"
+            "intent":"Intent",
+            "chatsInQueueNotFound": "No Queued Chats"
         },
         "cannedResponses": {
             "mode": "Mode",

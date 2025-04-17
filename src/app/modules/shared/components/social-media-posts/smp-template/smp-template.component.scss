@@ -5,7 +5,7 @@
         width: 50px;
         height: 50px;
         background: rgba(255, 255, 255, 0.25);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        // box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         backdrop-filter: blur(4px);
         -webkit-backdrop-filter: blur(4px);
         border-radius: 5px;
@@ -100,7 +100,7 @@
     .toolbar-footer {
         height: 40px;
         width: 100%;
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        // box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -148,7 +148,7 @@
                 font-size: 20px;
                 height: 20px;
                 min-width: 0 !important;
-                width: 12px;
+                // width: 12px;
             }
         }
     }
@@ -162,7 +162,7 @@
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
-        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        // box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
         scroll-behavior: smooth;
 
         .comment-container {
@@ -496,7 +496,7 @@
         }
 
         .parent-comment {
-            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+            // box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
             z-index: 1;
         }
     }
@@ -553,7 +553,8 @@
 
 .smp-template.custom-theme-default {
     .post-content-container {
-        background: url('./../../../../../../assets/images/backgrounds/gradientMesh/theme-default.jpg');
+        // background: url('./../../../../../../assets/images/backgrounds/gradientMesh/theme-default.jpg');
+        background: var(--twd-primary-50);
         .pcc-top {
             .pcc-content {
                 p {
@@ -642,8 +643,8 @@
         }
 
         .active-comment {
-            background: url('./../../../../../../assets/images/backgrounds/gradientMesh/theme-default.jpg');
-
+            // background: url('./../../../../../../assets/images/backgrounds/gradientMesh/theme-default.jpg');
+            background: var(--twd-primary-50);
             .comment-box {
                 background-color: transparent !important;
 

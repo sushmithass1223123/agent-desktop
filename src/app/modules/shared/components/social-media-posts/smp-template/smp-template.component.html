@@ -57,9 +57,11 @@
             <div class="pcc-middle">
                 <p
                     appReadMore
-                    [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
+                    [maxLines]="3"
+                    readMoreText="Read More"
+                    readLessText="Read Less"
                     class="post-content-text"
-                    [innerHTML]="('stylizeContent' | SMPPipe: postData?.PostText?.Text)"
+                    [innerHTML]="'stylizeContent' | SMPPipe: postData?.PostText?.Text"
                 ></p>
             </div>
             <ng-container *ngIf="postData?.PostAttachments?.length">
@@ -71,22 +73,23 @@
                     } as postMedia"
                 >
                     <img
-                        *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['image']"
+                        *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType : ['image']"
                         [src]="postMedia.mediaData?.MediaUrl"
                         (click)="previewMedia(postMedia.mediaData, postData?.PostText?.Text)"
                     />
                     <video
-                        *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['video']"
+                        *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType : ['video']"
                         [src]="postMedia.mediaData?.MediaUrl"
                         (click)="previewMedia(postMedia.mediaData, postData?.PostText?.Text)"
                         [autoplay]="false"
                         [controls]="false"
                     ></video>
                     <mat-icon
-                        *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['video']"
+                        *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType : ['video']"
                         (click)="previewMedia(postMedia.mediaData, postData?.PostText?.Text)"
                         class="play-button theme-icon"
-                     >play_circle_filled</mat-icon>
+                        >play_circle_filled</mat-icon
+                    >
                 </div>
             </ng-container>
         </div>
@@ -98,7 +101,7 @@
                         <img
                             *ngIf="eng.ReactionCount"
                             src="assets/images/vectors/{{
-                                'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
+                                'replaceAll' | MiscellaneousPipe: eng.ReactionType : [' ', '']
                             }}.svg"
                         />
                     </ng-container>
@@ -115,7 +118,7 @@
                 <i class="fi fi-sr-comment"></i>
                 <p>
                     <span>{{
-                        'getCommentCount' | SMPPipe: flattenedCommentHistory:[enhanceCommentContainer, postData]
+                        'getCommentCount' | SMPPipe: flattenedCommentHistory : [enhanceCommentContainer, postData]
                     }}</span>
                     active comments found on this post
                 </p>
@@ -124,7 +127,7 @@
 
         <div class="header-flex" *ngIf="mode !== 'cj'">
             <div class="twd-flex">
-                <h5 class="twd-p-2 font-weight-600">Comments</h5>
+                <h5 class="twd-p-2 !twd-m-0 font-weight-600">Comments</h5>
                 <mat-icon
                     *ngIf="mode === 'workbench'"
                     [matTooltip]="locale('widgets.smpControls.tooltips.viewOnlyMode')"
@@ -139,7 +142,7 @@
                 *ngIf="mode !== 'workbench' && enhanceCommentContainer"
             >
                 <mat-icon class="theme-icon">priority_high</mat-icon>
-                <h5 class="twd-p-2 font-weight-600">Active comment</h5>
+                <h5 class="twd-p-2 !twd-m-0 font-weight-600">Active comment</h5>
             </div>
         </div>
 
@@ -153,7 +156,6 @@
                 >
                     <div class="comment-info-flex">
                         <div class="author-info">
-                            <img src="assets/images/avatars/profile.jpg" />
                             <p>
                                 {{
                                     postData?.SmParentComments?.FromName
@@ -185,7 +187,9 @@
                         <div class="comment-content">
                             <p
                                 appReadMore
-                                [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
+                                [maxLines]="3"
+                                readMoreText="Read More"
+                                readLessText="Read Less"
                                 [innerHTML]="'stylizeContent' | SMPPipe: postData?.SmParentComments?.CommentText?.Text"
                             ></p>
                         </div>
@@ -213,29 +217,30 @@
                             <div class="comment-attachment-flex">
                                 <ng-container
                                     *ngFor="let item of postData?.SmParentComments?.CommentAttachments"
-                                    [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
+                                    [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl : [item?.MediaType]"
                                 >
-                                <div class="caf-box">
-                                    <img
-                                        class="comment-attachment"
-                                        *ngSwitchCase="'image'"
-                                        (click)="previewMedia(item, postData?.SmParentComments?.CommentText?.Text)"
-                                        [src]="item?.MediaUrl"
-                                    />
-                                    <video
-                                        class="comment-attachment"
-                                        *ngSwitchCase="'video'"
-                                        [src]="item?.MediaUrl"
-                                        (click)="previewMedia(item, postData?.SmParentComments?.CommentText?.Text)"
-                                        [autoplay]="false"
-                                        [controls]="false"
-                                    ></video>
-                                    <mat-icon
-                                        *ngSwitchCase="'video'"
-                                        (click)="previewMedia(item, postData?.SmParentComments?.CommentText?.Text)"
-                                        class="play-button theme-icon"
-                                    >play_circle_filled</mat-icon>
-                                </div>
+                                    <div class="caf-box">
+                                        <img
+                                            class="comment-attachment"
+                                            *ngSwitchCase="'image'"
+                                            (click)="previewMedia(item, postData?.SmParentComments?.CommentText?.Text)"
+                                            [src]="item?.MediaUrl"
+                                        />
+                                        <video
+                                            class="comment-attachment"
+                                            *ngSwitchCase="'video'"
+                                            [src]="item?.MediaUrl"
+                                            (click)="previewMedia(item, postData?.SmParentComments?.CommentText?.Text)"
+                                            [autoplay]="false"
+                                            [controls]="false"
+                                        ></video>
+                                        <mat-icon
+                                            *ngSwitchCase="'video'"
+                                            (click)="previewMedia(item, postData?.SmParentComments?.CommentText?.Text)"
+                                            class="play-button theme-icon"
+                                            >play_circle_filled</mat-icon
+                                        >
+                                    </div>
                                 </ng-container>
                             </div>
                         </ng-container>
@@ -268,7 +273,7 @@
                                         <img
                                             *ngIf="eng.ReactionCount"
                                             src="assets/images/vectors/{{
-                                                'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
+                                                'replaceAll' | MiscellaneousPipe: eng.ReactionType : [' ', '']
                                             }}.svg"
                                         />
                                     </ng-container>
@@ -297,7 +302,7 @@
                             engagementFromNotification?.smmId === postData?.SmParentComments?.PostId)
                     "
                     src="assets/images/vectors/{{
-                        'replaceAll' | MiscellaneousPipe: engagementFromNotification.reactionType:[' ', '']
+                        'replaceAll' | MiscellaneousPipe: engagementFromNotification.reactionType : [' ', '']
                     }}.svg"
                 />
             </div>
@@ -316,7 +321,6 @@
                 >
                     <div class="comment-info-flex">
                         <div class="author-info">
-                            <img src="assets/images/avatars/profile.jpg" />
                             <p>
                                 {{
                                     postData?.SmActiveComment?.FromName
@@ -330,7 +334,7 @@
                                     *ngIf="{
                                         isEdited:
                                             ('findPreviousCommentIndex'
-                                                | SMPPipe: previousCommentFromNotification:[postData]) ||
+                                                | SMPPipe: previousCommentFromNotification : [postData]) ||
                                             isActiveCommentEdited ||
                                             postData.IsCommentEdited,
                                         isDeleted: postData.IsCommentDeleted || isActiveCommentDeleted
@@ -354,7 +358,9 @@
                         <div class="comment-content">
                             <p
                                 appReadMore
-                                [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
+                                [maxLines]="3"
+                                readMoreText="Read More"
+                                readLessText="Read Less"
                                 [innerHTML]="'stylizeContent' | SMPPipe: postData?.SmActiveComment?.CommentText?.Text"
                             ></p>
                         </div>
@@ -382,29 +388,30 @@
                             <div class="comment-attachment-flex">
                                 <ng-container
                                     *ngFor="let item of postData?.SmActiveComment?.CommentAttachments"
-                                    [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
+                                    [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl : [item?.MediaType]"
                                 >
-                                <div class="caf-box">
-                                    <img
-                                        class="comment-attachment"
-                                        *ngSwitchCase="'image'"
-                                        (click)="previewMedia(item, postData?.SmActiveComment?.CommentText?.Text)"
-                                        [src]="item?.MediaUrl"
-                                    />
-                                    <video
-                                        class="comment-attachment"
-                                        *ngSwitchCase="'video'"
-                                        [src]="item?.MediaUrl"
-                                        (click)="previewMedia(item, postData?.SmActiveComment?.CommentText?.Text)"
-                                        [autoplay]="false"
-                                        [controls]="false"
-                                    ></video>
-                                    <mat-icon
-                                        *ngSwitchCase="'video'"
-                                        (click)="previewMedia(item, postData?.SmActiveComment?.CommentText?.Text)"
-                                        class="play-button theme-icon"
-                                    >play_circle_filled</mat-icon>
-                                </div>
+                                    <div class="caf-box">
+                                        <img
+                                            class="comment-attachment"
+                                            *ngSwitchCase="'image'"
+                                            (click)="previewMedia(item, postData?.SmActiveComment?.CommentText?.Text)"
+                                            [src]="item?.MediaUrl"
+                                        />
+                                        <video
+                                            class="comment-attachment"
+                                            *ngSwitchCase="'video'"
+                                            [src]="item?.MediaUrl"
+                                            (click)="previewMedia(item, postData?.SmActiveComment?.CommentText?.Text)"
+                                            [autoplay]="false"
+                                            [controls]="false"
+                                        ></video>
+                                        <mat-icon
+                                            *ngSwitchCase="'video'"
+                                            (click)="previewMedia(item, postData?.SmActiveComment?.CommentText?.Text)"
+                                            class="play-button theme-icon"
+                                            >play_circle_filled</mat-icon
+                                        >
+                                    </div>
                                 </ng-container>
                             </div>
                         </ng-container>
@@ -415,7 +422,7 @@
                             <ng-container
                                 *ngIf="
                                     ('findPreviousCommentIndex'
-                                        | SMPPipe: previousCommentFromNotification:[postData]) &&
+                                        | SMPPipe: previousCommentFromNotification : [postData]) &&
                                     !(isActiveCommentEdited || postData.IsCommentEdited)
                                 "
                             >
@@ -426,7 +433,7 @@
                                             | CustomDatePipe
                                                 : (
                                                       'findPreviousCommentIndex'
-                                                      | SMPPipe: previousCommentFromNotification:[postData]
+                                                      | SMPPipe: previousCommentFromNotification : [postData]
                                                   )?.UpdatedDateTime
                                     }}
                                     ago
@@ -446,7 +453,7 @@
                                 *ngIf="
                                     !(
                                         (('findPreviousCommentIndex'
-                                            | SMPPipe: previousCommentFromNotification:[postData]) &&
+                                            | SMPPipe: previousCommentFromNotification : [postData]) &&
                                             !(isActiveCommentEdited || postData.IsCommentEdited)) ||
                                         isActiveCommentEdited ||
                                         postData.IsCommentEdited
@@ -474,7 +481,7 @@
                                         <img
                                             *ngIf="eng.ReactionCount"
                                             src="assets/images/vectors/{{
-                                                'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
+                                                'replaceAll' | MiscellaneousPipe: eng.ReactionType : [' ', '']
                                             }}.svg"
                                         />
                                     </ng-container>
@@ -492,7 +499,7 @@
                             <ng-container
                                 *ngIf="
                                     'findPreviousCommentIndex'
-                                        | SMPPipe: previousCommentFromNotification:[postData] as prevComment
+                                        | SMPPipe: previousCommentFromNotification : [postData] as prevComment
                                 "
                             >
                                 <mat-icon class="dot">fiber_manual_record</mat-icon>
@@ -516,7 +523,7 @@
                             engagementFromNotification?.smmId === postData?.SmActiveComment?.PostId)
                     "
                     src="assets/images/vectors/{{
-                        'replaceAll' | MiscellaneousPipe: engagementFromNotification.reactionType:[' ', '']
+                        'replaceAll' | MiscellaneousPipe: engagementFromNotification.reactionType : [' ', '']
                     }}.svg"
                 />
             </div>
@@ -525,7 +532,8 @@
             <ng-container *ngIf="showPreviousCommentData">
                 <div
                     *ngIf="
-                        'findPreviousCommentIndex' | SMPPipe: previousCommentFromNotification:[postData] as prevComment
+                        'findPreviousCommentIndex'
+                            | SMPPipe: previousCommentFromNotification : [postData] as prevComment
                     "
                     class="comment-container previous-comment"
                     [ngStyle]="{ paddingLeft: postData?.SmActiveComment?.ParentId !== postData?.PostId ? '25px' : 0 }"
@@ -541,7 +549,9 @@
                             <div class="comment-content">
                                 <p
                                     appReadMore
-                                    [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
+                                    [maxLines]="3"
+                                    readMoreText="Read More"
+                                    readLessText="Read Less"
                                     [innerHTML]="'stylizeContent' | SMPPipe: prevComment?.CommentText?.PreviousComment"
                                 ></p>
                             </div>
@@ -565,29 +575,30 @@
                                 <div class="comment-attachment-flex">
                                     <ng-container
                                         *ngFor="let item of prevComment?.CommentAttachments"
-                                        [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
+                                        [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl : [item?.MediaType]"
                                     >
-                                    <div class="caf-box">
-                                        <img
-                                            class="comment-attachment"
-                                            *ngSwitchCase="'image'"
-                                            (click)="previewMedia(item, prevComment?.CommentText?.PreviousComment)"
-                                            [src]="item?.MediaUrl"
-                                        />
-                                        <video
-                                            class="comment-attachment"
-                                            *ngSwitchCase="'video'"
-                                            [src]="item?.MediaUrl"
-                                            (click)="previewMedia(item, prevComment?.CommentText?.PreviousComment)"
-                                            [autoplay]="false"
-                                            [controls]="false"
-                                        ></video>
-                                        <mat-icon
-                                            *ngSwitchCase="'video'"
-                                            (click)="previewMedia(item, prevComment?.CommentText?.PreviousComment)"
-                                            class="play-button theme-icon"
-                                        >play_circle_filled</mat-icon>
-                                    </div>
+                                        <div class="caf-box">
+                                            <img
+                                                class="comment-attachment"
+                                                *ngSwitchCase="'image'"
+                                                (click)="previewMedia(item, prevComment?.CommentText?.PreviousComment)"
+                                                [src]="item?.MediaUrl"
+                                            />
+                                            <video
+                                                class="comment-attachment"
+                                                *ngSwitchCase="'video'"
+                                                [src]="item?.MediaUrl"
+                                                (click)="previewMedia(item, prevComment?.CommentText?.PreviousComment)"
+                                                [autoplay]="false"
+                                                [controls]="false"
+                                            ></video>
+                                            <mat-icon
+                                                *ngSwitchCase="'video'"
+                                                (click)="previewMedia(item, prevComment?.CommentText?.PreviousComment)"
+                                                class="play-button theme-icon"
+                                                >play_circle_filled</mat-icon
+                                            >
+                                        </div>
                                     </ng-container>
                                 </div>
                             </ng-container>
@@ -608,7 +619,7 @@
                                             <img
                                                 *ngIf="eng.ReactionCount"
                                                 src="assets/images/vectors/{{
-                                                    'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
+                                                    'replaceAll' | MiscellaneousPipe: eng.ReactionType : [' ', '']
                                                 }}.svg"
                                             />
                                         </ng-container>
@@ -645,17 +656,34 @@
                             (input)="dataChanged.emit(interactionId)"
                         ></textarea>
                         <div class="attachment-box-flex">
-                            <div class="attachment-box" *ngFor="let rawAttachmentData of draftData.rawAttachmentData; let i = index;">
-                                <img *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i]:['image']"
-                                    (click)="previewMedia({ MediaType: 'image', MediaUrl: rawAttachmentData })" [src]="rawAttachmentData" />
-                                <video *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i]:['video']"
-                                    (click)="previewMedia({ MediaType: 'video', MediaUrl: rawAttachmentData })" [src]="rawAttachmentData"
-                                    [controls]="false" [autoplay]="false"></video>
-                                <mat-icon *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i]:['video']"
+                            <div
+                                class="attachment-box"
+                                *ngFor="let rawAttachmentData of draftData.rawAttachmentData; let i = index"
+                            >
+                                <img
+                                    *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i] : ['image']"
+                                    (click)="previewMedia({ MediaType: 'image', MediaUrl: rawAttachmentData })"
+                                    [src]="rawAttachmentData"
+                                />
+                                <video
+                                    *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i] : ['video']"
                                     (click)="previewMedia({ MediaType: 'video', MediaUrl: rawAttachmentData })"
-                                    class="play-button theme-icon">play_circle_filled</mat-icon>
-                                <div class="close-icon-holder" [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')"
-                                    role="button" (click)="onClearAttachment(i)">
+                                    [src]="rawAttachmentData"
+                                    [controls]="false"
+                                    [autoplay]="false"
+                                ></video>
+                                <mat-icon
+                                    *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i] : ['video']"
+                                    (click)="previewMedia({ MediaType: 'video', MediaUrl: rawAttachmentData })"
+                                    class="play-button theme-icon"
+                                    >play_circle_filled</mat-icon
+                                >
+                                <div
+                                    class="close-icon-holder"
+                                    [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')"
+                                    role="button"
+                                    (click)="onClearAttachment(i)"
+                                >
                                     <mat-icon>close</mat-icon>
                                 </div>
                             </div>
@@ -716,7 +744,7 @@
                             *ngIf="showEmojiPicker"
                             style="z-index: 2"
                             (emojiClick)="addEmoji($event)"
-                            [darkMode]="'includes' | MiscellaneousPipe: customFuse.config.colorTheme:['dark']"
+                            [darkMode]="'includes' | MiscellaneousPipe: customFuse.config.colorTheme : ['dark']"
                             [showPreview]="false"
                             isNative="true"
                             navPosition="none"
@@ -728,7 +756,7 @@
         </div>
 
         <div class="comment-content-container" *ngIf="enhanceCommentContainer">
-            <ng-container *ngFor="let commentData of flattenedCommentHistory; let i = index;">
+            <ng-container *ngFor="let commentData of flattenedCommentHistory; let i = index">
                 <div
                     *ngIf="commentData?.isVisible"
                     class="comment-container {{
@@ -737,8 +765,8 @@
                         (mode === 'interaction-max' && commentData?.CommentId === postData?.SmActiveComment?.CommentId)
                             ? 'active-comment'
                             : commentData.nestLevel === 0
-                            ? 'parent-comment'
-                            : 'child-comment'
+                              ? 'parent-comment'
+                              : 'child-comment'
                     }} {{ commentData?.ReplyComments?.length ? '' : 'no-shadow' }}"
                     [ngStyle]="{
                         paddingLeft: commentData.nestLevel * 25 + 'px',
@@ -784,9 +812,11 @@
                             <div class="comment-content">
                                 <p
                                     appReadMore
-                                    [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
-                                    [innerHTML]="'stylizeContent' | SMPPipe: commentData?.CommentText?.Text">
-                                </p>
+                                    [maxLines]="3"
+                                    readMoreText="Read More"
+                                    readLessText="Read Less"
+                                    [innerHTML]="'stylizeContent' | SMPPipe: commentData?.CommentText?.Text"
+                                ></p>
                             </div>
 
                             <!-- Attachment section -->
@@ -804,29 +834,30 @@
                                 <div class="comment-attachment-flex">
                                     <ng-container
                                         *ngFor="let item of commentData?.CommentAttachments"
-                                        [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
+                                        [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl : [item?.MediaType]"
                                     >
-                                    <div class="caf-box">
-                                        <img
-                                            class="comment-attachment"
-                                            *ngSwitchCase="'image'"
-                                            (click)="previewMedia(item, commentData?.CommentText?.Text)"
-                                            [src]="item?.MediaUrl"
-                                        />
-                                        <video
-                                            class="comment-attachment"
-                                            *ngSwitchCase="'video'"
-                                            [src]="item?.MediaUrl"
-                                            (click)="previewMedia(item, commentData?.CommentText?.Text)"
-                                            [autoplay]="false"
-                                            [controls]="false"
-                                        ></video>
-                                        <mat-icon
-                                            *ngSwitchCase="'video'"
-                                            (click)="previewMedia(item, commentData?.CommentText?.Text)"
-                                            class="play-button theme-icon"
-                                        >play_circle_filled</mat-icon>
-                                    </div>
+                                        <div class="caf-box">
+                                            <img
+                                                class="comment-attachment"
+                                                *ngSwitchCase="'image'"
+                                                (click)="previewMedia(item, commentData?.CommentText?.Text)"
+                                                [src]="item?.MediaUrl"
+                                            />
+                                            <video
+                                                class="comment-attachment"
+                                                *ngSwitchCase="'video'"
+                                                [src]="item?.MediaUrl"
+                                                (click)="previewMedia(item, commentData?.CommentText?.Text)"
+                                                [autoplay]="false"
+                                                [controls]="false"
+                                            ></video>
+                                            <mat-icon
+                                                *ngSwitchCase="'video'"
+                                                (click)="previewMedia(item, commentData?.CommentText?.Text)"
+                                                class="play-button theme-icon"
+                                                >play_circle_filled</mat-icon
+                                            >
+                                        </div>
                                     </ng-container>
                                 </div>
                             </ng-container>
@@ -857,7 +888,7 @@
                                             <img
                                                 *ngIf="eng.ReactionCount"
                                                 src="assets/images/vectors/{{
-                                                    'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
+                                                    'replaceAll' | MiscellaneousPipe: eng.ReactionType : [' ', '']
                                                 }}.svg"
                                             />
                                         </ng-container>
@@ -874,7 +905,7 @@
                                     *ngIf="
                                         commentData?.ReplyComments?.length &&
                                         commentData?.isVisible &&
-                                        !('validateLoadHistory' | SMPPipe: commentData:[flattenedCommentHistory])
+                                        !('validateLoadHistory' | SMPPipe: commentData : [flattenedCommentHistory])
                                     "
                                 >
                                     <mat-icon class="dot">fiber_manual_record</mat-icon>
@@ -896,7 +927,7 @@
                         }"
                         *ngIf="commentData.finalCommentIndex >= 0"
                     >
-                        <h5 class="twd-p-2 font-weight-600">
+                        <h5 class="twd-p-2 !twd-m-0 font-weight-600">
                             {{ isCommentHistoryLoading ? 'Loading...' : 'Load more' }}
                         </h5>
                         <img src="assets/images/vectors/loading.svg" *ngIf="isCommentHistoryLoading" />
@@ -923,17 +954,40 @@
                                 (input)="dataChanged.emit(interactionId)"
                             ></textarea>
                             <div class="attachment-box-flex">
-                                <div class="attachment-box" *ngFor="let rawAttachmentData of draftData.rawAttachmentData; let i = index;">
-                                    <img *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i]:['image']"
-                                        (click)="previewMedia({ MediaType: 'image', MediaUrl: rawAttachmentData })" [src]="rawAttachmentData" />
-                                    <video *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i]:['video']"
-                                        (click)="previewMedia({ MediaType: 'video', MediaUrl: rawAttachmentData })" [src]="rawAttachmentData"
-                                        [controls]="false" [autoplay]="false"></video>
-                                    <mat-icon *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i]:['video']"
+                                <div
+                                    class="attachment-box"
+                                    *ngFor="let rawAttachmentData of draftData.rawAttachmentData; let i = index"
+                                >
+                                    <img
+                                        *ngIf="
+                                            'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i] : ['image']
+                                        "
+                                        (click)="previewMedia({ MediaType: 'image', MediaUrl: rawAttachmentData })"
+                                        [src]="rawAttachmentData"
+                                    />
+                                    <video
+                                        *ngIf="
+                                            'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i] : ['video']
+                                        "
                                         (click)="previewMedia({ MediaType: 'video', MediaUrl: rawAttachmentData })"
-                                        class="play-button theme-icon">play_circle_filled</mat-icon>
-                                    <div class="close-icon-holder" [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')"
-                                        role="button" (click)="onClearAttachment(i)">
+                                        [src]="rawAttachmentData"
+                                        [controls]="false"
+                                        [autoplay]="false"
+                                    ></video>
+                                    <mat-icon
+                                        *ngIf="
+                                            'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i] : ['video']
+                                        "
+                                        (click)="previewMedia({ MediaType: 'video', MediaUrl: rawAttachmentData })"
+                                        class="play-button theme-icon"
+                                        >play_circle_filled</mat-icon
+                                    >
+                                    <div
+                                        class="close-icon-holder"
+                                        [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')"
+                                        role="button"
+                                        (click)="onClearAttachment(i)"
+                                    >
                                         <mat-icon>close</mat-icon>
                                     </div>
                                 </div>
@@ -950,7 +1004,8 @@
                                         [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
                                         [ngStyle]="{
                                             pointerEvents:
-                                                postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                postData?.SubChannel?.toLowerCase() != 'x' &&
+                                                draftData?.attachments?.length
                                                     ? 'none'
                                                     : 'all'
                                         }"
@@ -962,7 +1017,8 @@
                                         [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
                                         [ngStyle]="{
                                             pointerEvents:
-                                                postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                postData?.SubChannel?.toLowerCase() != 'x' &&
+                                                draftData?.attachments?.length
                                                     ? 'none'
                                                     : 'all'
                                         }"
@@ -974,7 +1030,8 @@
                                         [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
                                         [ngStyle]="{
                                             pointerEvents:
-                                                postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                postData?.SubChannel?.toLowerCase() != 'x' &&
+                                                draftData?.attachments?.length
                                                     ? 'none'
                                                     : 'all'
                                         }"
@@ -994,7 +1051,7 @@
                                 *ngIf="showEmojiPicker"
                                 style="z-index: 2"
                                 (emojiClick)="addEmoji($event)"
-                                [darkMode]="'includes' | MiscellaneousPipe: customFuse.config.colorTheme:['dark']"
+                                [darkMode]="'includes' | MiscellaneousPipe: customFuse.config.colorTheme : ['dark']"
                                 [showPreview]="false"
                                 isNative="true"
                                 navPosition="none"
@@ -1014,7 +1071,9 @@
                 }"
                 *ngIf="flattenedCommentHistory?.length && !hasNoFurtherComments"
             >
-                <h5 class="twd-p-2 font-weight-600">{{ isCommentHistoryLoading ? 'Loading...' : 'Load more' }}</h5>
+                <h5 class="twd-p-2 !twd-m-0 font-weight-600">
+                    {{ isCommentHistoryLoading ? 'Loading...' : 'Load more' }}
+                </h5>
                 <img src="assets/images/vectors/loading.svg" *ngIf="isCommentHistoryLoading" />
                 <mat-icon *ngIf="!isCommentHistoryLoading">keyboard_arrow_down</mat-icon>
             </div>
@@ -1044,9 +1103,16 @@
 
     <div *transloco="let locale" mat-dialog-content fxLayout="column" fxLayoutAlign=" none">
         <div class="preview-content">
-            <p *ngIf="previewMediaDialogData?.content" class="twd-mb-1" style="font-size: 16px;" appReadMore [maxLines]="3"
-                readMoreText="Read More" readLessText="Read Less"
-                [innerHTML]="('stylizeContent' | SMPPipe: previewMediaDialogData.content)"></p>
+            <p
+                *ngIf="previewMediaDialogData?.content"
+                class="twd-mb-1"
+                style="font-size: 16px"
+                appReadMore
+                [maxLines]="3"
+                readMoreText="Read More"
+                readLessText="Read Less"
+                [innerHTML]="'stylizeContent' | SMPPipe: previewMediaDialogData.content"
+            ></p>
         </div>
         <drag-scroll scrollbar-hidden>
             <div
@@ -1055,7 +1121,7 @@
                 [ngClass]="{ 'twd-cursor-move': previewMediaDialogData?.otherData?.scale > 1 }"
             >
                 <img
-                    *ngIf="'includes' | MiscellaneousPipe: previewMediaDialogData?.attachment?.type:['image']"
+                    *ngIf="'includes' | MiscellaneousPipe: previewMediaDialogData?.attachment?.type : ['image']"
                     title="Attachment preview"
                     [src]="previewMediaDialogData?.attachment?.src"
                     width="100%"
@@ -1063,7 +1129,7 @@
                 />
             </div>
             <video
-                *ngIf="'includes' | MiscellaneousPipe: previewMediaDialogData?.attachment?.type:['video']"
+                *ngIf="'includes' | MiscellaneousPipe: previewMediaDialogData?.attachment?.type : ['video']"
                 controls
                 autoplay
                 [src]="previewMediaDialogData?.attachment?.src"
