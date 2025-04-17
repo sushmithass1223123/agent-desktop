@@ -97,15 +97,7 @@ tw-email-controls {
         min-height: 200px;
     }
 
-    button {
-        height: 36px;
 
-        .mat-mdc-button-wrapper {
-            justify-content: center;
-            align-items: center;
-            display: flex;
-        }
-    }
 }
 
 .attachment-overlay {
@@ -120,3 +112,15 @@ tw-email-controls {
         }
     }
 }
+
+.mat-mdc-button > .mat-icon,
+.mat-mdc-unelevated-button > .mat-icon,
+.mat-mdc-raised-button > .mat-icon,
+.mat-mdc-outlined-button > .mat-icon {
+    font-size: x-large;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+

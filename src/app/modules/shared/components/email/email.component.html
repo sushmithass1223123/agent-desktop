@@ -84,19 +84,19 @@
         </div> -->
             <form class="twd-mb-2" novalidate>
                 <div
-                    class="border-primary border-radius-20 w-100-p p-12"
+                    class="border-primary border-radius-10 w-100-p p-12"
                     [ngClass]="{ 'twd-hidden': mode === 'quick-reply' }"
                 >
                     <div [formGroup]="_addressFG">
                         <div *ngIf="_email.From" class="twd-flex twd-justify-between">
-                            <label class="twd-font-bold twd-mr-1 twd-flex twd-justify-between">
+                            <label class="twd-font-bold twd-mr-1 twd-flex twd-justify-between twd-text-black">
                                 <span> {{ locale('sharedComponents.email.emailFrom') }} </span>
                                 <span> : </span>
                             </label>
                             <span class="twd-flex-1">{{ _email.From }} </span>
                         </div>
                         <div class="twd-my-2 twd-flex twd-justify-between twd-gap-2">
-                            <label for="toField" class="font-weight-700 twd-pt-1 twd-flex twd-justify-between">
+                            <label for="toField" class="font-weight-700 twd-pt-1 twd-flex twd-justify-between twd-text-black">
                                 <span> {{ locale('sharedComponents.email.emailTo') }}</span>
                                 <span>:</span>
                             </label>
@@ -142,7 +142,7 @@
 
                     <div class="twd-my-2 twd-flex twd-justify-between twd-gap-2">
                         <label for="subjectField" class="twd-flex twd-justify-between">
-                            <span class="font-weight-700 twd-pr-2"
+                            <span class="font-weight-700 twd-pr-2 twd-text-black"
                                 >{{ locale('sharedComponents.email.emailSubject') }}
                             </span>
                             <span>
@@ -174,7 +174,7 @@
             </div>
 
             <email-editor
-                class="border-primary twd-flex-1 border-radius-20 twd-mb-2 twd-overflow-hidden"
+                class="border-primary twd-flex-1 border-radius-10 twd-mb-2 twd-overflow-hidden"
                 [(body)]="_email.Body"
                 (bodyChange)="onBodyChange($event)"
             ></email-editor>
@@ -201,7 +201,7 @@
                     mat-icon-button
                     color="primary"
                     [disabled]="state !== 'loaded'"
-                    class="mx-4"
+                    class="mx-4 border-radius-5"
                     [matTooltip]="locale('sharedComponents.email.attachFile')"
                     (click)="attachFileRef.click()"
                 >
@@ -230,7 +230,7 @@
                 <button
                     mat-raised-button
                     color="primary"
-                    class="mx-4 border-radius-20"
+                    class="mx-4 border-radius-5"
                     [disabled]="state !== 'loaded'"
                     [matTooltip]="locale('sharedComponents.email.sendEmail')"
                     (click)="onSendEmail(_email)"
