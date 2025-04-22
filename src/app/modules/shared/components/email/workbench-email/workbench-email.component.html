@@ -153,7 +153,7 @@
                                             { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }
                                         ]"
                                     >
-                                        <div class="advanced-search-form mat-elevation-z2 border-radius-20">
+                                        <div class="advanced-search-form mat-elevation-z2">
                                             <p class="text-center text-bold twd-py-4 twd-h-[52px] border-bottom">
                                                 {{ locale('widgets.workbench.advanceSearch') }}
                                             </p>
@@ -161,7 +161,7 @@
                                             <form
                                                 [formGroup]="advancedSearch.form"
                                                 [style.pointer-events]="this.disableBtn ? 'none' : 'auto'"
-                                                class="px-12 twd-grid twd-grid-cols-2 twd-gap-1 lg:twd-gap-2 twd-h-[calc(100%-52px)] twd-overflow-y-auto"
+                                                class="px-12 twd-grid twd-grid-cols-2 twd-gap-2 lg:twd-gap-2 twd-h-[calc(100%-52px)] twd-overflow-y-auto"
                                                 (ngSubmit)="submitAdvanceSearchForm()"
                                                 novalidate
                                             >
@@ -385,14 +385,14 @@
                                                 <div class="twd-col-span-2 twd-grid twd-grid-cols-2 twd-gap-3">
                                                     <button
                                                         mat-raised-button
-                                                        class="adv-search-btn h-40 mb-8 border-radius-20"
+                                                        class="adv-search-btn h-40 mb-8"
                                                         [disabled]="this.disableBtn"
                                                     >
                                                         {{ locale('global.search') }}
                                                     </button>
                                                     <button
                                                         mat-raised-button
-                                                        class="adv-search-btn h-40 mb-8 border-radius-20"
+                                                        class="adv-search-btn h-40 mb-8"
                                                         type="button"
                                                         (click)="resetForm(); doAdvancedSearch()"
                                                         [disabled]="this.disableBtn"
@@ -767,7 +767,7 @@
                 *ngFor="let node of treeNode; trackBy: trackBy"
             >
                 <div
-                    class="border-radius-20 twd-py-2"
+                    class="twd-py-2"
                     [ngClass]="
                         customFuse.anchor?.body ||
                         customFuse.widget?.body +

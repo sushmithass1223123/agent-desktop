@@ -13,7 +13,7 @@
         *transloco="let locale"
     >
         <div fxFlex="30" class="chat-list mx-12 twd-rounded-lg px-8">
-            <div fxLayout fxLayoutAlign="center center" class="theme-bg mt-8 border-radius-20 position-relative">
+            <div fxLayout fxLayoutAlign="center center" class="theme-bg mt-8 position-relative">
                 <form class="w-100-p" (ngSubmit)="doGlobalSearch()">
                     <mat-form-field class="form-field w-100-p" appearance="outline">
                         <input
@@ -69,7 +69,7 @@
                             { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }
                         ]"
                     >
-                        <div class="advanced-search-form mat-elevation-z2 border-radius-20">
+                        <div class="advanced-search-form mat-elevation-z2">
                             <p class="text-center text-bold">Advanced Search</p>
                             <form
                                 [formGroup]="advancedSearchForm"
@@ -132,13 +132,11 @@
                                     />
                                 </mat-form-field>
 
-                                <button mat-raised-button fxFlex="48" class="adv-search-btn h-40 mb-8 border-radius-20">
-                                    Search
-                                </button>
+                                <button mat-raised-button fxFlex="48" class="adv-search-btn h-40 mb-8">Search</button>
                                 <button
                                     mat-raised-button
                                     fxFlex="48"
-                                    class="adv-search-btn h-40 mb-8 border-radius-20"
+                                    class="adv-search-btn h-40 mb-8"
                                     type="button"
                                     (click)="resetForm()"
                                 >
@@ -192,7 +190,7 @@
                     >
                         <li
                             matTreeNodeToggle
-                            class="mb-8 border-radius-20"
+                            class="mb-8"
                             [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
                         >
                             <div class="mat-tree-node">
@@ -266,7 +264,7 @@
                             </button>
                             <button
                                 mat-raised-button
-                                class="border-radius-20 mb-12"
+                                class="mb-12"
                                 (click)="pushChat(card)"
                                 *ngIf="conf.PushAllowed && this.user.agentProfile === 'S'"
                             >
@@ -307,12 +305,7 @@
                 </div>
             </ng-container>
 
-            <div
-                class="h-100-p w-100-p border-radius-20"
-                fxLayout
-                fxLayoutAlign="center center"
-                *ngIf="!dataSource.data.length"
-            >
+            <div class="h-100-p w-100-p" fxLayout fxLayoutAlign="center center" *ngIf="!dataSource.data.length">
                 <div class="chat-list w-100-p" fxLayout fxLayoutAlign="center center">
                     <div class="w-30-p">
                         <p class="mat-display-1">
