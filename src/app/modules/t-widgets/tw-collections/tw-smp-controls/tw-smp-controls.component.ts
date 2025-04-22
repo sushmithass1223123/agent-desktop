@@ -585,24 +585,6 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         }
     }
 
-    /**
-     * Deletes the draft copy of the post
-     */
-    async deleteDraftPost(): Promise<void> {
-        try {
-            if (this.draftOutsessionId[this.activeSessionId]) {
-                await SDKClient.deleteBulkEmailsInDraft(
-                    `${this.sessionId}|${this.draftOutsessionId[this.activeSessionId] ?? this.outSessionId}`,
-                    undefined,
-                    true
-                ).catch((err) => throwADError('Unable to delete post drafts', ''));
-            }
-        } catch (e) {
-            console.error('Unable to delete the draft copy of the post');
-            console.error(e);
-        }
-    }
-
     async onSendReply() {
         try {
             let attachments = this.postDraftData[this.interactionId].attachments;
@@ -650,7 +632,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
                 let reasonCodeMsg = SMP_REASONCODE_VALUES[res.response.SendStatus];
 
-                if (res.response.CurrentStatus === 'EmailSending') {
+                if (res.response.CurrentStatus === 'ItemSending') {
                     this._interactionManagerService.updateInteraction(this.interactionId, {
                         isReplySent: false
                     });

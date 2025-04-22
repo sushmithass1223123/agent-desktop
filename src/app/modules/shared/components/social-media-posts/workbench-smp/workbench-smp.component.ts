@@ -1086,53 +1086,33 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
             return result.map((x: any): SMPost => {
                 return {
-                    Mailbox: x?.Mailbox,
-                    ConversationID: x?.ConversationID,
-                    AddedTime:
-                        x?.SocialMediaData?.Comments?.CommentText?.InsertionDateTime ??
-                        x?.SocialMediaData?.Comments?.InsertionDateTime,
+                    Mailbox: x?.AccountName,
+                    AddedTime: x?.CommentDatetime,
                     AgentId: '',
                     Channel: '',
                     CreatedBy: '',
                     CustomerIdentifier: '',
                     ItemId: '',
                     Key: '',
-                    OrderIndex: x?.OrderIndex,
-                    Reason: x?.Reason,
-                    RonaEnabled: x?.RonaEnabled,
-                    RouteDate: x?.RouteDate,
-                    RouteTime: x?.RouteTime,
-                    SkillId: x?.MakerSkill,
-                    SkillName: x?.MakerSkillName,
-                    Status: x?.Status,
-                    SubChannel: channelMapper[x?.Channel?.toLowerCase()],
+                    SkillId: x?.Skill,
+                    SkillName: x?.SkillName,
+                    SubChannel: channelMapper[x?.SubChannel?.toLowerCase()],
                     PostData: {
                         SessionId: x?.SessionID,
                         OutSessionId: '',
-                        PostId: x?.SocialMediaData?.Posts?.PostId,
-                        ActiveCommentId: x?.SocialMediaData?.Comments?.CommentId,
+                        PostId: x?.PostID,
+                        ActiveCommentId: x?.CommentID,
                         ParentCommentId: x?.SocialMediaData?.ParentComments?.CommentId,
                         RouteId: '',
                         From: x?.From,
-                        To: x?.Mailbox,
-                        Subject: x?.SocialMediaData?.Comments?.CommentText?.Text,
-                        EmailType: '',
-                        Skill: '',
-                        Intent: x?.Intent,
-                        JsonData: '',
-                        SentimentInfo: '',
-                        RouteReason: '',
-                        HasAttachment: x?.HasAttachments,
-                        IsEmailProbableSpam: false,
-                        RejectReason: '',
+                        To: x?.AccountName,
+                        Subject: x?.CommentText,
                         IsItemDeleted:
-                            x?.SocialMediaData?.Comments?.IsDeleted ||
-                            x?.SocialMediaData?.Posts?.IsDeleted ||
-                            x?.SocialMediaData?.ParentComments?.IsDeleted,
+                            x?.IsCommentDeleted ||
+                            x?.IsPostDeleted,
                         IsItemEdited:
-                            x?.SocialMediaData?.Comments?.IsEdited ||
-                            x?.SocialMediaData?.Posts?.IsEdited ||
-                            x?.SocialMediaData?.ParentComments?.IsEdited
+                            x?.IsCommentEdited ||
+                            x?.IsPostEdited
                     }
                 };
             });
