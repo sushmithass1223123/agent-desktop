@@ -24,43 +24,19 @@ declare var document: any;
 
 export class SMPost {
     Mailbox?: string;
-    ConversationID?: string;
-    ItemId: string;
     AddedTime: Date | string;
-    AgentId: string;
-    Channel: string;
-    CreatedBy: string;
-    CustomerIdentifier: string;
-    Key: string;
-    OrderIndex: number;
     SubChannel: string;
-    Status: number;
     SkillName: string;
     SkillId: string;
-    RouteDate: string;
-    RouteTime: string;
-    RonaEnabled: boolean;
-    Reason: string;
     PostData: PostData;
     Files?: any[]; // Will get assigned internally in code
 }
 
 interface PostData {
     SessionId: string;
-    OutSessionId: string;
-    RouteId: string;
     From: string;
     To: string;
     Subject: string;
-    EmailType: string;
-    Skill: string;
-    Intent: string;
-    JsonData: any;
-    SentimentInfo: any;
-    RouteReason: string;
-    HasAttachment: boolean;
-    IsEmailProbableSpam: boolean;
-    RejectReason: string;
     PostId?: string;
     ActiveCommentId?: string;
     ParentCommentId?: string;
@@ -1043,20 +1019,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             return result.map((x: any): SMPost => {
                 return {
                     AddedTime: x?.AddedTime,
-                    AgentId: x?.AgentID,
-                    Channel: x?.Channel,
-                    CreatedBy: x?.CreatedBy,
-                    CustomerIdentifier: x?.CustomerIdentifier,
-                    ItemId: x?.ItemID,
-                    Key: x?.Key,
-                    OrderIndex: x?.OrderIndex,
-                    Reason: x?.Reason,
-                    RonaEnabled: x?.RonaEnabled,
-                    RouteDate: x?.RouteDate,
-                    RouteTime: x?.RouteTime,
                     SkillId: x?.SkillId,
                     SkillName: x?.SkillName,
-                    Status: x?.Status,
                     SubChannel: channelMapper[x?.SubChannel?.toLowerCase()],
                     PostData: {
                         ...JSON.parse(x?.Data)
@@ -1088,22 +1052,13 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 return {
                     Mailbox: x?.AccountName,
                     AddedTime: x?.CommentDatetime,
-                    AgentId: '',
-                    Channel: '',
-                    CreatedBy: '',
-                    CustomerIdentifier: '',
-                    ItemId: '',
-                    Key: '',
                     SkillId: x?.Skill,
                     SkillName: x?.SkillName,
                     SubChannel: channelMapper[x?.SubChannel?.toLowerCase()],
                     PostData: {
                         SessionId: x?.SessionID,
-                        OutSessionId: '',
                         PostId: x?.PostID,
                         ActiveCommentId: x?.CommentID,
-                        ParentCommentId: x?.SocialMediaData?.ParentComments?.CommentId,
-                        RouteId: '',
                         From: x?.From,
                         To: x?.AccountName,
                         Subject: x?.CommentText,
@@ -1139,43 +1094,19 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
             return result.map((x: any): SMPost => {
                 return {
-                    Mailbox: x?.Mailbox,
-                    ConversationID: x?.ConversationID,
-                    AddedTime: x?.SocialMediaData?.Posts?.CreatedDateTime,
-                    AgentId: '',
-                    Channel: '',
-                    CreatedBy: '',
-                    CustomerIdentifier: '',
-                    ItemId: '',
-                    Key: '',
-                    OrderIndex: x?.OrderIndex,
-                    Reason: x?.Reason,
-                    RonaEnabled: x?.RonaEnabled,
-                    RouteDate: x?.RouteDate,
-                    RouteTime: x?.RouteTime,
-                    SkillId: x?.MakerSkill,
-                    SkillName: x?.MakerSkillName,
-                    Status: x?.Status,
-                    SubChannel: channelMapper[x?.Channel?.toLowerCase()],
+                    Mailbox: x?.AccountName,
+                    AddedTime: x?.PostDatetime,
+                    SkillId: x?.Skill,
+                    SkillName: x?.SkillName,
+                    SubChannel: channelMapper[x?.SubChannel?.toLowerCase()],
                     PostData: {
                         SessionId: x?.SessionID,
-                        OutSessionId: '',
-                        PostId: x?.SocialMediaData?.Posts?.PostId,
-                        RouteId: '',
-                        From: x?.SocialMediaData?.Posts?.AccountName,
-                        To: x?.Mailbox,
-                        Subject: x?.SocialMediaData?.Posts?.PostText?.Text,
-                        EmailType: '',
-                        Skill: '',
-                        Intent: x?.Intent,
-                        JsonData: '',
-                        SentimentInfo: '',
-                        RouteReason: '',
-                        HasAttachment: x?.HasAttachments,
-                        IsEmailProbableSpam: false,
-                        RejectReason: '',
-                        IsItemEdited: x?.SocialMediaData?.Posts?.IsEdited,
-                        IsItemDeleted: x?.SocialMediaData?.Posts?.IsDeleted
+                        PostId: x?.PostID,
+                        From: x?.From,
+                        To: x?.AccountName,
+                        Subject: x?.PostText,
+                        IsItemEdited: x?.IsPostEdited,
+                        IsItemDeleted: x?.IsPostDeleted
                     }
                 };
             });
@@ -1202,40 +1133,16 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
             return result.map((x: any): SMPost => {
                 return {
-                    Mailbox: x?.Mailbox,
-                    ConversationID: x?.ConversationID,
-                    AddedTime: x?.SocialMediaData?.Comments?.UpdatedDateTime,
-                    AgentId: '',
-                    Channel: '',
-                    CreatedBy: '',
-                    CustomerIdentifier: '',
-                    ItemId: '',
-                    Key: '',
-                    OrderIndex: 0,
-                    Reason: '',
-                    RonaEnabled: false,
-                    RouteDate: '',
-                    RouteTime: '',
+                    Mailbox: x?.AccountName,
+                    AddedTime: x?.CommentDatetime,
                     SkillId: '',
                     SkillName: '',
-                    Status: 0,
                     SubChannel: channelMapper[x?.Label?.split('Draft_')?.pop()?.toLowerCase()],
                     PostData: {
-                        SessionId: x?.InSessionID,
-                        OutSessionId: x?.SessionID,
-                        RouteId: x?.RouteId ?? '',
-                        From: x?.SocialMediaData?.Comments?.FromName,
-                        To: x?.Mailbox,
-                        Subject: x?.Body,
-                        EmailType: '',
-                        Skill: '',
-                        Intent: '',
-                        JsonData: '',
-                        SentimentInfo: '',
-                        RouteReason: '',
-                        HasAttachment: x?.HasAttachments,
-                        IsEmailProbableSpam: false,
-                        RejectReason: ''
+                        SessionId: x?.SessionID,
+                        From: x?.From,
+                        To: x?.AccountName,
+                        Subject: x?.CommentText
                     }
                 };
             });
@@ -1262,44 +1169,17 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
             return result.map((x: any): SMPost => {
                 return {
-                    Mailbox: x?.Mailbox,
-                    ConversationID: x?.ConversationID,
+                    Mailbox: x?.AccountName,
                     AddedTime:
-                        x?.SocialMediaData?.Comments?.CommentText?.InsertionDateTime ??
-                        x?.SocialMediaData?.Comments?.InsertionDateTime,
-                    AgentId: '',
-                    Channel: '',
-                    CreatedBy: '',
-                    CustomerIdentifier: '',
-                    ItemId: '',
-                    Key: '',
-                    OrderIndex: 0,
-                    Reason: '',
-                    RonaEnabled: false,
-                    RouteDate: '',
-                    RouteTime: '',
-                    SkillId: '',
-                    SkillName: '',
-                    Status: 0,
+                        x?.CommentDatetime,
                     SubChannel: channelMapper[x?.Label?.split('Sent_')?.pop()?.toLowerCase()],
                     PostData: {
-                        SessionId: x?.InSessionID,
-                        OutSessionId: x?.SessionID,
-                        RouteId: x?.RouteId ?? '',
-                        From: x?.SocialMediaData?.ParentComments?.FromName,
+                        SessionId: x?.SessionID,
+                        From: x?.From,
                         To: x?.From,
-                        Subject: x?.SocialMediaData?.Comments?.CommentText?.Text,
-                        EmailType: '',
-                        Skill: '',
-                        Intent: '',
-                        JsonData: '',
-                        SentimentInfo: '',
-                        RouteReason: '',
-                        HasAttachment: x?.HasAttachments,
-                        IsEmailProbableSpam: false,
-                        RejectReason: '',
-                        ActiveCommentId: x?.SocialMediaData?.Comments?.CommentId,
-                        ParentCommentId: x?.SocialMediaData?.ParentComments?.CommentId
+                        Subject: x?.CommentText,
+                        ActiveCommentId: x?.CommentID,
+                        ParentCommentId: x?.ParentCommentId
                     }
                 };
             });
