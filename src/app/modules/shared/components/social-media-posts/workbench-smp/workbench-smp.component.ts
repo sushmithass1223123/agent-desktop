@@ -1,6 +1,15 @@
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { initSmpostsSearchState, SocialMediaPostsService } from './../social-media-posts.service';
-import { AfterViewInit, Component, ElementRef, HostListener, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    HostListener,
+    Input,
+    OnInit,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse, ResData } from 'app/interfaces';
 import { TwSmpWorkbenchConfig, TwWorkbenchPanelChannel, TwWorkbenchPanelGeneral } from '@ad/types';
@@ -42,6 +51,7 @@ interface PostData {
     ParentCommentId?: string;
     IsItemDeleted?: boolean;
     IsItemEdited?: boolean;
+    RouteId: string;
 }
 
 const channelMapper: any = {
@@ -251,7 +261,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     availableMailboxes: string[] = [];
 
     selectedPostSessionId: string;
-    selectedPostId: string;
+    selectedPostId: string | any;
     selectedPostOutSessionId: string;
     selectedPostRouteReason: string;
     /**
@@ -1060,14 +1070,11 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         PostId: x?.PostID,
                         ActiveCommentId: x?.CommentID,
                         From: x?.From,
+                        RouteId: '',
                         To: x?.AccountName,
                         Subject: x?.CommentText,
-                        IsItemDeleted:
-                            x?.IsCommentDeleted ||
-                            x?.IsPostDeleted,
-                        IsItemEdited:
-                            x?.IsCommentEdited ||
-                            x?.IsPostEdited
+                        IsItemDeleted: x?.IsCommentDeleted || x?.IsPostDeleted,
+                        IsItemEdited: x?.IsCommentEdited || x?.IsPostEdited
                     }
                 };
             });
@@ -1106,7 +1113,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         To: x?.AccountName,
                         Subject: x?.PostText,
                         IsItemEdited: x?.IsPostEdited,
-                        IsItemDeleted: x?.IsPostDeleted
+                        IsItemDeleted: x?.IsPostDeleted,
+                        RouteId: ''
                     }
                 };
             });
@@ -1142,7 +1150,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         SessionId: x?.SessionID,
                         From: x?.From,
                         To: x?.AccountName,
-                        Subject: x?.CommentText
+                        Subject: x?.CommentText,
+                        RouteId: ''
                     }
                 };
             });
@@ -1170,16 +1179,18 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             return result.map((x: any): SMPost => {
                 return {
                     Mailbox: x?.AccountName,
-                    AddedTime:
-                        x?.CommentDatetime,
+                    AddedTime: x?.CommentDatetime,
                     SubChannel: channelMapper[x?.Label?.split('Sent_')?.pop()?.toLowerCase()],
+                    SkillId: '',
+                    SkillName: '',
                     PostData: {
                         SessionId: x?.SessionID,
                         From: x?.From,
                         To: x?.From,
                         Subject: x?.CommentText,
                         ActiveCommentId: x?.CommentID,
-                        ParentCommentId: x?.ParentCommentId
+                        ParentCommentId: x?.ParentCommentId,
+                        RouteId: ''
                     }
                 };
             });
@@ -1333,14 +1344,11 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             this.openPostRes.data.next(Object.assign(post, { Body: '' }, { currentTab: this.currentTab }));
             this.setComponentState('smposts/open/loading');
 
-            let fetchFromOutbox =
-                this.currentTab === 'draft' ||
-                this.currentTab === 'sentitem' ||
-                post.PostData.RouteReason === 'CheckerQueue';
+            let fetchFromOutbox = this.currentTab === 'draft' || this.currentTab === 'sentitem';
             let inboxRes: GetInboxItemResult | any;
             let outboxRes: GetInboxItemResult | any;
 
-            const getRequestedSession = () => (fetchFromOutbox ? post.PostData.OutSessionId : post.PostData.SessionId);
+            const getRequestedSession = () => post.PostData.SessionId;
 
             const getAttachments = (attachments: any[]): any[] => {
                 if (attachments && attachments.length) {
@@ -1359,8 +1367,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
             this.selectedPostSessionId = post.PostData.SessionId;
             this.selectedPostId = post.PostData.PostId;
-            this.selectedPostOutSessionId = post.PostData.OutSessionId;
-            this.selectedPostRouteReason = post.PostData.RouteReason;
 
             if (!fetchFromOutbox) {
                 inboxRes = (await SDKClient.getInboxItem(post.PostData.SessionId)).response;
@@ -1402,7 +1408,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             PostDetails: {
                                 To: post.PostData.To,
                                 From: post.PostData.From,
-                                Intent: post.PostData.Intent,
                                 Status: inboxRes.CurrentStatus
                             }
                         }
@@ -1411,13 +1416,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
 
             if (fetchFromOutbox) {
-                outboxRes = (
-                    await SDKClient.getOutboxItem(
-                        this.currentTab === 'draft'
-                            ? post.PostData.OutSessionId
-                            : `${post.PostData.OutSessionId}|${post.PostData.SessionId}`
-                    )
-                ).response;
+                outboxRes = (await SDKClient.getOutboxItem(post.PostData.SessionId)).response;
                 if (!outboxRes) {
                     throwADError('Error in WorkbenchSmpComponent.getOutboxItem', 'Unexpected Response from server');
                 }
@@ -1437,11 +1436,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     this.currentTab === 'draft' ? modifiedAttachmentData : outboxRes.Attachments
                 );
                 this.postBodies = Object.assign(this.postBodies, {
-                    [post.PostData.OutSessionId]: {
+                    [post.PostData.SessionId]: {
                         Files: getAttachments(tempAttachments),
                         ConversationID: outboxRes.ConversationID,
                         SessionId: post.PostData.SessionId,
-                        OutSessionId: post.PostData.OutSessionId,
                         SubChannel: post.SubChannel,
                         Subject: post.PostData.Subject,
                         PostAccountName: outboxRes.SocialMediaData.Posts.AccountName
@@ -1467,7 +1465,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         PostDetails: {
                             To: post.PostData.To,
                             From: post.PostData.From,
-                            Intent: post.PostData.Intent,
                             Status: outboxRes.CurrentStatus
                         }
                     }
@@ -1601,26 +1598,13 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 return;
             }
             const { items } = posts.reduce(
-                (acc, curr) => {
-                    const item = {
+                (acc: any, curr) => {
+                    acc.items.push({
                         routeId: curr.PostData.RouteId || '',
                         sessionId: curr.PostData.SessionId,
                         inSessionId: curr.PostData.SessionId,
-                        conversationId: curr?.ConversationID || '',
                         mailbox: curr?.Mailbox || ''
-                    };
-                    if (this.currentTab === 'draft') {
-                        item.sessionId = curr.PostData.OutSessionId;
-                    } else if (
-                        this.currentTab === 'queue' &&
-                        curr.PostData.EmailType !== 'Dummy' &&
-                        SMP_OUTBOX_REASONS.includes(curr.PostData.RouteReason)
-                    ) {
-                        item.sessionId = `${curr.PostData.SessionId}|${curr.PostData.OutSessionId}`;
-                    } else if (this.currentTab === 'sentitem') {
-                        item.sessionId = `${curr.PostData.SessionId}|${curr.PostData.OutSessionId}`;
-                    }
-                    acc.items.push(item);
+                    });
                     return acc;
                 },
                 { items: [] }
@@ -1691,15 +1675,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     async getValidDataForSelectedPost(): Promise<void> {
         try {
             const inboxRes: GetInboxItemResult = (await SDKClient.getInboxItem(this.selectedPostSessionId)).response;
-            const outboxRes: GetInboxItemResult | any = (await SDKClient.getOutboxItem(this.selectedPostOutSessionId))
-                .response;
             const postData: SMPost = new SMPost();
 
             postData.PostData.RouteId = inboxRes.RouteId;
             postData.PostData.SessionId = inboxRes.SessionID;
-            postData.PostData.RouteReason = this.selectedPostRouteReason;
-            postData.PostData.EmailType = inboxRes.EmailType;
-            postData.PostData.OutSessionId = outboxRes?.SessionID;
             this.pullPosts([postData]);
         } catch (e) {
             this.logger.error(
@@ -1922,7 +1901,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                                 routeId: curr.PostData.RouteId,
                                 sessionId: curr.PostData.SessionId,
                                 status: ['sentitem', 'draft'].includes(this.currentTab)
-                                    ? `Outbox,Closed,sent,${curr.PostData.OutSessionId}`
+                                    ? `Outbox,Closed,sent,${curr.PostData.SessionId}`
                                     : 'Close'
                             },
                             undefined,
