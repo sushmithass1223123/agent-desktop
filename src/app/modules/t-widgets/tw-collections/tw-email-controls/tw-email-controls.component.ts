@@ -1336,7 +1336,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 // if the user clicks on cancel, this will be boolean false. Else it will be undefined
                 if (dialogResult === false) {
                     this.deleteDraftEmail();
-                    if (closeEmail) {
+                    // Only close interaction if closeEmail is true and we're not in the No Close case
+                    if (closeEmail && dialogResult !== false) {
                         this.closeInteraction(null, true);
                         return;
                     }
