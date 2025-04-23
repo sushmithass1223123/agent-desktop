@@ -8,44 +8,82 @@ const yesterday = new Date();
 yesterday.setDate(today.getDate() - 1);
 
 export const initSmpostsSearchState = {
-    fromDate: yesterday,
-    fromTime: `00:00`,
-    toDate: today,
-    toTime: `${'23'}:${'59'}`,
-    email: '',
-    subject: '',
-    content: '',
-    skills: '',
-    agent: '',
-    inSessionId: '',
-    deviceid: '',
-    hasAttachments: 2,
+    // Sent
+    sentDateFrom: '',
+    sentDateTo: '',
+    // Draft
+    savedDateFrom: '',
+    savedDateTo: '',
+    // Inbox
+    postText: '',
+    hasCommentAttachments: 2,
+    hasPostAttachments: 2,
     assignedTo: '',
     replied: 2,
     closed: 2,
     assigned: 2,
-    listOfMailboxes: []
+    startDateFrom: '',
+    startDateTo: '',
+    queue: '',
+    // Queue
+    skills: [],
+    Channel: 'SM',
+    fromDate: yesterday,
+    fromTime: `00:00`,
+    toDate: today,
+    toTime: `${'23'}:${'59'}`,
+    // common
+    agent: '',
+    commentText: '',
+    sessionid: '',
+    global: '',
+    listOfSocialMediaAccounts: [],
+    pageSize: 10,
+    pageNumber: 1,
+    deviceid: '',
+    accountName: ''
 };
 
 const searchParams = new FormGroup({
-    fromDate: new FormControl(initSmpostsSearchState.fromDate),
-    fromTime: new FormControl(initSmpostsSearchState.fromTime),
-    toDate: new FormControl(initSmpostsSearchState.toDate),
-    toTime: new FormControl(initSmpostsSearchState.toTime),
-    email: new FormControl(initSmpostsSearchState.email),
-    subject: new FormControl(initSmpostsSearchState.subject),
-    content: new FormControl(initSmpostsSearchState.content),
-    skills: new FormControl(initSmpostsSearchState.skills),
-    agent: new FormControl(initSmpostsSearchState.agent),
-    inSessionId: new FormControl(initSmpostsSearchState.inSessionId),
-    deviceid: new FormControl(initSmpostsSearchState.deviceid),
-    hasAttachments: new FormControl(initSmpostsSearchState.hasAttachments),
+    // Sent
+    sentDateFrom: new FormControl(initSmpostsSearchState.sentDateFrom),
+    sentDateTo: new FormControl(initSmpostsSearchState.sentDateTo),
+  
+    // Draft
+    savedDateFrom: new FormControl(initSmpostsSearchState.savedDateFrom),
+    savedDateTo: new FormControl(initSmpostsSearchState.savedDateTo),
+  
+    // Inbox
+    postText: new FormControl(initSmpostsSearchState.postText),
+    hasCommentAttachments: new FormControl(initSmpostsSearchState.hasCommentAttachments),
+    hasPostAttachments: new FormControl(initSmpostsSearchState.hasPostAttachments),
     assignedTo: new FormControl(initSmpostsSearchState.assignedTo),
     replied: new FormControl(initSmpostsSearchState.replied),
     closed: new FormControl(initSmpostsSearchState.closed),
     assigned: new FormControl(initSmpostsSearchState.assigned),
-    listOfMailboxes: new FormControl([])
-});
+    startDateFrom: new FormControl(initSmpostsSearchState.startDateFrom),
+    startDateTo: new FormControl(initSmpostsSearchState.startDateTo),
+    queue: new FormControl(initSmpostsSearchState.queue),
+  
+    // Queue
+    skills: new FormControl(initSmpostsSearchState.skills),
+    Channel: new FormControl(initSmpostsSearchState.Channel),
+    fromDate: new FormControl(initSmpostsSearchState.fromDate),
+    fromTime: new FormControl(initSmpostsSearchState.fromTime),
+    toDate: new FormControl(initSmpostsSearchState.toDate),
+    toTime: new FormControl(initSmpostsSearchState.toTime),
+  
+    // Common
+    agent: new FormControl(initSmpostsSearchState.agent),
+    commentText: new FormControl(initSmpostsSearchState.commentText),
+    sessionid: new FormControl(initSmpostsSearchState.sessionid),
+    global: new FormControl(initSmpostsSearchState.global),
+    listOfSocialMediaAccounts: new FormControl(initSmpostsSearchState.listOfSocialMediaAccounts),
+    pageSize: new FormControl(initSmpostsSearchState.pageSize),
+    pageNumber: new FormControl(initSmpostsSearchState.pageNumber),
+    deviceid: new FormControl(initSmpostsSearchState.deviceid),
+    accountName: new FormControl(initSmpostsSearchState.accountName)
+  });  
 
 @Injectable({
     providedIn: 'root'
@@ -111,12 +149,12 @@ export class SocialMediaPostsService {
                 throw new Error(`Invalid Server response ${JSON.stringify(res.response, null, 2)}`);
             }
             if (res.response.length) {
-                const listOfMailboxes =
+                const listOfSocialMediaAccounts =
                     res.response.map((email) => {
                         const [mail] = email.split(',');
                         return mail;
                     }) || [];
-                this.globalSmpWorkbenchState$.searchParams.patchValue({ listOfMailboxes });
+                this.globalSmpWorkbenchState$.searchParams.patchValue({ listOfSocialMediaAccounts });
                 this.globalSmpWorkbenchState$.defaultEmail.setValue(res.response[0]);
                 this.globalSmpWorkbenchState$.availableMailboxes.setValue(res.response);
             }
@@ -133,7 +171,7 @@ export class SocialMediaPostsService {
         this.globalSmpWorkbenchState$.searchParams.setValue({
             ...initSmpostsSearchState,
             ...update,
-            listOfMailboxes: this.globalSmpWorkbenchState$.availableMailboxes.value
+            listOfSocialMediaAccounts: this.globalSmpWorkbenchState$.availableMailboxes.value
         });
     }
 }
