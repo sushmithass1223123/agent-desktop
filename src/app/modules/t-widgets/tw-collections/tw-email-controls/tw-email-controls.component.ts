@@ -1342,28 +1342,27 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.saveEmailAsDraft(closeEmail, btn);
                 // this.replyInfo = null;
                 this.emailComponentMode = 'preview';
-            } else {
+                if (closeEmail) {
+                    this.closeInteraction(null, true);
+                    this.sendDataToSupervisor({
+                        DraftStatus: 'closed'
+                    });
+                    return;
+                }
+               } else {
                 // this checks if the user clicked on cancel, or on the overlay
                 // if the user clicks on cancel, this will be boolean false. Else it will be undefined
                 if (dialogResult === false) {
-                    this.deleteDraftEmail();
-                    if (closeEmail) {
-                        this.closeInteraction(null, true);
-                        this.sendDataToSupervisor({
-                            DraftStatus: 'closed'
-                        });
-                        return;
-                    }
                     this.sendDataToSupervisor({
                         DraftStatus: 'preview'
                     });
                     // this.replyInfo = null;
                     this.emailComponentMode = 'preview';
-                }
+                    this.deleteDraftEmail();
                 if (btn) {
                     btn.disabled = false;
                 }
-            }
+            }}
             this.draftPolling$?.unsubscribe();
         });
     }
