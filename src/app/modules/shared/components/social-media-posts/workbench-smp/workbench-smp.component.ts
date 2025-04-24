@@ -1379,45 +1379,56 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
             if (!fetchFromOutbox) {
                 inboxRes = (await SDKClient.getInboxItem(post.PostData.SessionId)).response;
-                if (!inboxRes || inboxRes?.EmailType === 'Dummy') {
+                if (!inboxRes) {
                     if (this.currentTab === 'queue') {
                         fetchFromOutbox = true;
                     } else if (!fetchFromOutbox) {
                         throwADError('Error in WorkbenchSmpComponent.getInboxItem', 'Unexpected Response from server');
                     }
                 } else {
-                    let tempAttachments = await this.requestAttachmentData(inboxRes.Attachments);
+                    let modifiedAttachmentData: any[] = [];
+                    if (inboxRes?.Comments?.CommentAttachments?.length) {
+                        modifiedAttachmentData = inboxRes.Comments.CommentAttachments.map((attdat) => {
+                            return {
+                                IsCloud: true,
+                                Url: attdat?.MediaUrl,
+                                IsUploaded: true,
+                                Ext: attdat?.MediaType
+                            };
+                        });
+                    }
+                    let tempAttachments = await this.requestAttachmentData(
+                        modifiedAttachmentData.length ? modifiedAttachmentData : []
+                    );
                     this.postBodies = Object.assign(this.postBodies, {
                         [post.PostData.SessionId]: {
                             Files: getAttachments(tempAttachments),
-                            ConversationID: inboxRes.ConversationID,
                             SessionId: post.PostData.SessionId,
-                            SubChannel: (post.SubChannel ?? inboxRes.EmailType).toLowerCase(),
+                            SubChannel: post.SubChannel.toLowerCase(),
                             Subject: post.PostData.Subject,
-                            PostAccountName: inboxRes.SocialMediaData.Posts.AccountName
-                                ? inboxRes.SocialMediaData.Posts.AccountName
-                                : inboxRes.SocialMediaData.Posts.AccountId,
-                            PostCreatedTime: inboxRes.SocialMediaData.Posts.CreatedDateTime,
-                            PostUpdatedTime: inboxRes.SocialMediaData.Posts.UpdatedDateTime,
-                            PostId: inboxRes.SocialMediaData.Posts.PostId,
-                            SmActiveComment: inboxRes.SocialMediaData.Comments,
-                            SmParentComments: inboxRes.SocialMediaData.ParentComments,
-                            PostText: inboxRes.SocialMediaData.Posts.PostText,
-                            PostAttachments: inboxRes.SocialMediaData.Posts.PostAttachments,
-                            PostEngagements: inboxRes.SocialMediaData.Posts.PostEngagements,
-                            Engagement: inboxRes.SocialMediaData.Engagement,
+                            PostAccountName: inboxRes.Posts.AccountName
+                                ? inboxRes.Posts.AccountName
+                                : inboxRes.Posts.AccountId,
+                            PostCreatedTime: inboxRes.Posts.CreatedDateTime,
+                            PostUpdatedTime: inboxRes.Posts.UpdatedDateTime,
+                            PostId: inboxRes.Posts.PostId,
+                            SmActiveComment: inboxRes.Comments,
+                            SmParentComments: inboxRes.ParentComments,
+                            PostText: inboxRes.Posts.PostText,
+                            PostAttachments: inboxRes.Posts.PostAttachments,
+                            PostEngagements: inboxRes.Posts.PostEngagements,
+                            Engagement: inboxRes.Engagement,
                             IsOutbound: fetchFromOutbox,
-                            IsParentCommentEdited: inboxRes.SocialMediaData.ParentComments?.IsEdited,
-                            IsParentCommentDeleted: inboxRes.SocialMediaData.ParentComments?.IsDeleted,
-                            IsCommentDeleted: inboxRes.SocialMediaData.Comments?.IsDeleted,
-                            IsCommentEdited: inboxRes.SocialMediaData.Comments?.IsEdited,
-                            IsPostDeleted: inboxRes.SocialMediaData.Posts?.IsDeleted,
-                            IsPostEdited: inboxRes.SocialMediaData.Posts?.IsEdited,
-                            RouteId: post.PostData.RouteId,
+                            IsParentCommentEdited: inboxRes.ParentComments?.IsEdited,
+                            IsParentCommentDeleted: inboxRes.ParentComments?.IsDeleted,
+                            IsCommentDeleted: inboxRes.Comments?.IsDeleted,
+                            IsCommentEdited: inboxRes.Comments?.IsEdited,
+                            IsPostDeleted: inboxRes.Posts?.IsDeleted,
+                            IsPostEdited: inboxRes.Posts?.IsEdited,
+                            RouteId: inboxRes.RouteId,
                             PostDetails: {
                                 To: post.PostData.To,
-                                From: post.PostData.From,
-                                Status: inboxRes.CurrentStatus
+                                From: post.PostData.From
                             }
                         }
                     });
@@ -1442,39 +1453,37 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 }
 
                 let tempAttachments = await this.requestAttachmentData(
-                    this.currentTab === 'draft' ? modifiedAttachmentData : outboxRes.Attachments
+                    this.currentTab === 'draft' ? modifiedAttachmentData : []
                 );
                 this.postBodies = Object.assign(this.postBodies, {
                     [post.PostData.SessionId]: {
                         Files: getAttachments(tempAttachments),
-                        ConversationID: outboxRes.ConversationID,
                         SessionId: post.PostData.SessionId,
                         SubChannel: post.SubChannel,
                         Subject: post.PostData.Subject,
-                        PostAccountName: outboxRes.SocialMediaData.Posts.AccountName
-                            ? outboxRes.SocialMediaData.Posts.AccountName
-                            : outboxRes.SocialMediaData.Posts.AccountId,
-                        PostCreatedTime: outboxRes.SocialMediaData.Posts.CreatedDateTime,
-                        PostUpdatedTime: outboxRes.SocialMediaData.Posts.UpdatedDateTime,
-                        PostId: outboxRes.SocialMediaData.Posts.PostId,
-                        SmActiveComment: outboxRes.SocialMediaData.Comments,
-                        SmParentComments: outboxRes.SocialMediaData.ParentComments,
-                        PostText: outboxRes.SocialMediaData.Posts.PostText,
-                        PostAttachments: outboxRes.SocialMediaData.Posts.PostAttachments,
-                        PostEngagements: outboxRes.SocialMediaData.Posts.PostEngagements,
-                        Engagements: outboxRes.SocialMediaData.Engagement,
+                        PostAccountName: outboxRes.Posts.AccountName
+                            ? outboxRes.Posts.AccountName
+                            : outboxRes.Posts.AccountId,
+                        PostCreatedTime: outboxRes.Posts.CreatedDateTime,
+                        PostUpdatedTime: outboxRes.Posts.UpdatedDateTime,
+                        PostId: outboxRes.Posts.PostId,
+                        SmActiveComment: outboxRes.Comments,
+                        SmParentComments: outboxRes.ParentComments,
+                        PostText: outboxRes.Posts.PostText,
+                        PostAttachments: outboxRes.Posts.PostAttachments,
+                        PostEngagements: outboxRes.Posts.PostEngagements,
+                        Engagements: outboxRes.Engagement,
                         IsOutbound: fetchFromOutbox,
-                        IsParentCommentEdited: outboxRes.SocialMediaData.ParentComments?.IsEdited,
-                        IsParentCommentDeleted: outboxRes.SocialMediaData.ParentComments?.IsDeleted,
-                        IsCommentDeleted: outboxRes.SocialMediaData.Comments?.IsDeleted,
-                        IsCommentEdited: outboxRes.SocialMediaData.Comments?.IsEdited,
-                        IsPostDeleted: outboxRes.SocialMediaData.Posts?.IsDeleted,
-                        IsPostEdited: outboxRes.SocialMediaData.Posts?.IsEdited,
-                        RouteId: post.PostData.RouteId,
+                        IsParentCommentEdited: outboxRes.ParentComments?.IsEdited,
+                        IsParentCommentDeleted: outboxRes.ParentComments?.IsDeleted,
+                        IsCommentDeleted: outboxRes.Comments?.IsDeleted,
+                        IsCommentEdited: outboxRes.Comments?.IsEdited,
+                        IsPostDeleted: outboxRes.Posts?.IsDeleted,
+                        IsPostEdited: outboxRes.Posts?.IsEdited,
+                        RouteId: outboxRes.RouteId,
                         PostDetails: {
                             To: post.PostData.To,
-                            From: post.PostData.From,
-                            Status: outboxRes.CurrentStatus
+                            From: post.PostData.From
                         }
                     }
                 });

@@ -930,8 +930,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
                 const setPostBody = async (resData: any, sid: any) => {
                     let modifiedAttachmentData: any[] = [];
-                    if (resData?.SocialMediaData?.Comments?.CommentAttachments?.length) {
-                        modifiedAttachmentData = resData.SocialMediaData.Comments.CommentAttachments.map((attdat) => {
+                    if (resData?.Comments?.CommentAttachments?.length) {
+                        modifiedAttachmentData = resData.Comments.CommentAttachments.map((attdat) => {
                             return {
                                 IsCloud: true,
                                 Url: attdat?.MediaUrl,
@@ -941,18 +941,17 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         });
                     }
                     let tempAttachments = await this.requestAttachmentData(
-                        (modifiedAttachmentData.length && this.isDraftMode) ? modifiedAttachmentData : resData.Attachments
+                        (modifiedAttachmentData.length && this.isDraftMode) ? modifiedAttachmentData : []
                     );
-                    let smData = resData?.SocialMediaData;
+                    let smData = resData;
                     this.smpService.postBodies = Object.assign(this.smpService.postBodies, {
                         [sid]: {
                             Files: getAttachments(tempAttachments, sid),
-                            ConversationID: resData.ConversationID,
                             SessionId: sid,
                             SubChannel: (
-                                channelMapper[smData?.Posts?.Channel?.toLowerCase()] ?? resData.EmailType
+                                channelMapper[smData?.Posts?.Channel?.toLowerCase()]
                             ).toLowerCase(),
-                            Subject: resData.Subject,
+                            Subject: resData.Comments.CommentText.Text,
                             PostAccountName: smData.Posts.AccountName
                                 ? smData.Posts.AccountName
                                 : smData.Posts.AccountId,
