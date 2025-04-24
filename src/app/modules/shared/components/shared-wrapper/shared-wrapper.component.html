@@ -5,18 +5,20 @@
             <!-- Wrapper to wrap header and body -->
             <div fxLayout="column" fxLayoutAlign=" none" class="card-wrapper">
                 <mat-card-header [ngClass]="customFuse.header">
-                    <div mat-card-avatar>
-                        <mat-icon *ngIf="icon.indexOf('custom') < 0">{{ icon || 'widgets' }}</mat-icon>
-                        <mat-icon [svgIcon]="icon" *ngIf="icon.indexOf('custom') >= 0"></mat-icon>
-                    </div>
-                    <mat-card-title>{{ title || locale('sharedComponents.widget') }}</mat-card-title>
+                    <mat-card-title class="!twd-flex twd-gap-2">
+                        <div class="twd-flex twd-items-center">
+                            <mat-icon *ngIf="icon.indexOf('custom') < 0">{{ icon || 'widgets' }}</mat-icon>
+                            <mat-icon [svgIcon]="icon" *ngIf="icon.indexOf('custom') >= 0"></mat-icon>
+                        </div>
+                        <span>{{ title || locale('sharedComponents.widget') }}</span>
+                    </mat-card-title>
                     <span class="spacer"></span>
-                    <button mat-icon-button [matTooltip]="locale('wrapperComponent.close')" mat-dialog-close #closeBtn tabindex="-1">
+                    <button [matTooltip]="locale('wrapperComponent.close')" mat-dialog-close #closeBtn tabindex="-1">
                         <mat-icon>close</mat-icon>
                     </button>
                 </mat-card-header>
                 <!-- Card content -->
-                <mat-card-content class="border-radius-20" [ngClass]="customFuse.content">
+                <mat-card-content class="shared-content" [ngClass]="customFuse.content">
                     <mat-progress-bar *ngIf="loading" mode="query"></mat-progress-bar>
                     <!-- All the card content goes here -->
                     <ng-content></ng-content>

@@ -1,4 +1,4 @@
-<shared-wrapper *transloco="let locale" [icon]="icon" [title]="title" [loading]="loading">
+<shared-wrapper *transloco="let locale" [icon]="icon" [title]="title" [loading]="loading" class="twd-h-full">
     <div mat-dialog-content class="twd-h-full !twd-max-h-full !lg:twd-w-6/12">
         <ng-container *ngIf="customFuse$ | async as customFuse">
             <ng-container *ngIf="switcherList[activeSwitcher] as tabConf">
@@ -8,11 +8,8 @@
                     } as controls"
                 >
                     <div class="twd-h-full twd-flex twd-flex-col">
-                        <div
-                            class="twd-flex border-radius-20 twd-mb-1 twd-gap-x-2 twd-p-2"
-                            [ngClass]="customFuse?.content"
-                        >
-                            <div class="twd-flex twd-flex-col twd-flex-1">
+                        <div class="twd-flex twd-mb-1 twd-gap-x-2 twd-p-2" [ngClass]="customFuse?.content">
+                            <div class="twd-flex twd-gap-2 twd-flex-col twd-flex-1">
                                 <!-- conditional !allowDirectEdit can be removed after 2 future releases, since there is no need of a configuration -->
                                 <div class="twd-flex" *ngIf="!allowDirectEdit">
                                     <mat-form-field
@@ -27,6 +24,7 @@
                                             required
                                             [placeholder]="tabConf.placeholder"
                                             [(ngModel)]="selectedItemDisplayName"
+                                            class="!twd-pl-2"
                                         />
                                         <button
                                             *ngIf="tabConf.freeText.allowed"
@@ -58,7 +56,7 @@
                                         *ngIf="tabConf.freeText.active"
                                         fxFlex
                                         appearance="outline"
-                                        class="custom with-bg twd-mt-1"
+                                        class="custom with-bg twd-mt-1 twd-bg-white"
                                     >
                                         <input
                                             matInput
@@ -67,6 +65,7 @@
                                             [(ngModel)]="tabConf.freeText.value"
                                             #skillVdnInput
                                             (input)="onSkillVdnInputChange($event.target.value)"
+                                            class="!twd-pl-2"
                                         />
                                         <button
                                             mat-button
@@ -82,9 +81,14 @@
                                     </mat-form-field>
                                 </div>
                                 <div class="twd-flex" *ngIf="allowDirectEdit">
-                                    <mat-form-field fxFlex appearance="outline" class="custom with-bg twd-mt-1">
+                                    <mat-form-field
+                                        fxFlex
+                                        appearance="outline"
+                                        class="custom with-bg twd-mt-1 twd-bg-white"
+                                    >
                                         <input
                                             matInput
+                                            class="!twd-pl-2"
                                             required
                                             [readonly]="!tabConf?.freeText?.allowed"
                                             [placeholder]="
@@ -115,7 +119,7 @@
                                 </div>
                                 <mat-form-field
                                     floatLabel="never"
-                                    appearance="standard"
+                                    appearance="outline"
                                     [ngClass]="{ 'twd-hidden': !tabConf.comments }"
                                     class="custom with-bg comments twd-flex-1 twd-mb-1"
                                 >
@@ -132,8 +136,7 @@
                             <div class="twd-flex twd-flex-col twd-items-center twd-py-1.5 twd-gap-y-2">
                                 <button
                                     *ngIf="tabConf.consult"
-                                    mat-raised-button
-                                    class="custom-btn bg-success border-radius-20"
+                                    class="custom-btn bg-success action-buttons"
                                     [matTooltip]="actionTooltip"
                                     [disabled]="controls.disabled"
                                     (click)="executeAction(true)"
@@ -144,9 +147,8 @@
 
                                 <button
                                     *ngIf="tabConf.blind"
-                                    mat-raised-button
                                     [matTooltip]="locale('sharedComponents.agentSkillList.blind')"
-                                    class="custom-btn bg-success border-radius-20"
+                                    class="custom-btn bg-success action-buttons"
                                     [disabled]="controls.disabled"
                                     (click)="executeAction(false)"
                                 >
@@ -155,7 +157,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="twd-flex-1 twd-flex twd-flex-col border-radius-20" [ngClass]="customFuse?.content">
+                        <div class="twd-flex-1 twd-flex twd-flex-col" [ngClass]="customFuse?.content">
                             <div
                                 class="twd-flex twd-text-center twd-gap-3 border-bottom twd-p-2"
                                 *ngIf="switcherList | keyvalue as tabList"
@@ -163,29 +165,31 @@
                                 <ng-container *ngIf="tabList.length > 1">
                                     <div
                                         *ngFor="let item of tabList"
-                                        class="border-radius-20 twd-p-2 twd-font-bold twd-cursor-pointer twd-flex-1"
-                                        [ngClass]="activeSwitcher === item.key && customFuse?.body"
+                                        class="twd-p-2 twd-font-bold twd-cursor-pointer twd-flex-1"
+                                        [ngClass]="activeSwitcher === item.key ? 'active-tab' : ''"
                                         (click)="switchTab(item.key); agentSearchRef.focus()"
                                     >
                                         {{ item.key }}
                                     </div>
                                 </ng-container>
                             </div>
-                            <div
-                                class="twd-flex-1 twd-flex-col twd-overflow-x-hidden twd-overflow-y-auto twd-relative border-bottom twd-p-2"
-                            >
+                            <div class="twd-flex-1 twd-flex-col twd-overflow-hidden twd-relative border-bottom twd-p-2">
                                 <div
                                     class="twd-flex twd-items-center twd-gap-2"
                                     [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Agent List' }"
                                 >
                                     <div #skillSelectDropdown class="twd-flex-1">
-                                        <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
+                                        <mat-form-field
+                                            class="form-field custom with-bg w-100-p twd-bg-white"
+                                            appearance="outline"
+                                        >
                                             <mat-select
                                                 #skillSelectRef
                                                 [placeholder]="
                                                     locale('sharedComponents.agentSkillList.skillPlaceholder')
                                                 "
                                                 [(ngModel)]="selectedSkill"
+                                                class="!twd-px-2"
                                             >
                                                 <mat-option (click)="clearSkillFilter()">None</mat-option>
                                                 <mat-option
@@ -200,7 +204,10 @@
 
                                     <!-- Search form field with form control searchKey -->
                                     <div #searchKeyText class="twd-hidden">
-                                        <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
+                                        <mat-form-field
+                                            class="form-field custom with-bg w-100-p twd-bg-white"
+                                            appearance="outline"
+                                        >
                                             <input
                                                 matInput
                                                 #agentSearchRef
@@ -223,8 +230,7 @@
 
                                     <div>
                                         <button
-                                            mat-raised-button
-                                            mat-icon-button
+                                            class="action-buttons tb-action"
                                             [matTooltip]="locale('sharedComponents.clearAll')"
                                             (click)="clearAllFilter()"
                                         >
@@ -234,8 +240,7 @@
 
                                     <div>
                                         <button
-                                            mat-raised-button
-                                            mat-icon-button
+                                            class="action-buttons tb-action"
                                             [matTooltip]="locale('sharedComponents.agentSkillList.reloadAgents')"
                                             (click)="reloadAgentList()"
                                         >
@@ -246,8 +251,7 @@
                                     <!-- skill select dropdown when clicked , select dropdown input form field shown -->
                                     <div #skillSelectButton class="twd-hidden">
                                         <button
-                                            mat-raised-button
-                                            mat-icon-button
+                                            class="action-buttons tb-action"
                                             [matTooltip]="locale('sharedComponents.agentSkillList.selectSkill')"
                                             (click)="
                                                 searchKeyText.classList.replace('twd-flex-1', 'twd-hidden');
@@ -264,8 +268,7 @@
                                     <!-- search key button hidden by defaullt , when clicked , searchKey input form field shown -->
                                     <div #searchKeyButton>
                                         <button
-                                            mat-raised-button
-                                            mat-icon-button
+                                            class="action-buttons tb-action"
                                             [matTooltip]="locale('global.search')"
                                             (click)="
                                                 skillSelectDropdown.classList.replace('twd-flex-1', 'twd-hidden');

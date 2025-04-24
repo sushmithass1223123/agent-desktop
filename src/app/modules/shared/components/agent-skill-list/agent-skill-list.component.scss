@@ -11,9 +11,7 @@ agent-skill-list {
             &.custom {
                 .mat-mdc-text-field-wrapper {
                     padding: 0 !important;
-                    .mat-mdc-form-field-outline {
-                        border-radius: 16px;
-                    }
+                    
                     .mat-mdc-form-field-infix {
                         padding: 0.65em 0.5rem !important;
 
@@ -38,7 +36,6 @@ agent-skill-list {
                             padding: 0 !important;
 
                             textarea {
-                                border-radius: 16px;
                                 overflow: hidden;
                                 width: 100%;
                                 padding: 12px 12px 10px 12px;
@@ -63,7 +60,6 @@ agent-skill-list {
             .switch-item {
                 padding: 8px;
                 margin-right: 8px;
-                border-radius: 20px;
                 text-align: center;
                 font-weight: 700;
                 cursor: pointer;
@@ -73,5 +69,21 @@ agent-skill-list {
                 }
             }
         }
+    }
+
+    .action-buttons {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        border-radius: 5px;
+        justify-content: center;
+        align-items: center;
+    }
+    .tb-action {
+        background: #fff;
+        border: 1px solid #ddd;
+    }
+    .active-tab {
+        background: #ddd;
     }
 }

@@ -75,8 +75,8 @@
 </tw-wrapper>
 
 <ng-template #addWorkcodeModalRef *transloco="let locale">
-    <div *transloco="let locale" class="twd-sticky twd-top-0 twd-left-0">
-        <p class="mat-title">{{ locale('widgets.workcodes.selectWorkcodes') }}</p>
+    <div *transloco="let locale" class="twd-px-4 twd-py-2">
+        <p class="mat-title !twd-text-xl">{{ locale('widgets.workcodes.selectWorkcodes') }}</p>
 
         <mat-form-field class="w-100-p" appearance="outline">
             <mat-chip-grid #selectedWorkCodesRef aria-label="WorkCodes">
@@ -107,16 +107,16 @@
     </ng-container>
 
     <ng-container *ngFor="let group of filteredOptions | async | keyvalue">
-        <p class="mat-title" *ngIf="group.value && group.value.length">{{ group.key }}</p>
-        <mat-chip-list aria-label="WorkCodes">
+        <p class="mat-title twd-px-4 !twd-text-xl" *ngIf="group.value && group.value.length">{{ group.key }}</p>
+        <mat-chip-list class="twd-flex twd-px-4 twd-pb-4 twd-flex-wrap twd-gap-2" aria-label="WorkCodes">
             <ng-container *ngFor="let workCode of group.value">
                 <mat-chip
                     *ngIf="workCode.ParentID !== '0'"
                     class="bg-secondary"
                     (click)="setWorkCode(workCode, group.key)"
                 >
-                    <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
-                    {{ workCode.Name }}
+                    <mat-icon class="mat-icon-sm mr-4">local_offer</mat-icon>
+                    <span class="twd-align-text-bottom">{{ workCode.Name }}</span>
                 </mat-chip>
             </ng-container>
         </mat-chip-list>
