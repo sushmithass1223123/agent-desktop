@@ -747,6 +747,8 @@
                                             (emojiClick)="addEmoji($event)"
                                             [darkMode]="customFuse.config.colorTheme.includes('dark')"
                                             [showPreview]="false"
+                                            [perLine]="9"
+                                            class="!twd-overflow-y-auto custom-emoji-mart"
                                         ></emoji-mart>
                                     </ng-template>
                                 </button>
@@ -826,6 +828,7 @@
                                     cdkAutosizeMinRows="1"
                                     cdkAutosizeMaxRows="5"
                                     (keyup)="onKeyUp($event)"
+                                    style="font-family: 'Roboto', 'TwemojiMozilla', sans-serif;"
                                 ></textarea>
                                 <!-- </mat-form-field> -->
 
