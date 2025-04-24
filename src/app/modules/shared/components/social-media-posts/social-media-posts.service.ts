@@ -8,12 +8,6 @@ const yesterday = new Date();
 yesterday.setDate(today.getDate() - 1);
 
 export const initSmpostsSearchState = {
-    // Sent
-    sentDateFrom: '',
-    sentDateTo: '',
-    // Draft
-    savedDateFrom: '',
-    savedDateTo: '',
     // Inbox
     postText: '',
     hasCommentAttachments: 2,
@@ -22,8 +16,6 @@ export const initSmpostsSearchState = {
     replied: 2,
     closed: 2,
     assigned: 2,
-    startDateFrom: '',
-    startDateTo: '',
     queue: '',
     // Queue
     skills: [],
@@ -44,15 +36,7 @@ export const initSmpostsSearchState = {
     accountName: ''
 };
 
-const searchParams = new FormGroup({
-    // Sent
-    sentDateFrom: new FormControl(initSmpostsSearchState.sentDateFrom),
-    sentDateTo: new FormControl(initSmpostsSearchState.sentDateTo),
-  
-    // Draft
-    savedDateFrom: new FormControl(initSmpostsSearchState.savedDateFrom),
-    savedDateTo: new FormControl(initSmpostsSearchState.savedDateTo),
-  
+const searchParams = new FormGroup({  
     // Inbox
     postText: new FormControl(initSmpostsSearchState.postText),
     hasCommentAttachments: new FormControl(initSmpostsSearchState.hasCommentAttachments),
@@ -61,8 +45,6 @@ const searchParams = new FormGroup({
     replied: new FormControl(initSmpostsSearchState.replied),
     closed: new FormControl(initSmpostsSearchState.closed),
     assigned: new FormControl(initSmpostsSearchState.assigned),
-    startDateFrom: new FormControl(initSmpostsSearchState.startDateFrom),
-    startDateTo: new FormControl(initSmpostsSearchState.startDateTo),
     queue: new FormControl(initSmpostsSearchState.queue),
   
     // Queue
@@ -97,7 +79,7 @@ export class SocialMediaPostsService {
             searchParams,
             globalSearchKey: new FormControl(''),
             defaultEmail: new FormControl(''),
-            availableMailboxes: new FormControl([])
+            listOfSocialMediaAccounts: new FormControl([])
         }
     };
     /**
@@ -156,7 +138,7 @@ export class SocialMediaPostsService {
                     }) || [];
                 this.globalSmpWorkbenchState$.searchParams.patchValue({ listOfSocialMediaAccounts });
                 this.globalSmpWorkbenchState$.defaultEmail.setValue(res.response[0]);
-                this.globalSmpWorkbenchState$.availableMailboxes.setValue(res.response);
+                this.globalSmpWorkbenchState$.listOfSocialMediaAccounts.setValue(res.response);
             }
         } catch (e) {
             console.error(e);
@@ -171,7 +153,7 @@ export class SocialMediaPostsService {
         this.globalSmpWorkbenchState$.searchParams.setValue({
             ...initSmpostsSearchState,
             ...update,
-            listOfSocialMediaAccounts: this.globalSmpWorkbenchState$.availableMailboxes.value
+            listOfSocialMediaAccounts: this.globalSmpWorkbenchState$.listOfSocialMediaAccounts.value
         });
     }
 }

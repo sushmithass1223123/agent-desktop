@@ -258,7 +258,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     /**
      * List of availabloe mailboxes
      */
-    availableMailboxes: string[] = [];
+    listOfSocialMediaAccounts: string[] = [];
 
     selectedPostSessionId: string;
     selectedPostId: string | any;
@@ -327,7 +327,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     async ngOnInit() {
         try {
             // get and set the list of available mailboxes
-            await this.setAvailableMailboxes();
+            await this.setListOfSocialMediaAccounts();
 
             this.validateAvailabletabsFromConfiguration();
 
@@ -569,49 +569,58 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             // In case if we are back to old tab, get the preserved global key
             if (globalKey) {
                 searchParams = {
-                    subject: globalKey,
-                    content: this.currentTab !== 'queue' ? globalKey : undefined,
+                    commentText: globalKey,
                     global: 'GLOBAL',
-                    listOfMailboxes:
-                        this._smpService.globalSmpWorkbenchState$.searchParams.value.listOfMailboxes.join(','),
-                    hasAttachments: 2,
-                    replied: 2,
-                    closed: 2,
-                    assigned: 2,
+                    listOfSocialMediaAccounts:
+                        this._smpService.globalSmpWorkbenchState$.searchParams.value.listOfSocialMediaAccounts.join(
+                            ','
+                        ),
+                    accountName: searchFields.accountName,
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
-                    skills: [],
-                    channel: 'SM'
+                    pageSize: 10,
+                    pageNumber: 1
                 };
             }
             if (!globalKey || (globalKey && this.advancedSearch.data[this.currentTab].changed)) {
                 searchParams = {
                     global: '',
-                    skills: [],
-                    email: searchFields.email,
-                    agent: searchFields.agent || '',
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
-                    subject: searchFields.subject,
-                    content: searchFields.content,
-                    listOfMailboxes: searchFields.listOfMailboxes.join(','),
-                    channel: 'SM'
+                    commentText: searchFields.commentText,
+                    accountName: searchFields.accountName,
+                    listOfSocialMediaAccounts: searchFields.listOfSocialMediaAccounts.join(','),
+                    pageSize: 10,
+                    pageNumber: 1
                 };
             }
-            if (this.currentTab === 'inbox' || this.currentTab === 'posts') {
+            if (this.currentTab === 'sentitem') {
+                searchParams.deviceid = searchFields.deviceid;
+                searchParams.agent = searchFields.agent;
+                searchParams.sessionid = searchFields.sessionid;
+            } else if (this.currentTab === 'draft') {
+                searchParams.agent = searchFields.agent;
+                searchParams.sessionid = searchFields.sessionid;
+            } else if (this.currentTab === 'inbox') {
+                searchParams.deviceid = searchFields.deviceid;
+                searchParams.queue = searchFields.queue;
+                searchParams.postText = searchFields.postText;
+                searchParams.hasCommentAttachments = searchFields.hasCommentAttachments;
+                searchParams.hasPostAttachments = searchFields.hasPostAttachments;
                 searchParams.assignedTo = searchFields.assignedTo;
-                searchParams.hasAttachments = searchFields.hasAttachments;
                 searchParams.replied = searchFields.replied;
                 searchParams.closed = searchFields.closed;
                 searchParams.assigned = searchFields.assigned;
-                searchParams.deviceId = '';
-                searchParams.assignedValue = false;
-                searchParams.closedValue = false;
-                searchParams.repliedValue = false;
-            }
-            if (this.currentTab !== 'queue') {
-                searchParams.insessionid = searchFields.inSessionId;
-                searchParams.listOfMailboxes = searchFields.listOfMailboxes.join(',');
+                searchParams.sessionid = searchFields.sessionid;
+            } else if (this.currentTab === 'queue') {
+                searchParams.skills = searchFields.skills;
+                searchParams.assignedTo = searchFields.assignedTo;
+                searchParams.postText = searchFields.postText;
+                searchParams.Channel = 'SM';
+            } else if (this.currentTab === 'posts') {
+                searchParams.deviceid = searchFields.deviceid;
+                searchParams.postText = searchFields.postText;
+                searchParams.hasPostAttachments = searchFields.hasPostAttachments;
             }
 
             const maps: Record<AvailableTabs, any> = {
@@ -1207,21 +1216,21 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     /**
      * Methos to set available mailboxes
      */
-    private async setAvailableMailboxes(): Promise<void> {
+    private async setListOfSocialMediaAccounts(): Promise<void> {
         try {
-            if (!this._smpService.globalSmpWorkbenchState$.availableMailboxes.value?.length) {
+            if (!this._smpService.globalSmpWorkbenchState$.listOfSocialMediaAccounts.value?.length) {
                 await this._smpService.init();
             }
 
-            this.availableMailboxes = this._smpService.globalSmpWorkbenchState$.availableMailboxes.value;
-            this._smpService.globalSmpWorkbenchState$.availableMailboxes.valueChanges
+            this.listOfSocialMediaAccounts = this._smpService.globalSmpWorkbenchState$.listOfSocialMediaAccounts.value;
+            this._smpService.globalSmpWorkbenchState$.listOfSocialMediaAccounts.valueChanges
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((res) => {
-                    this.availableMailboxes = res;
+                    this.listOfSocialMediaAccounts = res;
                 });
         } catch (e) {
             this.logger.error(
-                '[WorkbenchSmpComponent.setAvailableMailboxes] - Error occured while setting available mailboxes:',
+                '[WorkbenchSmpComponent.setListOfSocialMediaAccounts] - Error occured while setting available mailboxes:',
                 JSON.stringify(e),
                 true
             );
