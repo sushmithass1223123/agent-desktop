@@ -706,9 +706,12 @@
                                 </div>
                             </div>
 
-                            <mat-chip-list *ngIf="textTemplates.filtered.length" class="w-100-p mx-16 mb-8">
+                            <mat-chip-list
+                                *ngIf="textTemplates.filtered.length"
+                                class="twd-px-2 twd-gap-2 twd-flex-wrap twd-w-full twd-flex"
+                            >
                                 <mat-chip
-                                    class="twd-cursor-pointer"
+                                    class="twd-cursor-pointer twd-rounded-sm"
                                     *ngFor="let item of textTemplates.filtered"
                                     (click)="selectTemplate(item)"
                                 >
@@ -828,7 +831,7 @@
                                     cdkAutosizeMinRows="1"
                                     cdkAutosizeMaxRows="5"
                                     (keyup)="onKeyUp($event)"
-                                    style="font-family: 'Roboto', 'TwemojiMozilla', sans-serif;"
+                                    style="font-family: 'Roboto', 'TwemojiMozilla', sans-serif"
                                 ></textarea>
                                 <!-- </mat-form-field> -->
 

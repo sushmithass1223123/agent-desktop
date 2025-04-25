@@ -190,27 +190,27 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
         // Select
         .mat-mdc-select-trigger,
         .mat-mdc-select-arrow {
-            color: map-get($fuseForeground, hint-text);
+            // color: map-get($fuseForeground, hint-text);
         }
 
         .mat-mdc-select-underline {
             background-color: map-get($fuseForeground, divider);
         }
 
-        .mat-mdc-select-disabled .mat-mdc-select-value,
-        .mat-mdc-select-arrow,
-        .mat-mdc-select-trigger {
-            color: map-get($fuseForeground, hint-text);
-        }
+        // .mat-mdc-select-disabled .mat-mdc-select-value,
+        // .mat-mdc-select-arrow,
+        // .mat-mdc-select-trigger {
+        //     color: map-get($fuseForeground, hint-text);
+        // }
 
         .mat-mdc-select-content,
         .mat-mdc-select-panel-done-animating {
             //background: map-get($background, card);
         }
 
-        .mat-mdc-select-value {
-            color: map-get($fuseForeground, text);
-        }
+        // .mat-mdc-select-value {
+        //     color: map-get($fuseForeground, text);
+        // }
     }
 }
 

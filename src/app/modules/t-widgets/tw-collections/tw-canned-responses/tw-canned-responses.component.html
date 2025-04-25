@@ -8,8 +8,8 @@
     <mat-progress-bar *ngIf="loading" mode="query"></mat-progress-bar>
     <!-- your code goes here -->
     <div fxFill fxFlex fxLayout="column" fxLayoutAlign=" none" class="px-16 py-8">
-        <div fxLayout="row" fxLayoutAlign="space-between center" class="w-100-p template-selector">
-            <div fxFill fxFlex="50" class="mr-4">
+        <div fxLayout="row" class="w-100-p twd-items-center twd-flex-wrap twd-gap-2 template-selector">
+            <div>
                 <mat-form-field fxFill class="custom select-box" appearance="outline">
                     <mat-select
                         [placeholder]="locale('widgets.cannedResponses.mode')"
@@ -22,7 +22,7 @@
                 </mat-form-field>
             </div>
 
-            <div fxFill fxFlex="50" class="mr-4">
+            <div>
                 <mat-form-field fxFill class="custom select-box" appearance="outline">
                     <mat-select
                         [placeholder]="locale('sharedComponents.textTemplates.departments')"
@@ -36,7 +36,7 @@
                     <mat-error> {{ locale('sharedComponents.textTemplates.departmentRequired') }} </mat-error>
                 </mat-form-field>
             </div>
-            <div fxFill fxFlex="50">
+            <div>
                 <mat-form-field fxFill class="custom select-box" appearance="outline">
                     <mat-select
                         [placeholder]="locale('sharedComponents.textTemplates.groups')"
@@ -88,7 +88,6 @@
                 <button
                     mat-raised-button
                     color="accent"
-                    class="border-radius-20"
                     [disabled]="!selectedTemplate"
                     (click)="sendTemplate(selectedTemplate)"
                 >

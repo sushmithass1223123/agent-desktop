@@ -4,7 +4,7 @@ tw-canned-responses {
     }
 
     .template-selector {
-        height: 44px;
+        // height: 44px;
     }
 
     .template-items {
@@ -18,13 +18,14 @@ tw-canned-responses {
     }
 
     .select-box {
-        border-radius: 20px;
-        background-color: rgb(0 0 0 / 0.1);
-        padding: 0px 7px;
+        // border-radius: 20px;
+        // background-color: rgb(0 0 0 / 0.1);
+        // padding: 0px 7px;
 
         .mat-mdc-text-field-wrapper {
             .mat-mdc-form-field-flex {
                 padding: 0px 15px;
+                height: 44px;
 
                 .mat-mdc-form-field-infix {
                     padding: 0px !important;

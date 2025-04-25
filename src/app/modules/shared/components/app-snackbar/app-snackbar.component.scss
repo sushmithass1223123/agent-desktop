@@ -10,45 +10,48 @@ snack-bar-container {
             height: 100%;
         }
     }
-    &.mat-mdc-snack-bar-container {
-        &.app-snackbar {
-            color: #323232;
-            background: #ffffff;
-            border-radius: 16px;
+}
+    .mat-mdc-snack-bar-container {
+        &.app-snackbar, .mat-mdc-snackbar-surface {
+            color: #323232 !important;
+            background: #ffffff !important;
+            
             min-height: 56px;
             padding: 0;
 
             .icon {
-                border-top-left-radius: 14px;
-                border-bottom-left-radius: 14px;
+                
             }
 
             &.info-snackbar {
                 .icon {
-                    background: $tw-info;
+                    color: $tw-info;
                 }
             }
 
             &.success-snackbar {
                 .icon {
-                    color: #ffffff;
-                    background: $tw-alt-success;
+                    // color: #ffffff;
+                    // background: $tw-alt-success;
+                    color: $tw-alt-success;
                 }
             }
 
             &.warning-snackbar {
                 .icon {
-                    color: #ffffff;
-                    background: $tw-alt-warning;
+                    // color: #ffffff;
+                    // background: $tw-alt-warning;
+                    color: $tw-alt-warning;
                 }
             }
 
             &.danger-snackbar {
                 .icon {
-                    color: #ffffff;
-                    background: $tw-alt-danger;
+                    // color: #ffffff;
+                    // background: $tw-alt-danger;
+                    color:  $tw-alt-danger;
                 }
             }
         }
     }
-}
+
