@@ -1320,7 +1320,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 isEmailSent: true
             });
             if (dialogResult) {
-                this.saveEmailAsDraft(closeEmail, btn);
+                this.saveEmailAsDraft(true, btn);
                 // this.replyInfo = null;
                 this.emailComponentMode = 'preview';
             } else {
@@ -1343,7 +1343,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         });
     }
 
-    /**
+    /**cl
      * Rejects email, only available for checkers
      */
     rejectEmail(evt: MatButton): void {
