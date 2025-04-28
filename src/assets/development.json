@@ -970,6 +970,7 @@
                         "Path": "/voice",
                         "RouteOnInteraction": true,
                         "PreserveOnTabChange": false,
+                        "RedirectPath": "/home",
                         "Widgets": {
                             "Static": [
                                 {
@@ -1561,6 +1562,7 @@
                         "Path": "/textchat",
                         "RouteOnInteraction": true,
                         "PreserveOnTabChange": false,
+                        "RedirectPath": "/home",
                         "Widgets": {
                             "Static": [
                                 {
@@ -2196,6 +2198,7 @@
                         "Path": "/email",
                         "RouteOnInteraction": true,
                         "PreserveOnTabChange": false,
+                        "RedirectPath": "/home",
                         "Widgets": {
                             "Static": [
                                 {
@@ -2520,6 +2523,7 @@
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
                         "Path": "/smp",
+                        "RedirectPath": "/home",
                         "Duration": 100,
                         "RouteOnInteraction": true,
                         "PreserveOnTabChange": false,
