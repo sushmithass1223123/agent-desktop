@@ -71,7 +71,8 @@ interface PostData {
 const channelMapper: any = {
     fb: 'facebook',
     instagram: 'instagram',
-    twitter: 'x'
+    twitter: 'x',
+    youtube: 'youtube'
 };
 
 /**

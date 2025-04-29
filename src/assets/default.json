@@ -1395,7 +1395,7 @@
                                                     },
                                                     "DisableAvConstraints": {
                                                         "Devices": ["android", "ios"],
-                                                        "SocialChannels": ["whatsapp", "instagram", "fb", "twitter"],
+                                                        "SocialChannels": ["whatsapp", "instagram", "fb", "twitter", "youtube"],
                                                         "EscalateAudioCall": false,
                                                         "EscalateVideoCall": false,
                                                         "RequestAudioCall": false,

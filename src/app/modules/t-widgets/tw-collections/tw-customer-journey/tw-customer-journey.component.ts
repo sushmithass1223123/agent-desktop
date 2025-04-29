@@ -55,7 +55,8 @@ type IHRecord = {
 const channelMapper: any = {
     fb: 'facebook',
     instagram: 'instagram',
-    twitter: 'x'
+    twitter: 'x',
+    youtube: 'youtube'
 };
 
 /**
@@ -240,9 +241,11 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             twitter: 'custom-twitter',
             fb: 'custom-fb',
             telegram: 'custom-telegram',
+            youtube: 'custom-youtube',
             smfb: 'custom-smfb',
             smtwitter: 'custom-smtwitter',
             sminstagram: 'custom-sminstagram',
+            smyoutube: 'custom-smyoutube',
             store: 'store',
             in: 'south',
             out: 'north'
