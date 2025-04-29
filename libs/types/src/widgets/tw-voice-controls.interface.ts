@@ -228,6 +228,19 @@ export type TwVoiceControlsDataConfig = {
       * @type {ConfirmFeatureTypes}
       */
      DisableConfirmation: ConfirmFeatureTypes;
+
+    /**
+     * Flag to enable auto hold feature when answering a new call
+     */
+    AutoHoldActiveCallOnNewCallAnswer: boolean,
+    /**
+     * Flag to enable confirmation dialog before holding the call on answering / unholding 2nd call
+     */
+    ShowPromptForAutoHold: boolean,
+    /**
+     * Flag to enable auto hold feature when unholding a call
+     */
+    AutoHoldActiveCallOnUnhold: boolean
 };
 
 export type ConfirmFeatureTypes = {

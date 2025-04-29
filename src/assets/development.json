@@ -1130,7 +1130,10 @@
                                                     "DisableConfirmation": {
                                                         "OnEndCall": false,
                                                         "OnCloseInteraction": true
-                                                    }
+                                                    },
+                                                    "AutoHoldActiveCallOnNewCallAnswer": true,
+                                                    "ShowPromptForAutoHold": true,
+                                                    "AutoHoldActiveCallOnUnhold": true
                                                 }
                                             },
                                             {
@@ -1633,7 +1636,7 @@
                                                             "Blind": true,
                                                             "Comments": true,
                                                             "Source": {
-                                                                "Use": "vdn",
+                                                                "Use": "skill",
                                                                 "Display": "skill",
                                                                 "FreeTextAllowed": false
                                                             },
@@ -3662,5 +3665,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.10.3"
+    "Version": "5.10.4-test.1"
 }

@@ -1502,6 +1502,34 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.toggleButton(true, btn);
         // check if ms call then do not call api, just process the media server messages
         if (this.isMSCall) {
+            
+            // check if agent is answering a call when another active call going on
+            if(this.interactionList?.length > 1 && this.interactionList.find((i) => i.status === 'connected')) {
+                // check if auto hold other calls on answer call is enabled
+                if(this.widgetData?.AutoHoldActiveCallOnNewCallAnswer) {
+                    // check if prompt is needed
+                    if(this.widgetData?.ShowPromptForAutoHold) {
+                        const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic',
+                            '',
+                            this.translocoService.translate('widgets.voiceControls.holdActiveCallConfirmationMessage'),
+                        );
+                        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+                            if (dialogResult) {
+                                this.holdOtherActiveCalls();
+                            } else {
+                                return;
+                            }
+                        });
+                    } else { // if prompt is not needed
+                        this.holdOtherActiveCalls();
+                    }
+                } else {
+                    // show a warning message that it is not allowed to answer call when an active call is on
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.activeCallPresentWarningOnAnswer'), 'warning');
+                    return;
+                }
+            }
+
             // get the connection variable
             let connection: AVChannel = this.getAVConnection();
             // this.avConns[this.sessionID];
@@ -1553,6 +1581,24 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this.handleCallFailure('Answer call');
             this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + JSON.stringify(e),true);
             this.isAnswerLoading = false;
+        });
+    }
+
+    holdOtherActiveCalls() {
+        const activeInteraction = this.interactionList.find((i) => i.isActive);
+        this.interactionList.forEach((i) => {
+            if(i.interactionId !== activeInteraction.interactionId) {
+                SDKClient.holdCall(i.interactionId.toString(), null).then((dt: IResponse) => {
+                    // toggle the button
+                    // this.toggleButton(false, btn);
+                    // check for the response
+                    if (dt.response && dt.response.ResultCode === 0) {
+                        // hold call success
+                    } else {
+                        console.log(this.translocoService.translate('interactionComponent.holdCallFailed'));
+                    }
+                });
+            }
         });
     }
 
@@ -1658,7 +1704,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this.toggleButton(false, btn);
             // check for the response
             if (dt.response && dt.response.ResultCode === 0) {
-                // disconnect call success
+                // hold call success
             } else {
                 this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.holdCallFailed'), 'failure');
             }
@@ -1674,6 +1720,34 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.toggleButton(true, btn);
         // check if ms call then do not call api, invoke webclient api hold
         if (this.isMSCall) {
+
+            // check if agent is answering a call when another active call going on
+            if(this.interactionList?.length > 1 && this.interactionList.find((i) => i.status === 'connected')) {
+                // check if auto hold other calls on answer call is enabled
+                if(this.widgetData?.AutoHoldActiveCallOnUnhold) {
+                    // check if prompt is needed
+                    if(this.widgetData?.ShowPromptForAutoHold) {
+                        const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic',
+                            '',
+                            this.translocoService.translate('widgets.voiceControls.holdActiveCallConfirmationMessageOnUnhold'),
+                        );
+                        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+                            if (dialogResult) {
+                                this.holdOtherActiveCalls();
+                            } else {
+                                return;
+                            }
+                        });
+                    } else { // if prompt is not needed
+                        this.holdOtherActiveCalls();
+                    }
+                } else {
+                    // show a warning message that it is not allowed to answer call when an active call is on
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.activeCallPresentWarningOnUnHold'), 'warning');
+                    return;
+                }
+            }
+
             // unhold all call lines
             this.callLines.forEach((sessionId) => {
                 // get the connection variable
