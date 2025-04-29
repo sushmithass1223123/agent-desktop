@@ -1085,6 +1085,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
 
             return result.map((x: any): SMPost => {
+                const customerId = x?.SocialMediaData?.Comments?.From;
+                const customerName = this._smpService.getCustomerName(customerId);
+                
                 return {
                     Mailbox: x?.Mailbox,
                     ConversationID: x?.ConversationID,
@@ -1094,7 +1097,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     AgentId: '',
                     Channel: '',
                     CreatedBy: '',
-                    CustomerIdentifier: '',
+                    CustomerIdentifier: customerName,
                     ItemId: '',
                     Key: '',
                     OrderIndex: x?.OrderIndex,
@@ -1107,32 +1110,21 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     Status: x?.Status,
                     SubChannel: channelMapper[x?.Channel?.toLowerCase()],
                     PostData: {
-                        SessionId: x?.SessionID,
-                        OutSessionId: '',
-                        PostId: x?.SocialMediaData?.Posts?.PostId,
-                        ActiveCommentId: x?.SocialMediaData?.Comments?.CommentId,
-                        ParentCommentId: x?.SocialMediaData?.ParentComments?.CommentId,
-                        RouteId: '',
-                        From: x?.From,
+                        SessionId: x?.InSessionID,
+                        OutSessionId: x?.SessionID,
+                        RouteId: x?.RouteId ?? '',
+                        From: customerName,
                         To: x?.Mailbox,
-                        Subject: x?.SocialMediaData?.Comments?.CommentText?.Text,
+                        Subject: x?.Body,
                         EmailType: '',
                         Skill: '',
-                        Intent: x?.Intent,
+                        Intent: '',
                         JsonData: '',
                         SentimentInfo: '',
                         RouteReason: '',
                         HasAttachment: x?.HasAttachments,
                         IsEmailProbableSpam: false,
-                        RejectReason: '',
-                        IsItemDeleted:
-                            x?.SocialMediaData?.Comments?.IsDeleted ||
-                            x?.SocialMediaData?.Posts?.IsDeleted ||
-                            x?.SocialMediaData?.ParentComments?.IsDeleted,
-                        IsItemEdited:
-                            x?.SocialMediaData?.Comments?.IsEdited ||
-                            x?.SocialMediaData?.Posts?.IsEdited ||
-                            x?.SocialMediaData?.ParentComments?.IsEdited
+                        RejectReason: ''
                     }
                 };
             });
@@ -1143,6 +1135,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 true
             );
             console.error(e);
+            return [];
         }
     }
 

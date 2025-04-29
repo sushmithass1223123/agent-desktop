@@ -58,6 +58,12 @@
             }
         },
         "MaxFileUploadSize": 20971520,
-        "AsyncReplySendTimeout": 60000
+        "AsyncReplySendTimeout": 60000,
+        "SocialMediaAPIs": [
+            "https://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
+            "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
+        ],
+        "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
+        "ControlFields": []
     }
 }

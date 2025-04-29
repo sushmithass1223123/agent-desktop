@@ -245,6 +245,14 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             this.isDraftMode = this.routeReason === 'AgentDraftPull';
                             this.setPostDetails();
                             this.interactionId = i.interactionId;
+                            const customerId = JSON.parse(i.otherData?.JsonData).CustomerId;
+                            if (customerId && this.data?.Data?.SocialMediaAPIs?.[0] && this.data?.Data?.ViewMethodName) {
+                                this.smpService.getCustomerDetails(
+                                    customerId,
+                                    this.data.Data.SocialMediaAPIs[0],
+                                    this.data.Data.ViewMethodName
+                                ).subscribe();
+                            }
                         }
                         return {
                             user: i.user,

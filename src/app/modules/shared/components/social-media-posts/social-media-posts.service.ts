@@ -2,6 +2,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Injectable } from '@angular/core';
 import { SDKClient } from '@tmac/sdk';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
 
 const today = new Date();
 const yesterday = new Date();
@@ -73,6 +75,11 @@ export class SocialMediaPostsService {
     private _postFromNotification: Subject<any> = new Subject<any>();
     private _switchTabFromNotification: Subject<any> = new Subject<string>();
     private _emittedNotificationData: Subject<any> = new Subject<any>();
+    private customerDetailsSubject = new BehaviorSubject<any>(null);
+    customerDetails$ = this.customerDetailsSubject.asObservable();
+
+    constructor(private http: HttpClient) {}
+
     /**
      * Service init method
      */
@@ -135,5 +142,26 @@ export class SocialMediaPostsService {
             ...update,
             listOfMailboxes: this.globalSmpWorkbenchState$.availableMailboxes.value
         });
+    }
+
+    getCustomerDetails(customerId: string, apiUrl: string, viewMethodName: string): Observable<any> {
+        const url = `${apiUrl}${viewMethodName}${customerId}`;
+        return this.http.post(url, {}).pipe(
+            map((res: any) => {
+                if (res.errCode === 0 && res.errMsg === "Success") {
+                    this.customerDetailsSubject.next(res.data);
+                    return res.data;
+                }
+                return null;
+            })
+        );
+    }
+
+    getCustomerName(customerId: string): string {
+        const customerDetails = this.customerDetailsSubject.value;
+        if (customerDetails && customerDetails.customerID === customerId) {
+            return `${customerDetails.firstName} ${customerDetails.lastName}`.trim();
+        }
+        return customerId;
     }
 }
