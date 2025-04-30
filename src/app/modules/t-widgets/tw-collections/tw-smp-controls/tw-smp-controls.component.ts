@@ -27,9 +27,23 @@ import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
-import { AgentNotificaitonEvent, IAgentData, IncomingEmailEvent, InteractionDataEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
+import {
+    AgentNotificaitonEvent,
+    IAgentData,
+    IncomingEmailEvent,
+    InteractionDataEvent,
+    IResponse,
+    SDKClient,
+    TUtils
+} from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { InteractionComment, InteractionRef, IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse } from 'app/interfaces';
+import {
+    InteractionComment,
+    InteractionRef,
+    IWidget,
+    MediaStreamerMetaResponse,
+    MediaStreamerMultiResponse
+} from 'app/interfaces';
 import { AgentSkillListDataModel } from 'app/models';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { merge, sortBy } from 'lodash';
@@ -162,6 +176,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.isDraftMode = this.routeReason === 'AgentDraftPull';
         await this.setPostDetails();
 
+        // Set customer details configuration in service
+        this.smpService.setCustomerDetailsConfig(this.data);
+
         this.maxFileUploadSize = this.data.Data.MaxFileUploadSize;
         this.asyncReplySendTimeout = this.data.Data.AsyncReplySendTimeout;
 
@@ -179,14 +196,14 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.smpService.getEmittedNotificationData
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(({ message, action }) => {
-                switch(action) {
+                switch (action) {
                     case 'smc_e': {
                         if (!this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId]) {
                             this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
                                 message: message?.SocialMediaData?.Comments,
                                 isConsented: false
                             };
-                        } 
+                        }
                         break;
                     }
                     case 'smpc_e': {
@@ -195,17 +212,17 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                                 message: message?.SocialMediaData?.ParentComments,
                                 isConsented: false
                             };
-                        } 
+                        }
                         break;
                     }
                     case 'smp_e': {
-                        if(!this.editedPostData[message?.SocialMediaData?.Posts?.PostId]) {
+                        if (!this.editedPostData[message?.SocialMediaData?.Posts?.PostId]) {
                             this.editedPostData[message?.SocialMediaData?.Posts?.PostId] = {};
                         }
                         break;
                     }
                     case 'smc_d': {
-                        if(!this.deletedCommentData[message?.SocialMediaData?.Comments?.CommentId]) {
+                        if (!this.deletedCommentData[message?.SocialMediaData?.Comments?.CommentId]) {
                             this.deletedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
                                 isConsented: false
                             };
@@ -213,12 +230,13 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         break;
                     }
                     case 'smp_d': {
-                        if(!this.deletedPostData[message?.SocialMediaData?.Posts?.PostId]) {
+                        if (!this.deletedPostData[message?.SocialMediaData?.Posts?.PostId]) {
                             this.deletedPostData[message?.SocialMediaData?.Posts?.PostId] = {};
                         }
                         break;
                     }
-                    default: break;
+                    default:
+                        break;
                 }
             });
 
@@ -246,12 +264,18 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             this.setPostDetails();
                             this.interactionId = i.interactionId;
                             const customerId = JSON.parse(i.otherData?.JsonData).CustomerId;
-                            if (customerId && this.data?.Data?.SocialMediaAPIs?.[0] && this.data?.Data?.ViewMethodName) {
-                                this.smpService.getCustomerDetails(
-                                    customerId,
-                                    this.data.Data.SocialMediaAPIs[0],
-                                    this.data.Data.ViewMethodName
-                                ).subscribe();
+                            if (
+                                customerId &&
+                                this.data?.Data?.SocialMediaAPIs?.[0] &&
+                                this.data?.Data?.ViewMethodName
+                            ) {
+                                this.smpService
+                                    .getCustomerDetails(
+                                        customerId,
+                                        this.data.Data.SocialMediaAPIs[0],
+                                        this.data.Data.ViewMethodName
+                                    )
+                                    .subscribe();
                             }
                         }
                         return {
@@ -440,7 +464,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 isConsented: false
             };
         } else if (type === 'socialmediapost_edit') {
-            if(this.editedPostData[message?.SocialMediaData?.Posts?.PostId])
+            if (this.editedPostData[message?.SocialMediaData?.Posts?.PostId])
                 delete this.editedPostData[message?.SocialMediaData?.Posts?.PostId];
             this.editedPostData[message?.SocialMediaData?.Posts?.PostId] = {};
         } else if (type === 'socialmediacomment_delete') {
@@ -448,7 +472,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 isConsented: false
             };
         } else if (type === 'socialmediapost_delete') {
-            if(this.deletedPostData[message?.SocialMediaData?.Posts?.PostId])
+            if (this.deletedPostData[message?.SocialMediaData?.Posts?.PostId])
                 delete this.deletedPostData[message?.SocialMediaData?.Posts?.PostId];
             this.deletedPostData[message?.SocialMediaData?.Posts?.PostId] = {};
         }
@@ -489,18 +513,16 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.floatEvent.emit(isFloat);
     }
 
-
-   getInitials = (customerId,apiUrl,viewMethodName) => {
-       this.smpService.getCustomerDetails(customerId,apiUrl,viewMethodName)
-           .subscribe((name: string) => {
-               return name
-                   .split(' ')
-                   .map((part) => part.charAt(0))
-                   .join('')
-                   .toUpperCase()
-                   .substring(0, 2);
-           });
-   };
+    getInitials = (customerId, apiUrl, viewMethodName) => {
+        this.smpService.getCustomerDetails(customerId, apiUrl, viewMethodName).subscribe((name: string) => {
+            return name
+                .split(' ')
+                .map((part) => part.charAt(0))
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+        });
+    };
     /**
      * To select an interaction from interaction list
      *
@@ -640,7 +662,10 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     attachmentFileList: attachments && attachments.length ? JSON.stringify(attachments) : '',
                     body: body,
                     inboxSessionId: this.sessionId,
-                    outboxSessionId: !this.outSessionId && this.draftOutsessionId[this.activeSessionId] ? this.draftOutsessionId[this.activeSessionId] : (this.outSessionId || ''),
+                    outboxSessionId:
+                        !this.outSessionId && this.draftOutsessionId[this.activeSessionId]
+                            ? this.draftOutsessionId[this.activeSessionId]
+                            : this.outSessionId || '',
                     routeId: '',
                     toList: '',
                     bccList: '',
@@ -735,11 +760,11 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     savePostAsDraft(closePost = false, isLoud: boolean): void {
         const postBody = (this.postDraftData[this.interactionId].body || '').toString();
         let draftSnackbarRef: any;
-        if(!postBody) {
+        if (!postBody) {
             this._appUiService.showSnackbar(
                 this.translocoService.translate('widgets.smpControls.invalidDraftTrigger'),
                 'failure'
-        );
+            );
             return;
         }
         if (isLoud)
@@ -802,7 +827,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         this.translocoService.translate('widgets.smpControls.savingDraftFailedLabel'),
                         'failure'
                     );
-            }).finally(draftSnackbarRef?.dismiss);
+            })
+            .finally(draftSnackbarRef?.dismiss);
     }
 
     /**
@@ -968,7 +994,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         });
                     }
                     let tempAttachments = await this.requestAttachmentData(
-                        (modifiedAttachmentData.length && this.isDraftMode) ? modifiedAttachmentData : resData.Attachments
+                        modifiedAttachmentData.length && this.isDraftMode ? modifiedAttachmentData : resData.Attachments
                     );
                     let smData = resData?.SocialMediaData;
                     this.smpService.postBodies = Object.assign(this.smpService.postBodies, {
@@ -1047,16 +1073,17 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     this.translocoService.translate('interactionComponent.closeInteractionFailed'),
                     'failure'
                 );
-            }).finally(() => {
-                this._fuseProgressBarService.hide();
             })
+            .finally(() => {
+                this._fuseProgressBarService.hide();
+            });
     }
 
-    restrictPostActionEvt(data: {interactionId: any, restrict: boolean}) {
+    restrictPostActionEvt(data: { interactionId: any; restrict: boolean }) {
         this.restrictPostActions[data.interactionId] = data.restrict;
     }
 
-        /**
+    /**
      * Transfers post
      */
     transferPost(): void {
