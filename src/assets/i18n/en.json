@@ -998,6 +998,8 @@
             "spamEmailFailed": "Unable to spam the email",
             "emptyEmailWarning": "Email cannot be empty",
             "getEmailsLoading": "Loading emails",
+            "maxRecordLimitExceeded":"Number of emails present in the search has reached maximum limit, Please select a shorter date range",
+            "dateRangeExceeded":"Selected date range exceeds allowed limit, please reduce the date range",
             "getEmailsFailed": "Error occured while fetching emails",
             "loadEmailsFailed": "Unable to load emails",
             "replyEmailLoading": "Replying to email",
