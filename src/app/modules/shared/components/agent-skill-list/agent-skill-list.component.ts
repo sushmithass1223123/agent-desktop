@@ -1896,6 +1896,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     }
                     // assign the selected row
                     this.selectedRow = { type: 'Skill List', row };
+                    if(this.allowDirectEdit) this.updateFreetextValue();
                 } else {
                     this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.getSkillFailed'), 'failure');
                     row.Stf = 'NA';
@@ -1910,8 +1911,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 row.CIQ = 'NA';
                 this.loading -= 1;
             });
-        
-        if(this.allowDirectEdit) this.updateFreetextValue();
     };
 
     skillSelecteFailed(message: string) {
