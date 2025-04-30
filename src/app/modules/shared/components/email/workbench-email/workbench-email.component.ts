@@ -697,7 +697,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         const searchRange = (this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange
                             ? (this.channelConf.Config as TwEmailWorkbenchConfig).MaxSearchRange
                             : 30;
-                        this.setComponentState('emails/search/failure', { msg: 'Please select dates within the range of ' + searchRange + ' days' });
+                        this.setComponentState('emails/search/failure', { msg: 'Please select shorter date range' });
                         return;
                 }
             }
@@ -778,11 +778,18 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         if (res.find((x: any) => x.status !== 'SUCCESS')) {
                             const resultStr = JSON.parse(JSON.stringify(res.find((x) => x.status !== 'SUCCESS'))?.toLowerCase());
 
-                            if (resultStr?.errorcode && resultStr.errorcode == '-101') {
+                            if (resultStr?.errorCode && resultStr.errorCode == '-101') {
                                 this.appUiService.showSnackbar(
-                                    'Number of emails present in the search has reached maximum limit, Please select a shorter date range',
+                                    this.translocoService.translate('sharedComponents.email.maxRecordLimitExceeded'),
                                     'warning'
                                 );
+                                return;
+                              }
+                            if (resultStr?.errorCode && resultStr.errorCode == '-102') {
+                                this.appUiService.showSnackbar(
+                                    this.translocoService.translate('sharedComponents.email.dateRangeExceeded'),
+                                    'warning'
+                                );                         
                                 return;
                             }
 
