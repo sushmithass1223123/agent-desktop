@@ -1046,6 +1046,7 @@
             "emailTransferErrorFailedToTransferEmailToAgentInOutlookPlugin": "Error in transferring email to agent in outlook plugin",
             "emailTransferErrorFailedToTransferEmailToSkill": "Error in transferring email to skill",
             "emailTransferErrorFailedToTransferEmailToAgent": "Error in transferring email to agent",
+            "emailTransferErrorEmailMaxTabCountReached": "Error in transferring email to agent - maximum email tab count reached",
             "emailDeleteFailed": "Failed to delete email - reason : ",
             "emailsDeleteFailed": "Failed to delete emails",
             "emailDeleteErrorFailedToDeleteEmail": "Failed to delete email",
