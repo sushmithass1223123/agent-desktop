@@ -1,9 +1,10 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { Injectable } from '@angular/core';
+import { Injectable, Input } from '@angular/core';
 import { SDKClient } from '@tmac/sdk';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import {TwSmpControls } from '@ad/types';
 
 const today = new Date();
 const yesterday = new Date();
@@ -77,6 +78,11 @@ export class SocialMediaPostsService {
     private _emittedNotificationData: Subject<any> = new Subject<any>();
     private customerDetailsSubject = new BehaviorSubject<any>(null);
     customerDetails$ = this.customerDetailsSubject.asObservable();
+   /**
+       * App config data
+       */
+      @Input() data: TwSmpControls<any>;
+      customerId: string;
 
     constructor(private http: HttpClient) {}
 
@@ -145,7 +151,8 @@ export class SocialMediaPostsService {
     }
 
     getCustomerDetails(customerId: string, apiUrl: string, viewMethodName: string): Observable<any> {
-        const url = `${apiUrl}${viewMethodName}${customerId}`;
+        const url = this.data.Data.SocialMediaAPIs[0] + this.data.Data.ViewMethodName 
+        + this.customerId; 
         return this.http.post(url, {}).pipe(
             map((res: any) => {
                 if (res.errCode === 0 && res.errMsg === "Success") {

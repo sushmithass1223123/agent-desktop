@@ -489,15 +489,18 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.floatEvent.emit(isFloat);
     }
 
-    getInitials = (name) => {
-        return name
-            .split(' ')
-            .map((part) => part.charAt(0))
-            .join('')
-            .toUpperCase()
-            .substring(0, 2);
-    };
 
+   getInitials = (customerId,apiUrl,viewMethodName) => {
+       this.smpService.getCustomerDetails(customerId,apiUrl,viewMethodName)
+           .subscribe((name: string) => {
+               return name
+                   .split(' ')
+                   .map((part) => part.charAt(0))
+                   .join('')
+                   .toUpperCase()
+                   .substring(0, 2);
+           });
+   };
     /**
      * To select an interaction from interaction list
      *

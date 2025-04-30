@@ -57,4 +57,5 @@ export interface TwSmpControlsData {
      * Method name for getting customer details
      */
     ViewMethodName: string;
+    
 }
