@@ -745,7 +745,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     agent: searchFields.agent || '',
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
-                    subject: searchFields.subject,
+                    subject: searchFields.subject === '' ? globalKey : searchFields.subject,
                     content: searchFields.content,
                     listOfMailboxes: searchFields.listOfMailboxes.join(',')
                 };
