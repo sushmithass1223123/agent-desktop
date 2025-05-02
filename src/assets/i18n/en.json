@@ -1039,7 +1039,7 @@
             "emailSendErrorExchangeMessageNotCreated": "Exchange message not created",
             "emailSendErrorMailboxInstanceCreationError": "Mailbox creation error",
             "emailSendErrorUnknown": "Unknown",
-            "emailSendErrorEwsApiAdaptorDown": "EWS adapter down",
+            "emailSendErrorEwsApiAdaptorDown": "EWS adaptor down",
             "emailSendErrorPayloadTooLarge": "Attachments exceed maximum file size",
             "emailSendErrorEmailManagerLoading": "Email manager service is still loading, pls retry after a minute",
             "emailTransferFailed": "Failed to transfer email - reason : ",
