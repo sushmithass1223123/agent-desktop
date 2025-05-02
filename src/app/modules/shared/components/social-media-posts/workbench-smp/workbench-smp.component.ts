@@ -256,7 +256,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         draftsTabAllowed: boolean;
     };
     /**
-     * List of availabloe mailboxes
+     * List of available social media accounts
      */
     listOfSocialMediaAccounts: string[] = [];
 
@@ -294,6 +294,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     isFullscreen: boolean = false;
     currentTheme: string = 'theme-default-2';
 
+    outboundStatus = new FormControl('');
+
+    outboundStatusList: string[] = ['Pending', 'Failed', 'Success'];
+
     constructor(
         private _fuseFacadeService: FuseFacadeService,
         private translocoService: TranslocoService,
@@ -326,7 +330,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
     async ngOnInit() {
         try {
-            // get and set the list of available mailboxes
+            // get and set the list of available social media accounts
             await this.setListOfSocialMediaAccounts();
 
             this.validateAvailabletabsFromConfiguration();
