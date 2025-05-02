@@ -1051,6 +1051,7 @@
             "emailTransferErrorEmailMaxTabCountReached": "Error in transferring email to agent - maximum email tab count reached",
             "emailDeleteFailed": "Failed to delete email - reason : ",
             "emailsDeleteFailed": "Failed to delete emails",
+            "emailDeleteSuccess":"Draft deleted successfully",
             "emailDeleteErrorFailedToDeleteEmail": "Failed to delete email",
             "emailDeleteErrorFailedToBulkDeleteDraftEmail": "Failed to bulk delete drafted emails",
             "emailSpamFailed": "Failed to mark email as spam - reason : ",
