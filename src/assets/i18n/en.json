@@ -1042,6 +1042,7 @@
             "emailTransferErrorFailedToTransferEmailToSkill": "Error in transferring email to skill",
             "emailTransferErrorFailedToTransferEmailToAgent": "Error in transferring email to agent",
             "emailDeleteFailed": "Failed to delete email - reason : ",
+            "emailDeleteSuccess":"Draft deleted successfully",
             "emailsDeleteFailed": "Failed to delete emails",
             "emailDeleteErrorFailedToDeleteEmail": "Failed to delete email",
             "emailDeleteErrorFailedToBulkDeleteDraftEmail": "Failed to bulk delete drafted emails",

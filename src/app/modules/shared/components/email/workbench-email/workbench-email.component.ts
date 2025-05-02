@@ -889,6 +889,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         'failure'
                     );
                 }
+               else if (EMAIL_SEND_STATUS[result.response] && EMAIL_SEND_STATUS[result.response] === 'Success') {
+                this.appUiService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.email.emailDeleteSuccess'),
+                    'success'
+                );
+            }            
             } else if (this.currentTab === 'queue') {
                 const { tmacServer, agentId } = SDKClient.getAgentData();
                 const res$ = this.http
