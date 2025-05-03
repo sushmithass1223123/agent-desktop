@@ -554,6 +554,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         this._appUiService.showSnackbar(
                             this.translocoService.translate('interactionComponent.closeInteractionSuccess')
                         );
+                        if(this.data?.Data?.RedirectPath && this.interactionList?.length === 1) this._contentPageService.mode = this.data.Data.RedirectPath;
                         this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                     } else {
                         this._appUiService.showSnackbar(

@@ -240,7 +240,11 @@ export type TwVoiceControlsDataConfig = {
     /**
      * Flag to enable auto hold feature when unholding a call
      */
-    AutoHoldActiveCallOnUnhold: boolean
+    AutoHoldActiveCallOnUnhold: boolean,
+    /**
+     * Path to redirect on interaction close
+     */
+    RedirectPath: string
 };
 
 export type ConfirmFeatureTypes = {

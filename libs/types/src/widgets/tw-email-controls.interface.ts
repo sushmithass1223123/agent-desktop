@@ -122,4 +122,9 @@ export interface TwEmailControlsData {
      * Flag to show the (current payload size/max payload size)
      */
     ShowPayloadSizeStats: boolean;
+
+    /**
+     * Path to redirect on interaction close
+     */
+    RedirectPath: string;
 }

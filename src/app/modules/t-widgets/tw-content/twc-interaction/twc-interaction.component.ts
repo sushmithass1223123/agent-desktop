@@ -154,7 +154,6 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
                 .subscribe((evts) =>
                     evts.forEach((evt) => {
                         if (evt.EventName === 'InteractionClosedEvent' || evt.EventName === 'AutoCloseTabEvent') {
-                            if(this.data?.Data?.RedirectPath) this.contentPageService.mode = this.data.Data.RedirectPath;
                             this.tabCloseEvent(evt);
                         } else {
                             this[evt.EventName](evt);

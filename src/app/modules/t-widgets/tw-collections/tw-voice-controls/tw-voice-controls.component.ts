@@ -751,7 +751,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
                     
                     this._tmacEventService._uiControlsEvents.next({eventName: 'enableStatusChange'});
-                    
+                    if(this.data?.Data?.RedirectPath && this.interactionList?.length === 1) this._contentPageService.mode = this.data.Data.RedirectPath;
                     // remove the interaction reference
                     this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                 } else {
@@ -1496,13 +1496,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @method answerCall
      * @param {MatButton} btn
      */
-    answerCall(btn: MatButton): void {
+    answerCall(btn: MatButton): Promise<void> {
         this.isAnswerLoading = true;
         // toggle the button
         this.toggleButton(true, btn);
         // check if ms call then do not call api, just process the media server messages
         if (this.isMSCall) {
-            
             // check if agent is answering a call when another active call going on
             if(this.interactionList?.length > 1 && this.interactionList.find((i) => i.status === 'connected')) {
                 // check if auto hold other calls on answer call is enabled
@@ -1515,89 +1514,131 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                         );
                         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
                             if (dialogResult) {
-                                this.holdOtherActiveCalls();
+                                this.holdOtherActiveCalls('answer'); 
                             } else {
+                                this.isAnswerLoading = false;
+                                // toggle the button
+                                this.toggleButton(false, btn);
                                 return;
                             }
                         });
                     } else { // if prompt is not needed
-                        this.holdOtherActiveCalls();
+                        this.holdOtherActiveCalls('answer');
                     }
                 } else {
                     // show a warning message that it is not allowed to answer call when an active call is on
                     this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.activeCallPresentWarningOnAnswer'), 'warning');
                     return;
                 }
-            }
-
-            // get the connection variable
-            let connection: AVChannel = this.getAVConnection();
-            // this.avConns[this.sessionID];
-            // check if the connection found for session id
-            if (!connection) {
-                // get connection by first callLines
-                connection = this.getAVConnection(this.callLines[0]);
-                // this.avConns[this.callLines[0]];
-            }
-            // check if the connection is there and media server messages are there
-            if (connection && this.mediaServerMessages.length > 0) {
-                // process the media server messages
-                this.mediaServerMessages.forEach((item: string) => {
-                    connection.onMessage(item);
-                });
-                // clear the array after processing
-                this.mediaServerMessages = [];
             } else {
-                this.logger.warn(`answerCall: AV connection is not found - ${this.msSessionId}`, true);
-                this._appUIService.showAppSnackbar({
-                    'message': this.translocoService.translate('widgets.voiceControls.answerCallFailed') + ' <br> AV Connection not found !!',
-                    'state': 'danger',
-                    'vPos':'top',
-                    'hPos': 'center'
-                });
+                this.answerMSCall();
             }
-            // set the process media message to true for further messages
-            this.processMediaMessages = true;
-            this.isAnswerLoading = false;
-            this.checkIfConnected();
-            return;
-        }
-        
-        SDKClient.answerCall(this.interaction.InteractionID.toString(), null).then((dt: IResponse) => {
-            this.isAnswerLoading = false;
-            // toggle the button
-            this.toggleButton(false, btn);
-            // check for the response
-            if (dt.response && dt.response.ResultCode === 0) {
-                // answer call success
-            } else {
+        } else {
+            SDKClient.answerCall(this.interaction.InteractionID.toString(), null).then((dt: IResponse) => {
+                this.isAnswerLoading = false;
+                // toggle the button
+                this.toggleButton(false, btn);
+                // check for the response
+                if (dt.response && dt.response.ResultCode === 0) {
+                    // answer call success
+                } else {
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
+                    this.handleCallFailure('Answer call');
+                    this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + ':' + JSON.stringify(dt),true);
+                }
+            })
+            .catch((e) => {
                 this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
                 this.handleCallFailure('Answer call');
-                this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + ':' + JSON.stringify(dt),true);
-            }
-        })
-        .catch((e) => {
-            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
-            this.handleCallFailure('Answer call');
-            this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + JSON.stringify(e),true);
-            this.isAnswerLoading = false;
-        });
+                this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + JSON.stringify(e),true);
+                this.isAnswerLoading = false;
+            });
+        }
     }
 
-    holdOtherActiveCalls() {
+    /**
+     * Answer MS call
+     * @method answerMSCall
+     */
+    answerMSCall() {
+        // get the connection variable
+        let connection: AVChannel = this.getAVConnection();
+        // this.avConns[this.sessionID];
+        // check if the connection found for session id
+        if (!connection) {
+            // get connection by first callLines
+            connection = this.getAVConnection(this.callLines[0]);
+            // this.avConns[this.callLines[0]];
+        }
+        // check if the connection is there and media server messages are there
+        if (connection && this.mediaServerMessages.length > 0) {
+            // process the media server messages
+            this.mediaServerMessages.forEach((item: string) => {
+                connection.onMessage(item);
+            });
+            // clear the array after processing
+            this.mediaServerMessages = [];
+        } else {
+            this.logger.warn(`answerCall: AV connection is not found - ${this.msSessionId}`, true);
+            this._appUIService.showAppSnackbar({
+                'message': this.translocoService.translate('widgets.voiceControls.answerCallFailed') + ' <br> AV Connection not found !!',
+                'state': 'danger',
+                'vPos':'top',
+                'hPos': 'center'
+            });
+        }
+        // set the process media message to true for further messages
+        this.processMediaMessages = true;
+        this.isAnswerLoading = false;
+        this.checkIfConnected();
+    }
+
+    holdOtherActiveCalls(type) {
+        const waitingForHoldSnackbarRef = this._appUIService.showSnackbar('Please wait while, keeping other interactions on hold..', 'loading');
         const activeInteraction = this.interactionList.find((i) => i.isActive);
+        const actionType = type;
         this.interactionList.forEach((i) => {
             if(i.interactionId !== activeInteraction.interactionId) {
-                SDKClient.holdCall(i.interactionId.toString(), null).then((dt: IResponse) => {
-                    // toggle the button
-                    // this.toggleButton(false, btn);
-                    // check for the response
-                    if (dt.response && dt.response.ResultCode === 0) {
-                        // hold call success
-                    } else {
-                        console.log(this.translocoService.translate('interactionComponent.holdCallFailed'));
-                    }
+                // hold all call lines
+                this.callLines.forEach((sessionId) => {
+                    // get the connection variable
+                    // const connection: AVChannel = this.getAVConnection(sessionId);
+                    // //this.avConns[sessionId];
+                    // // check if the connection is there and interaction is not on hold
+                    // if (connection && this.status !== 'hold') {
+                    //     connection.hold();
+                    // }
+                    const requestArgs = {
+                        interactionId : i.interactionId.toString(),
+                        type : 'holdav',
+                        message: JSON.stringify({
+                            type: 'holdav',
+                            hold:true,
+                            intent:'call',
+                            from: ""+i.interactionId+ "_" + SDKClient.getAgentData().agentId+"_",
+                            session:sessionId
+                        }),
+                        deviceId: SDKClient.getAgentData().deviceId,
+                        tmacServer: SDKClient.getAgentData().tmacServer,
+                    };
+                    SDKClient.sendAVControlMessage(requestArgs).then(response => {console.log('success')}).catch((error) => {console.log('Failed')});
                 });
+
+                
+            }
+        });
+
+
+        const waitForHoldSubscribe =  this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
+            // filter out the textchat interaction
+            this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'voice' && i.status !== 'hold' && i.status !== 'disconnected' && i.interactionId !== this.interaction.InteractionID);
+            // check if all interactions are on hold
+            if(this.interactionList.length === 0) {
+                // hide the snackbar
+                waitingForHoldSnackbarRef?.dismiss();
+                // unsubscribe
+                waitForHoldSubscribe.unsubscribe();
+                actionType === 'answer' ? this.answerMSCall() : this.unholdMSCall();
             }
         });
     }
@@ -1733,13 +1774,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                         );
                         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
                             if (dialogResult) {
-                                this.holdOtherActiveCalls();
+                                this.holdOtherActiveCalls('unhold');
                             } else {
                                 return;
                             }
                         });
                     } else { // if prompt is not needed
-                        this.holdOtherActiveCalls();
+                        this.holdOtherActiveCalls('unhold');
                     }
                 } else {
                     // show a warning message that it is not allowed to answer call when an active call is on
@@ -1747,27 +1788,30 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     return;
                 }
             }
-
-            // unhold all call lines
-            this.callLines.forEach((sessionId) => {
-                // get the connection variable
-                const connection: AVChannel = this.getAVConnection(sessionId);
-                // this.avConns[sessionId];
-                // check if the connection is there and interaction is on hold
-                if (connection && this.status === 'hold') {
-                    connection.unHold();
+        } else {
+            SDKClient.unHoldCall(this.interaction.InteractionID.toString(), null).then((dt: IResponse) => {
+                // toggle the button
+                this.toggleButton(false, btn);
+                // check for the response
+                if (dt.response && dt.response.ResultCode === 0) {
+                    // disconnect call success
+                } else {
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.unHoldCallFailed'), 'failure');
                 }
             });
-            return;
         }
-        SDKClient.unHoldCall(this.interaction.InteractionID.toString(), null).then((dt: IResponse) => {
-            // toggle the button
-            this.toggleButton(false, btn);
-            // check for the response
-            if (dt.response && dt.response.ResultCode === 0) {
-                // disconnect call success
-            } else {
-                this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.unHoldCallFailed'), 'failure');
+        
+    }
+
+    unholdMSCall() {
+        // unhold all call lines
+        this.callLines.forEach((sessionId) => {
+            // get the connection variable
+            const connection: AVChannel = this.getAVConnection(sessionId);
+            // this.avConns[sessionId];
+            // check if the connection is there and interaction is on hold
+            if (connection && this.status === 'hold') {
+                connection.unHold();
             }
         });
     }

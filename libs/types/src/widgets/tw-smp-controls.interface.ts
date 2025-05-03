@@ -49,4 +49,9 @@ export interface TwSmpControlsData {
      * Send reply timeout
      */
     AsyncReplySendTimeout: number;
+
+    /**
+     * Path to redirect on interaction close
+     */
+    RedirectPath: string;
 }
