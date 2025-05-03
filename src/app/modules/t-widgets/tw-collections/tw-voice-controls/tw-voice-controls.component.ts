@@ -1,5 +1,5 @@
 import { AgentSkillListData, IVRTransferMenu, TwVoiceControls, TwVoiceControlsData } from '@ad/types';
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -34,6 +34,7 @@ import {
     IncomingCallUpdateEvent,
     InteractionDataEvent,
     IResponse,
+    IUIEvent,
     IVRDataEvent,
     MediaServerEvent,
     OutgoingCallEvent,
@@ -51,6 +52,7 @@ import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwComposeMessagingComponent } from '../tw-compose-messaging/tw-compose-messaging.component';
 import { TwVoiceControlsService } from './tw-voice-controls.service';
 import { TranslocoService } from '@ngneat/transloco';
+import { SharedService } from '@services/shared.service';
 
 /**
  * Voice Controls Component
@@ -341,6 +343,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /** flag to check the state of transfer */
     isTransferCompleted = false;
 
+    @ViewChild('holdBtn') holdBtn!: ElementRef<MatButton>;
+
     constructor(
         private _fuseFacadeService: FuseFacadeService,
         private _fuseProgressBarService: FuseProgressBarService,
@@ -352,7 +356,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private _matDialog: MatDialog,
         private _contentPageService: ContentPageService,
         public voiceControlsService: TwVoiceControlsService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private _sharedService: SharedService
     ) {
         super('TwVoiceControlsComponent');
     }
@@ -387,6 +392,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // filter out the textchat interaction
             this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'voice');
         });
+
+        this._sharedService.getHoldActiveVoiceCalls().subscribe((interactionId) => {
+            if(this.interaction.InteractionID === interactionId) {
+                this.holdCall(this.holdBtn.nativeElement)
+            }
+        })
 
         this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
             try{
@@ -751,7 +762,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
                     
                     this._tmacEventService._uiControlsEvents.next({eventName: 'enableStatusChange'});
-                    if(this.data?.Data?.RedirectPath && this.interactionList?.length === 1) this._contentPageService.mode = this.data.Data.RedirectPath;
+                    if (this.data?.Data?.RedirectPath && this.interactionList?.length <= 1)
+                        this._contentPageService.mode = this.data.Data.RedirectPath;
                     // remove the interaction reference
                     this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                 } else {
@@ -1595,39 +1607,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     holdOtherActiveCalls(type) {
         const waitingForHoldSnackbarRef = this._appUIService.showSnackbar('Please wait while, keeping other interactions on hold..', 'loading');
-        const activeInteraction = this.interactionList.find((i) => i.isActive);
-        const actionType = type;
         this.interactionList.forEach((i) => {
-            if(i.interactionId !== activeInteraction.interactionId) {
-                // hold all call lines
-                this.callLines.forEach((sessionId) => {
-                    // get the connection variable
-                    // const connection: AVChannel = this.getAVConnection(sessionId);
-                    // //this.avConns[sessionId];
-                    // // check if the connection is there and interaction is not on hold
-                    // if (connection && this.status !== 'hold') {
-                    //     connection.hold();
-                    // }
-                    const requestArgs = {
-                        interactionId : i.interactionId.toString(),
-                        type : 'holdav',
-                        message: JSON.stringify({
-                            type: 'holdav',
-                            hold:true,
-                            intent:'call',
-                            from: ""+i.interactionId+ "_" + SDKClient.getAgentData().agentId+"_",
-                            session:sessionId
-                        }),
-                        deviceId: SDKClient.getAgentData().deviceId,
-                        tmacServer: SDKClient.getAgentData().tmacServer,
-                    };
-                    SDKClient.sendAVControlMessage(requestArgs).then(response => {console.log('success')}).catch((error) => {console.log('Failed')});
-                });
-
-                
-            }
+            if(i.status === 'connected') this._sharedService.triggerHoldActiveVoiceCalls(i.interactionId)
         });
-
+        const actionType = type;
 
         const waitForHoldSubscribe =  this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
             // filter out the textchat interaction
@@ -1787,7 +1770,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.activeCallPresentWarningOnUnHold'), 'warning');
                     return;
                 }
-            }
+            } else this.unholdMSCall();
         } else {
             SDKClient.unHoldCall(this.interaction.InteractionID.toString(), null).then((dt: IResponse) => {
                 // toggle the button
