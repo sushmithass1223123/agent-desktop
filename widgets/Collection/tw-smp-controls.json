@@ -21,6 +21,202 @@
         "Pinned": false
     },
     "Data": {
+        "SocialMediaAPIs": [
+            "https://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
+            "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
+        ],
+        "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
+        "UpdateMethodName": "UpdateCustomerDetails",
+        "EditAllowed": false,
+        "ControlFields": [
+            {
+                "id": "customerID",
+                "type": "text",
+                "title": "Customer Id",
+                "maxValue": 100,
+                "disabled": true,
+                "placeHolder": "Customer ID",
+                "visible": true,
+                "required": false,
+                "validation_regex": ""
+            },
+            {
+                "id": "salutation",
+                "type": "text",
+                "title": "Salutation",
+                "maxValue": 5,
+                "disabled": false,
+                "placeHolder": "Salutation",
+                "visible": true,
+                "required": false,
+                "validation_regex": ""
+            },
+            {
+                "id": "firstName",
+                "type": "text",
+                "title": "First Name",
+                "maxValue": 100,
+                "disabled": false,
+                "placeHolder": "First Name",
+                "visible": true,
+                "required": true,
+                "validation_regex": ""
+            },
+            {
+                "id": "lastName",
+                "type": "text",
+                "title": "Last Name",
+                "maxValue": 100,
+                "disabled": false,
+                "placeHolder": "Last Name",
+                "visible": true,
+                "required": false,
+                "validation_regex": ""
+            },
+            {
+                "id": "cif",
+                "type": "text",
+                "title": "CIF",
+                "disabled": false,
+                "placeHolder": "Customer Identification Number",
+                "maxValue": 100,
+                "visible": true,
+                "required": false,
+                "validation_regex": ""
+            },
+            {
+                "id": "secondaryCIF",
+                "type": "text",
+                "title": "Secondary Cif",
+                "disabled": false,
+                "maxValue": 100,
+                "placeHolder": "Secondary CIF",
+                "visible": true,
+                "required": false,
+                "validation_regex": ""
+            },
+            {
+                "id": "email",
+                "type": "email",
+                "title": "Email",
+                "maxValue": 100,
+                "disabled": false,
+                "placeHolder": "Email",
+                "visible": true,
+                "required": false,
+                "validation_regex": "[a-zA-Z0-9.*%±]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}"
+            },
+            {
+                "id": "phone",
+                "type": "tel",
+                "title": "Phone",
+                "maxValue": 10,
+                "disabled": false,
+                "placeHolder": "Phone",
+                "visible": true,
+                "required": false,
+                "validation_regex": "^((\\+91-?)|0)?[0-9]{10}$"
+            },
+            {
+                "id": "address",
+                "type": "text",
+                "title": "Address",
+                "maxValue": 100,
+                "disabled": false,
+                "placeHolder": "Address",
+                "visible": true,
+                "required": false,
+                "validation_regex": ""
+            },
+            {
+                "id": "city",
+                "type": "text",
+                "title": "City",
+                "maxValue": 100,
+                "disabled": false,
+                "placeHolder": "City",
+                "visible": true,
+                "required": false,
+                "validation_regex": "^[a-zA-Z.-]+(?:[\\s-][/a-zA-Z.]+)*$"
+            },
+            {
+                "id": "state",
+                "type": "text",
+                "title": "State",
+                "maxValue": 100,
+                "disabled": false,
+                "placeHolder": "State",
+                "visible": true,
+                "required": false,
+                "validation_regex": "^[a-zA-Z.-]+(?:[\\s-][/a-zA-Z.]+)*$"
+            },
+            {
+                "id": "country",
+                "type": "text",
+                "title": "Country",
+                "maxValue": 100,
+                "disabled": false,
+                "placeHolder": "Country",
+                "visible": true,
+                "required": false,
+                "validation_regex": "^[a-zA-Z.-]+(?:[\\s-][/a-zA-Z.]+)*$"
+            },
+            {
+                "id": "postalCode",
+                "type": "text",
+                "title": "Postal Code",
+                "maxValue": 100,
+                "disabled": false,
+                "placeHolder": "Postal Code",
+                "visible": true,
+                "required": false,
+                "validation_regex": ""
+            },
+            {
+                "id": "secondaryPhone",
+                "type": "tel",
+                "title": "Secondary Phone",
+                "maxValue": 10,
+                "disabled": false,
+                "placeHolder": "Secondary Phone",
+                "visible": true,
+                "required": false,
+                "validation_regex": "^((\\+91-?)|0)?[0-9]{10}$"
+            },
+            {
+                "id": "secondaryEmail",
+                "type": "email",
+                "title": "Secondary Email",
+                "maxValue": 100,
+                "disabled": false,
+                "placeHolder": "Secondary Email",
+                "visible": true,
+                "required": false,
+                "validation_regex": "[a-zA-Z0-9.*%±]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}"
+            },
+            {
+                "id": "lastChangedBy",
+                "type": "text",
+                "title": "Last Changed By",
+                "maxValue": 100,
+                "disabled": true,
+                "placeHolder": "Last Changed By",
+                "visible": true,
+                "required": false,
+                "validation_regex": ""
+            },
+            {
+                "id": "lastChangedOn",
+                "type": "text",
+                "title": "Last Changed On",
+                "maxValue": 100,
+                "disabled": true,
+                "placeHolder": "Last Changed On",
+                "visible": false,
+                "required": false,
+                "validation_regex": ""
+            }
+        ],
         "Transfer": {
             "Allowed": true,
             "Agent": {

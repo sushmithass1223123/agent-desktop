@@ -164,7 +164,16 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
         this.maxFileUploadSize = this.data.Data.MaxFileUploadSize;
         this.asyncReplySendTimeout = this.data.Data.AsyncReplySendTimeout;
+  // Get API configurations from widget config
+  const apiBaseUrl = this.data.Data.SocialMediaAPIs?.[0] || '';
+  const viewMethodName = this.data.Data.ViewMethodName || '';
 
+  // Fetch the customer details for the current interaction
+  if (this.data.InteractionDetails.From && apiBaseUrl && viewMethodName) {
+      const customerId = this.data.InteractionDetails.From;
+      this.smpService.fetchCustomerDetails(customerId, apiBaseUrl, viewMethodName)
+          .catch(err => console.error('Error fetching customer details:', err));
+  }
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
         });
@@ -245,6 +254,12 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             this.isDraftMode = this.routeReason === 'AgentDraftPull';
                             this.setPostDetails();
                             this.interactionId = i.interactionId;
+                              // Fetch customer details for newly active interaction
+                        if (i.user && apiBaseUrl && viewMethodName) {
+                            const customerId = i.user;
+                            this.smpService.fetchCustomerDetails(customerId, apiBaseUrl, viewMethodName)
+                                .catch(err => console.error('Error fetching customer details:', err));
+                        }
                         }
                         return {
                             user: i.user,
@@ -481,14 +496,14 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.floatEvent.emit(isFloat);
     }
 
-    getInitials = (name) => {
-        return name
-            .split(' ')
-            .map((part) => part.charAt(0))
-            .join('')
-            .toUpperCase()
-            .substring(0, 2);
-    };
+   // 3. Update getInitials method to use the service
+getInitials = (customerId) => {
+    // Use the service method to get initials based on customer name
+    if (customerId) {
+        return this.smpService.getCustomerInitials(customerId);
+    }
+    return 'UN'; // Unknown
+};
 
     /**
      * To select an interaction from interaction list

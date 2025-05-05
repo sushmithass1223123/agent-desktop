@@ -2,6 +2,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Injectable } from '@angular/core';
 import { SDKClient } from '@tmac/sdk';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { catchError, map } from 'rxjs/operators';
 
 const today = new Date();
 const yesterday = new Date();
@@ -73,6 +75,16 @@ export class SocialMediaPostsService {
     private _postFromNotification: Subject<any> = new Subject<any>();
     private _switchTabFromNotification: Subject<any> = new Subject<string>();
     private _emittedNotificationData: Subject<any> = new Subject<any>();
+    // Add these properties to the SocialMediaPostsService class
+private _customerDataSubject = new BehaviorSubject<{[key: string]: any}>({});
+public customerData$ = this._customerDataSubject.asObservable();
+constructor(
+    // Add HttpClient to constructor
+    private _httpClient: HttpClient,
+    // ... other existing parameters
+) {
+    // Existing constructor code
+}
     /**
      * Service init method
      */
@@ -103,7 +115,75 @@ export class SocialMediaPostsService {
     get getSwitchTabFromNotification(): Observable<any> {
         return this._switchTabFromNotification.asObservable();
     }
+/**
+ * Fetches customer details from Media Matrix API
+ * @param customerId The customer ID to fetch details for
+ * @param apiUrl Base API URL from configuration
+ * @param viewMethodName View method name from configuration
+ */
+public fetchCustomerDetails(customerId: string, apiUrl: string, viewMethodName: string): Promise<any> {
+    if (!customerId || !apiUrl || !viewMethodName) {
+        return Promise.resolve(null);
+    }
 
+    // Check if we already have this customer data cached
+    const existingData = this._customerDataSubject.getValue()[customerId];
+    if (existingData) {
+        return Promise.resolve(existingData);
+    }
+
+    const fullApiUrl = `${apiUrl}${viewMethodName}${customerId}`;
+    
+    return this._httpClient.post(fullApiUrl, {})
+        .pipe(
+            map((response: any) => {
+                if (response?.errCode === 0 && response?.errMsg === "Success" && response?.data) {
+                    // Update the cache with the new customer data
+                    const currentData = this._customerDataSubject.getValue();
+                    currentData[customerId] = response.data;
+                    this._customerDataSubject.next(currentData);
+                    return response.data;
+                }
+                return null;
+            }),
+            catchError(error => {
+                console.error('Error fetching customer details:', error);
+                return Promise.resolve(null);
+            })
+        ).toPromise();
+}
+
+/**
+ * Get customer name for a given customer ID
+ * @param customerId The customer ID
+ */
+public getCustomerName(customerId: string): string {
+    const customerData = this._customerDataSubject.getValue()[customerId];
+    if (customerData?.customerName) {
+        return customerData.customerName;
+    }
+    return customerId; // Fall back to ID if name not available
+}
+
+/**
+ * Get customer initials based on customer name
+ * @param customerId The customer ID
+ */
+public getCustomerInitials(customerId: string): string {
+    const customerName = this.getCustomerName(customerId);
+    
+    // If the name is just the ID (numeric), return a generic initial
+    if (customerName === customerId && /^\d+$/.test(customerId)) {
+        return 'CU'; // Customer
+    }
+    
+    return customerName
+        .split(' ')
+        .map(part => part.charAt(0))
+        .join('')
+        .toUpperCase()
+        .substring(0, 2);
+}
     async setMailboxes(): Promise<void> {
         try {
             const res = await SDKClient.getMailboxes('agent', undefined, true);

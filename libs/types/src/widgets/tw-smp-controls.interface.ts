@@ -49,4 +49,6 @@ export interface TwSmpControlsData {
      * Send reply timeout
      */
     AsyncReplySendTimeout: number;
+    SocialMediaAPIs: string[]; // Add this line
+    ViewMethodName: string;    // Add this line
 }

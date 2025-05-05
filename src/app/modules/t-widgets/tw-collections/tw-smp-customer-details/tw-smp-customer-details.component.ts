@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsul
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { TwControlInfo, TwCustomerInfo, TwSmmCustomerDetails } from '@ad/types';
+import { SocialMediaPostsService } from '@modules/shared/components/social-media-posts/social-media-posts.service';
 import { IUIEvent, SDKClient } from '@tmac/sdk';
 import { HttpClient } from '@angular/common/http';
 import { AppUiService } from '@services/app-ui.service';
@@ -268,6 +269,7 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         private _appUIService: AppUiService, 
         private _interactionManagerService: InteractionManagerService ,
         private translocoService: TranslocoService,
+        private smpService: SocialMediaPostsService, // Add this service
     ) {
         super('TwSmmCustomerDetailsComponent');
     }
@@ -411,52 +413,76 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         });
     }
 
-    getCustomerDetails() {
-       console.log("Getting Data for Customer ID: ", this.customerId)
-       if(!this.customerForm || !this.customerId) {
-        return;
-       }
+   // Update getCustomerDetails to use the shared service
+getCustomerDetails() {
+  console.log("Getting Data for Customer ID: ", this.customerId);
+  if(!this.customerForm || !this.customerId) {
+      return;
+  }
 
-        this.customerForm?.reset;
-        let apiUrl = this.data.Data.SocialMediaAPIs[0] + this.data.Data.ViewMethodName 
-          + this.customerId; 
-       if(this.test) {
-        apiUrl = "https://webhook.site/efc14eee-2fb5-468c-8a90-6e0edf9ff441";
-       }
-        this.httpClient.post(apiUrl, {})
-        .subscribe((res: any) => {
-        //   const loader = this._appUIService.showSnackbar(
-        //     this.translocoService.translate('sharedComponents.socialMediaPosts.GetCustomerDetails'),
-        //     'loading'
-        // );
-            console.log("getCustomerDetails Response", res)
-             if(res.errCode == 0 && res.errMsg == "Success") {
-              // loader.dismiss();
-                if(!res.data.customerID) {
-                    return;
-                }
+  this.customerForm?.reset();
+  
+  // Check if we already have the data in the service
+  const serviceData = this.smpService.getCustomerName(this.customerId);
+  if (serviceData !== this.customerId) {
+      // We already have the data, get it from the service's BehaviorSubject
+      this.smpService.customerData$.pipe(take(1)).subscribe(allCustomerData => {
+          const customerData = allCustomerData[this.customerId];
+          if (customerData) {
+              this.updateFormWithCustomerData(customerData);
+              return;
+          }
+      });
+  }
 
-                // convert time to current time zone
-                // let lastChangedOn = new Date(this.formData.lastChangedOn + 'Z');
-                res.data.lastChangedOn = moment(res.data.lastChangedOn + 'Z')
-                .format('DD-MM-YYYY hh:mm a');
+  // If not in service, fetch it
+  let apiUrl = this.data.Data.SocialMediaAPIs?.[0] + this.data.Data.ViewMethodName + this.customerId; 
+  if(this.test) {
+      apiUrl = "https://webhook.site/efc14eee-2fb5-468c-8a90-6e0edf9ff441";
+  }
+  
+  // Use the service to fetch data (this will also cache it for other components)
+  this.smpService.fetchCustomerDetails(
+      this.customerId, 
+      this.data.Data.SocialMediaAPIs?.[0] || '',
+      this.data.Data.ViewMethodName || ''
+  ).then(customerData => {
+      if (customerData) {
+          this.updateFormWithCustomerData(customerData);
+      }
+  }).catch(error => {
+      console.error("Error fetching customer details:", error);
+  });
+}
 
-                Object.keys(res.data).forEach(element => {  
-                    if(!this.editAllowed && !res.data[element]) {
-                           this.customerForm.controls[element].setValue('   '); 
-                    } else {
-                        this.customerForm.controls[element].setValue(res.data[element]);
-                    }
+// Separate method to update form with customer data
+private updateFormWithCustomerData(customerData: any) {
+  if (!customerData) return;
+  
+  // Convert time to current time zone
+  if (customerData.lastChangedOn) {
+      customerData.lastChangedOn = moment(customerData.lastChangedOn + 'Z')
+          .format('DD-MM-YYYY hh:mm a');
+  }
 
-                });
-                this.formChanged = false;
-                console.log("CustomerForm: ", this.customerForm.value)
-            }
-        });
-    }
+  Object.keys(customerData).forEach(element => {  
+      if(!this.editAllowed && !customerData[element]) {
+          this.customerForm.controls[element]?.setValue('   '); 
+      } else {
+          this.customerForm.controls[element]?.setValue(customerData[element]);
+      }
+  });
+  
+  this.formChanged = false;
+  console.log("CustomerForm updated: ", this.customerForm.value);
+}
 
     ngOnDestroy(): void {
         this.destroyWrapper();
     }
+}
+
+function take(arg0: number): any {
+  throw new Error('Function not implemented.');
 }
 
