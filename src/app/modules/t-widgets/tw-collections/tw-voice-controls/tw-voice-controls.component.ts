@@ -399,6 +399,18 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             }
         })
 
+        this._tmacEventService
+            .getConstructDisposeEvents<IUIEvent>(['InteractionClosedEvent', 'AutoCloseTabEvent'])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evts) =>
+                evts.forEach((evt) => {
+                    if (evt.EventName === 'InteractionClosedEvent' || evt.EventName === 'AutoCloseTabEvent') {
+                        if (this.data?.Data?.RedirectPath && this.interactionList?.length <= 1)
+                            this._contentPageService.mode = this.data.Data.RedirectPath;
+                    }
+                })
+            );
+
         this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
             try{
                 if(data && data.interactionID?.toString() === this.interaction.InteractionID.toString()) {
@@ -762,8 +774,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
                     
                     this._tmacEventService._uiControlsEvents.next({eventName: 'enableStatusChange'});
-                    if (this.data?.Data?.RedirectPath && this.interactionList?.length <= 1)
-                        this._contentPageService.mode = this.data.Data.RedirectPath;
                     // remove the interaction reference
                     this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                 } else {
@@ -1759,6 +1769,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                             if (dialogResult) {
                                 this.holdOtherActiveCalls('unhold');
                             } else {
+                                this.toggleButton(false, btn);
                                 return;
                             }
                         });
