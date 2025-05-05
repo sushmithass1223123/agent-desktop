@@ -1161,7 +1161,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 return {
                     Mailbox: x?.Mailbox,
                     ConversationID: x?.ConversationID,
-                    AddedTime: x?.SocialMediaData?.Posts?.CreatedDateTime,
+                    AddedTime: x?.SocialMediaData?.Posts?.PostText?.InsertionDateTime,
                     AgentId: '',
                     Channel: '',
                     CreatedBy: '',
