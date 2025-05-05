@@ -70,8 +70,8 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx"],
-                "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
+                "urls": ["https://testlabsd.productqa.tetherfi.cloud/SDKProxy/TmacProxy.asmx"],
+                "mediaMatrixUrls": [],
                 "type": "soap",
                 "timeout": 60
             },
@@ -96,5 +96,5 @@
             ]
         }
     },
-    "Version": "5.10.4-test.5.1"
+    "Version": "5.10.4-test.5.2"
 }

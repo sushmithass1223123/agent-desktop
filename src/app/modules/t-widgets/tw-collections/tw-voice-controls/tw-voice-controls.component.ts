@@ -404,10 +404,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) =>
                 evts.forEach((evt) => {
-                    if (evt.EventName === 'InteractionClosedEvent' || evt.EventName === 'AutoCloseTabEvent') {
-                        if (this.data?.Data?.RedirectPath && this.interactionList?.length <= 1)
-                            this._contentPageService.mode = this.data.Data.RedirectPath;
-                    }
+                    setTimeout(() => {
+                        if (evt.EventName === 'InteractionClosedEvent' || evt.EventName === 'AutoCloseTabEvent') {
+                            if (this.data?.Data?.RedirectPath && !this.interactionList?.length)
+                                this._contentPageService.mode = this.data.Data.RedirectPath;
+                        }
+                    });
                 })
             );
 
