@@ -401,6 +401,9 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             SMP_SEND_STATUS[JsonData?.StatusCode] === 'Success'
         ) {
             this._sharedService.triggerEmailFailure(evt.InteractionID);
+            this._appUIService.showSnackbar(
+                this.translocoService.translate('sharedComponents.email.asyncEmailSendSuccess')
+            );
             SDKClient.closeInteraction(evt.InteractionID.toString(), null)
                 .then((dt: IResponse) => {
                     // check the response
