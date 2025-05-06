@@ -32,4 +32,11 @@ import { Widget } from '..';
  */
 export interface TwAdInteractionDetails extends Widget<TwAdInteractionDetailsData> {}
 
-export type TwAdInteractionDetailsData = {};
+export type TwAdInteractionDetailsData = {
+    MinView: {
+        Columns: string[];
+    };
+    MaxView: {
+        Columns: string[];
+    };
+};

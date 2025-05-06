@@ -385,7 +385,12 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     urls: [`${this.fileUploadUrl.MediaStreamer}/meta/restore/${file.FileId}`],
                     requestArgs: {
                         agentId: agent.agentId,
-                        tmacServer: agent.tmacServer
+                        tmacServer: agent.tmacServer,
+                        sessionId: this.email?.SessionID ?? (this.email as any)?.InSessionId ?? '',
+                        sessionType: 'email'
+                    },
+                    header: {
+                        'Content-Type': 'application/json'
                     },
                     method: 'PUT',
                     responseType: 'json'
@@ -436,6 +441,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                         this.translocoService.translate('sharedComponents.email.uploadFileSizeWarning'),
                         'failure'
                     );
+                    ref.dismiss();
                     return;
                 }
 
