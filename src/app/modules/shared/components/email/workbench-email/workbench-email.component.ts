@@ -778,7 +778,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         if (res.find((x: any) => x.status !== 'SUCCESS')) {
                             const resultStr = JSON.parse(JSON.stringify(res.find((x) => x.status !== 'SUCCESS'))?.toLowerCase());
 
-                            if (resultStr?.errorCode && resultStr.errorCode == '-101') {
+                            if (resultStr?.errorcode && resultStr.errorcode == '-101') {
                                 this.appUiService.showSnackbar(
                                     this.translocoService.translate('sharedComponents.email.maxRecordLimitExceeded'),
                                     'warning'
