@@ -1269,7 +1269,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     connection = this.createAVConnection(evt.SessionID, 'in');
                     connection?.directCall(TEnums.WrcCallTypes.Audio, 'in');
                     // play incoming call sound
-                    this._appUIService.playAudio('incoming-call', 0.5, true);
+                    this._appUIService.playAudio('incoming-call', 0.5, this.getRepeatFlag());
                     break;
                 case 'call-connecting':
                     // create WebRTC peer connection
@@ -1310,6 +1310,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         } catch (error) {
             this.logger.error('Error in MediaServerEvent', error);
         }
+    }
+
+    getRepeatFlag(): boolean {
+        if(this.interactionList.find((i) => i.status === 'connected')) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -1475,7 +1482,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             },
             {
                 key: '#customerName',
-                value: this.translocoService.translate('dynamic_labels.audioVideoControls.customerName.' + this.callerID)
+                value: this.translocoService.translate('dynamic_labels.audioVideoControls.customerName.Customer') + ' ' + this.callerID
             },
             {
                 key: '#sessionID',
