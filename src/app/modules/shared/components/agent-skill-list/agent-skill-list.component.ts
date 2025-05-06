@@ -1,5 +1,5 @@
 import { AgentSkillListData, AgentSkillListSource } from '@ad/types';
-import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
@@ -70,7 +70,7 @@ const PRESET_TABLES: ITab[] = ['Agent List', 'Skill List', 'Speed Dial'];
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
-export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy {
+export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
     /**
      * Fuse theme config
      */
@@ -187,6 +187,12 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * Blind action label
      */
     blindLabel: string;
+
+    /**
+     * A static flag to allow direct edit if allowed to edit number / agent field
+     * TODO: Can be removed after 2 future releases
+     */
+    allowDirectEdit: boolean = true;
 
 
     /**
@@ -428,6 +434,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         SDKClient.events.on('OutgoingCallFailedEvent', this.onOutgoingCallFailed);
+
     }
 
     /**
@@ -464,6 +471,10 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         if (this.table) {
             this.table.source.filterPredicate = this.filterPredicate;
         }
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        console.log('changes', changes);
     }
 
     // /**
@@ -1752,6 +1763,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 'failure'
             );
         }
+
+        if(this.allowDirectEdit) this.updateFreetextValue();
     };
 
     /**
@@ -1778,6 +1791,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         }
         // assign the selected row
         this.selectedRow = { type: 'Speed Dial', row };
+
+        if(this.allowDirectEdit) this.updateFreetextValue();
     };
 
     /**
@@ -1881,6 +1896,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     }
                     // assign the selected row
                     this.selectedRow = { type: 'Skill List', row };
+                    if(this.allowDirectEdit) this.updateFreetextValue();
                 } else {
                     this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.getSkillFailed'), 'failure');
                     row.Stf = 'NA';
@@ -1938,7 +1954,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         this.isConsult = consult;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         // check if the selected tab is dynamic, then close the dynamicList widget should handle the action
-        if (!freeTextConf.active && !PRESET_TABLES.includes(this.selectedRow.type as ITab)) {
+        if (!freeTextConf.active && !PRESET_TABLES.includes(this.selectedRow?.type as ITab)) {
             this.close(true);
             return;
         }
@@ -2019,5 +2035,10 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     onFreetextEdit() {
         this.clearSelected(); 
         this.switcherList[this.activeSwitcher].freeText.active = true;
+    }
+
+    updateFreetextValue() {
+        this.switcherList[this.activeSwitcher].freeText.active = true;
+        this.switcherList[this.activeSwitcher].freeText.value = this.selectedItem;
     }
 }

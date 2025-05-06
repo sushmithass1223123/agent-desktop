@@ -12,12 +12,12 @@ export class CustomDatePipe implements PipeTransform {
     transform(type: string, value: any, args: any[]): any {
         switch (type) {
             case 'formatReadableDateWithDotnetDate': {
-                if (!value || value?.includes('-'))
+                if (!value)
                     return {
                         date: 'NA',
                         time: 'NA'
                     };
-                const inputDate = this.parseDotnetDate(value);
+                const inputDate = this.parseDate(value);
                 const months = [
                     'January',
                     'February',
@@ -67,7 +67,7 @@ export class CustomDatePipe implements PipeTransform {
                 const currentDate: any = new Date();
                 let date: any = '';
                 if (!value.includes('Date')) date = new Date(value);
-                else date = this.parseDotnetDate(value);
+                else date = this.parseDate(value);
                 const diffMilliseconds = currentDate - date;
 
                 const diffSeconds = Math.floor(diffMilliseconds / 1000);
@@ -102,15 +102,19 @@ export class CustomDatePipe implements PipeTransform {
 
     /**
      * Method to parse dotnet date to js format
-     * @param dotnetDate Dotnet date format
+     * @param dateToParse Dotnet date format
      */
-    parseDotnetDate(dotnetDate: string): Date | any {
+    parseDate(dateToParse: string): Date | any {
         try {
-            const regex = /\/Date\((\d+)\)\//;
-            const match = dotnetDate.match(regex);
-            if (match && match.length > 1) {
-                const timestamp = parseInt(match[1], 10);
-                return new Date(timestamp);
+            if (!dateToParse?.includes('Date')) {
+                return new Date(dateToParse);
+            } else {
+                const regex = /\/Date\((\d+)\)\//;
+                const match = dateToParse.match(regex);
+                if (match && match.length > 1) {
+                    const timestamp = parseInt(match[1], 10);
+                    return new Date(timestamp);
+                }
             }
             return new Date();
         } catch (error) {

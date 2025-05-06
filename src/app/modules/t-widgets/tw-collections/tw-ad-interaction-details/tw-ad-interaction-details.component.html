@@ -3,7 +3,11 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data" #wrapper (maximizeEvent)="maximizeEvent($event)">
     <ad-table
-        *ngIf="wrapper.maximized ? { footer: 'show', columns: maxDisplayedColumns } : { footer: 'hide', columns: minDisplayedColumns } as tableConf"
+        *ngIf="
+            wrapper.maximized
+                ? { footer: 'show', columns: maxDisplayedColumns }
+                : { footer: 'hide', columns: minDisplayedColumns } as tableConf
+        "
         [footer]="tableConf.footer"
         [columns]="tableConf.columns"
     ></ad-table>
@@ -20,4 +24,48 @@
     >
         <mat-icon>notes</mat-icon>
     </button>
+</ng-template>
+
+<ng-template #voiceEditCallbackRef *transloco="let locale" let-record="record">
+    <button
+        class="border-radius-20"
+        mat-button
+        color="primary"
+        [matTooltip]="locale('widgets.adInteractionDetails.editBeforeCall')"
+        (click)="showEditCallback(record)"
+    >
+        <mat-icon>contact_phone</mat-icon>
+    </button>
+</ng-template>
+
+<ng-template #voiceCallbackRef *transloco="let locale" let-record="record">
+    <button
+        class="border-radius-20"
+        mat-button
+        color="primary"
+        [matTooltip]="locale('widgets.adInteractionDetails.callback')"
+        (click)="makeCall(record)"
+    >
+        <mat-icon>phone</mat-icon>
+    </button>
+</ng-template>
+
+<ng-template #editNumberModalRef *transloco="let locale">
+    <div class="twd-flex twd-gap-3 twd-justify-between twd-align-center">
+        <mat-form-field class="twd-w-full custom custom-matfield with-border" appearance="outline">
+            <input
+                matInput
+                placeholder="{{ locale('widgets.adInteractionDetails.enterNumber') }}"
+                [formControl]="phoneNumber"
+            />
+        </mat-form-field>
+        <div class="twd-flex twd-items-center twd-gap-2">
+            <button mat-raised-button color="primary" class="twd-p-2.5" [mat-dialog-close]="true">
+                {{ locale('widgets.adInteractionDetails.call') }}
+            </button>
+            <button mat-raised-button color="warn" class="twd-p-2.5" mat-dialog-close>
+                {{ locale('widgets.adInteractionDetails.cancel') }}
+            </button>
+        </div>
+    </div>
 </ng-template>

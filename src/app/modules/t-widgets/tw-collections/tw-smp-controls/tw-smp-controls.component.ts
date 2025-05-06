@@ -791,7 +791,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         this.translocoService.translate('widgets.smpControls.savingDraftFailedLabel'),
                         'failure'
                     );
-            }).finally(draftSnackbarRef?.dismiss);
+            }).finally(() => {
+                draftSnackbarRef?.dismiss()
+            });
     }
 
     /**
