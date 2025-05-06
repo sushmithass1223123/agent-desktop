@@ -8,7 +8,7 @@
             <div
                 id="subject"
                 *ngIf="_email.Subject"
-                class="twd-text-xl twd-flex twd-justify-between twd-p-2 twd-rounded-t-20"
+                class="twd-text-xl twd-flex twd-justify-between twd-p-2"
                 mat-ripple
                 (click)="emailHeader.scrollTop = 0; headerCollapsed = !headerCollapsed"
             >
@@ -96,7 +96,10 @@
                             <span class="twd-flex-1">{{ _email.From }} </span>
                         </div>
                         <div class="twd-my-2 twd-flex twd-justify-between twd-gap-2">
-                            <label for="toField" class="font-weight-700 twd-pt-1 twd-flex twd-justify-between twd-text-black">
+                            <label
+                                for="toField"
+                                class="font-weight-700 twd-pt-1 twd-flex twd-justify-between twd-text-black"
+                            >
                                 <span> {{ locale('sharedComponents.email.emailTo') }}</span>
                                 <span>:</span>
                             </label>

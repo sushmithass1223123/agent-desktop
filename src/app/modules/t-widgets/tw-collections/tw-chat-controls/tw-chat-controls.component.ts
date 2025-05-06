@@ -3436,10 +3436,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             message,
             this.translocoService.translate('interactionComponent.interactionComment'),
             { minRows: 4 },
-            {
-                minWidth: '30%',
-                maxWidth: '30%'
-            }
+            
         );
         dialogRef.afterClosed().subscribe((resp1) => {
             if (resp1) {

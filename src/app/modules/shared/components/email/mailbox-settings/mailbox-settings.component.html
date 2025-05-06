@@ -1,19 +1,22 @@
-<div *transloco="let locale" class="twd-w-full">
+<div *transloco="let locale" class="twd-w-full twd-p-4">
     <div *ngIf="!mailboxes.loaded" class="twd-absolute twd-w-full twd-h-full twd-z-10 twd-top-0 twd-left-0">
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </div>
-    <div class="twd-text-xl twd-flex twd-items-center twd-gap-2 twd-font-bold twd-mb-4">
+    <div class="twd-text-xl twd-flex twd-items-center twd-gap-2 twd-font-bold twd-mb-4 twd-text-primary-600">
         <mat-icon>email</mat-icon>
         {{ locale('sharedComponents.mailBoxSettings.composeEmail') }}
     </div>
 
-    <div class="twd-grid twd-grid-cols-1" [formGroup]="mailboxes.form">
+    <div class="twd-grid twd-grid-cols-1 twd-gap-3" [formGroup]="mailboxes.form">
         <mat-form-field appearance="outline">
             <mat-label>{{ locale('sharedComponents.mailBoxSettings.sendEmailAs') }}</mat-label>
             <mat-select formControlName="default">
                 <mat-option *ngFor="let mailbox of mailboxes.available" [value]="mailbox">{{ mailbox }}</mat-option>
             </mat-select>
-            <mat-error *ngIf="mailboxes.form.controls.default.errors" class="twd-text-red-400 twd-text-xs twd-font-bold">
+            <mat-error
+                *ngIf="mailboxes.form.controls.default.errors"
+                class="twd-text-red-400 twd-text-xs twd-font-bold"
+            >
                 {{ locale('sharedComponents.mailBoxSettings.senderAccountNotFoundError') }}
             </mat-error>
         </mat-form-field>
@@ -36,7 +39,11 @@
         <button
             mat-raised-button
             color="primary"
-            [matTooltip]="mailboxes.form.controls.default.errors ? locale('sharedComponents.mailBoxSettings.senderAccountNotFoundError') : ''"
+            [matTooltip]="
+                mailboxes.form.controls.default.errors
+                    ? locale('sharedComponents.mailBoxSettings.senderAccountNotFoundError')
+                    : ''
+            "
             [disabled]="mailboxes.form.controls.default.errors"
             (click)="composeEmail($event)"
         >

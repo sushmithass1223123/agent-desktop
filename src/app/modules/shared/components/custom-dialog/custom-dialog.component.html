@@ -45,7 +45,7 @@
         </div>
 
         <div mat-dialog-actions xLayout="row" fxLayoutAlign="end none">
-            <button mat-button color="warn" (click)="data.cancel()" tabindex="-1" *ngIf="data.type !== 'alert'">
+            <button mat-raised-button color="warn" (click)="data.cancel()" tabindex="-1" *ngIf="data.type !== 'alert'">
                 {{ data.noMessage ? data.noMessage : locale('sharedComponents.customDialog.cancel') }}
             </button>
             <button
@@ -59,10 +59,10 @@
                     data.yesMessage
                         ? data.yesMessage
                         : data.type === 'prompt' || data.type === 'alert'
-                        ? locale('sharedComponents.customDialog.ok')
-                        : data.type === 'confirm'
-                        ? locale('sharedComponents.customDialog.confirm')
-                        : locale('sharedComponents.customDialog.done')
+                          ? locale('sharedComponents.customDialog.ok')
+                          : data.type === 'confirm'
+                            ? locale('sharedComponents.customDialog.confirm')
+                            : locale('sharedComponents.customDialog.done')
                 }}
             </button>
         </div>
@@ -88,11 +88,7 @@
         </div>
 
         <div mat-dialog-content *ngIf="data.message" fxLayout="column" fxLayoutAlign=" none">
-            <div
-                class="html-div"
-                [ngClass]="data.messageClasses || ''"
-                [innerHTML]="data.message.message"
-            ></div>
+            <div class="html-div" [ngClass]="data.messageClasses || ''" [innerHTML]="data.message.message"></div>
         </div>
 
         <div mat-dialog-actions xLayout="row" fxLayoutAlign="end none">
@@ -110,10 +106,10 @@
                     data.yesMessage
                         ? data.yesMessage
                         : data.type === 'prompt' || data.type === 'alert'
-                        ? locale('sharedComponents.customDialog.ok')
-                        : data.type === 'confirm'
-                        ? locale('sharedComponents.customDialog.confirm')
-                        : locale('sharedComponents.customDialog.done')
+                          ? locale('sharedComponents.customDialog.ok')
+                          : data.type === 'confirm'
+                            ? locale('sharedComponents.customDialog.confirm')
+                            : locale('sharedComponents.customDialog.done')
                 }}
             </button>
         </div>

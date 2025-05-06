@@ -132,7 +132,6 @@
                             <button
                                 [disabled]="isEmailSent(currentInteraction.InteractionID) === false"
                                 mat-raised-button
-                                class="border-radius-20"
                                 color="warn"
                                 (click)="rejectEmail(rejectBtn)"
                                 #rejectBtn
@@ -143,7 +142,6 @@
                                 [disabled]="isEmailSent(currentInteraction.InteractionID) === false"
                                 mat-raised-button
                                 [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
-                                class="border-radius-20"
                                 (click)="sendEmailAsChecker(approveBtn)"
                                 #approveBtn
                                 color="primary"
@@ -180,7 +178,6 @@
                             <button
                                 *ngIf="emailComponentMode !== 'preview'"
                                 mat-raised-button
-                                class="border-radius-20"
                                 color="accent"
                                 (click)="closeEditor(closeEditorBtn, true)"
                                 #closeEditorBtn
@@ -217,8 +214,8 @@
                             getInboxMessageReq.error
                                 ? 'error'
                                 : getInboxMessageReq.loading || sendingEmailAsMaker
-                                ? 'loading'
-                                : 'loaded'
+                                  ? 'loading'
+                                  : 'loaded'
                         "
                         (sendEmail)="sendEmailAsMaker($event)"
                         (retry)="setEmailDetails(true)"
@@ -408,7 +405,6 @@
                             <button
                                 *ngIf="data.Data?.InternetHeadersAllowed && currentInteraction.InternetHeaders"
                                 mat-raised-button
-                                class="border-radius-20"
                                 [matTooltip]="locale('widgets.emailControls.internetHeaders')"
                                 (click)="showHeaders()"
                             >
@@ -417,7 +413,7 @@
                             <button
                                 *ngIf="data.Data?.InteractionCommentAllowed"
                                 mat-raised-button
-                                color="primary"
+                                color="accent"
                                 class="border-radius-5"
                                 [matTooltip]="locale('interactionComponent.interactionComment')"
                                 (click)="saveInteractionComments()"
@@ -427,7 +423,7 @@
                             <button
                                 *ngIf="emailComponentMode === 'preview'"
                                 mat-raised-button
-                                class="border-radius-20"
+                                color="accent"
                                 [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 (click)="markAsSpam()"
                                 [matTooltip]="locale('widgets.emailControls.markAsSpam')"
@@ -437,7 +433,6 @@
                             <button
                                 *ngIf="data.Data.Transfer.Allowed"
                                 mat-raised-button
-                                class="border-radius-20"
                                 [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 (click)="transferEmail(currentInteraction)"
                                 [matTooltip]="locale('widgets.emailControls.transfer')"
@@ -446,7 +441,6 @@
                             </button>
                             <button
                                 mat-raised-button
-                                class="border-radius-20"
                                 (click)="showReplyEditor()"
                                 [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 [matTooltip]="locale('interactionComponent.reply')"
@@ -456,7 +450,6 @@
                             <button
                                 *ngIf="data.Data.ReplyAllAllowed"
                                 mat-raised-button
-                                class="border-radius-20"
                                 (click)="showReplyAllEmailEditor()"
                                 [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 [matTooltip]="locale('widgets.emailControls.replyAll')"
@@ -466,7 +459,6 @@
                             <button
                                 *ngIf="data.Data.ForwardAllowed"
                                 mat-raised-button
-                                class="border-radius-20"
                                 (click)="showForwardEmailEditor()"
                                 [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 [matTooltip]="locale('widgets.emailControls.forward')"
@@ -476,7 +468,6 @@
                             <button
                                 *ngIf="data.Data.DownloadAllowed"
                                 mat-raised-button
-                                class="border-radius-20"
                                 (click)="downloadEmail()"
                                 [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 [matTooltip]="locale('interactionComponent.download')"
@@ -486,7 +477,6 @@
                             <button
                                 *ngIf="emailComponentMode === 'preview'"
                                 mat-raised-button
-                                class="border-radius-20"
                                 color="warn"
                                 #closeBtn
                                 (click)="closeEmail(closeBtn)"
@@ -535,12 +525,7 @@
                     </mat-select>
                 </mat-form-field>
 
-                <mat-form-field
-                    fxFlex="100"
-                    floatLabel="never"
-                    appearance="standard"
-                    class="custom-2 mb-8 border-radius-20 with-bg"
-                >
+                <mat-form-field fxFlex="100" floatLabel="never" appearance="standard" class="custom-2 mb-8 with-bg">
                     <textarea
                         [placeholder]="locale('widgets.emailControls.reasonPlaceholder')"
                         [(ngModel)]="rejectReason.comment"
@@ -555,7 +540,6 @@
                 <button
                     type="button"
                     fxFlex="30"
-                    class="border-radius-20"
                     color="warn"
                     mat-raised-button
                     (click)="rejectEmailDialogRef.close(true)"
@@ -563,13 +547,7 @@
                     {{ locale('interactionComponent.cancel') }}
                 </button>
 
-                <button
-                    fxFlex="30"
-                    mat-raised-button
-                    color="primary"
-                    class="border-radius-20"
-                    [disabled]="!rejectReason.comment"
-                >
+                <button fxFlex="30" mat-raised-button color="primary" [disabled]="!rejectReason.comment">
                     {{ locale('global.submit') }}
                 </button>
             </form>
