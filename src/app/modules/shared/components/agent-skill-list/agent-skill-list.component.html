@@ -13,7 +13,8 @@
                             [ngClass]="customFuse?.content"
                         >
                             <div class="twd-flex twd-flex-col twd-flex-1">
-                                <div class="twd-flex">
+                                <!-- conditional !allowDirectEdit can be removed after 2 future releases, since there is no need of a configuration -->
+                                <div class="twd-flex" *ngIf="!allowDirectEdit">
                                     <mat-form-field
                                         *ngIf="!tabConf.freeText.active"
                                         fxFlex
@@ -72,6 +73,38 @@
                                             matSuffix
                                             mat-icon-button
                                             type="button"
+                                            [matTooltip]="locale('interactionComponent.cancel')"
+                                            (click)="clearSelected(); tabConf.freeText.active = false"
+                                        >
+                                            <mat-icon>cancel</mat-icon>
+                                        </button>
+                                        <input class="twd-hidden" required matInput [(ngModel)]="selectedItem" />
+                                    </mat-form-field>
+                                </div>
+                                <div class="twd-flex" *ngIf="allowDirectEdit">
+                                    <mat-form-field fxFlex appearance="outline" class="custom with-bg twd-mt-1">
+                                        <input
+                                            matInput
+                                            required
+                                            [readonly]="!tabConf?.freeText?.allowed"
+                                            [placeholder]="
+                                                tabConf?.freeText?.allowed
+                                                    ? 'Enter ' + tabConf.placeholder
+                                                    : tabConf.placeholder
+                                            "
+                                            [(ngModel)]="tabConf.freeText.value"
+                                            #skillVdnInput
+                                            (input)="
+                                                onSkillVdnInputChange($event.target.value);
+                                                tabConf.freeText.active = true
+                                            "
+                                        />
+                                        <button
+                                            mat-button
+                                            matSuffix
+                                            mat-icon-button
+                                            type="button"
+                                            *ngIf="tabConf.freeText.value"
                                             [matTooltip]="locale('interactionComponent.cancel')"
                                             (click)="clearSelected(); tabConf.freeText.active = false"
                                         >
