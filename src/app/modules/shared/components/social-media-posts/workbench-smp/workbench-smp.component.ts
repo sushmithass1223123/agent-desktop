@@ -595,7 +595,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
                     skills: [],
-                    channel: 'socialmediachannel'
+                    channel: 'SM'
                 };
             }
             if (!globalKey || (globalKey && this.advancedSearch.data[this.currentTab].changed)) {
@@ -609,7 +609,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     subject: searchFields.subject,
                     content: searchFields.content,
                     listOfMailboxes: searchFields.listOfMailboxes.join(','),
-                    channel: 'socialmediachannel'
+                    channel: 'SM'
                 };
             }
             if (this.currentTab === 'inbox' || this.currentTab === 'posts') {
@@ -1161,7 +1161,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 return {
                     Mailbox: x?.Mailbox,
                     ConversationID: x?.ConversationID,
-                    AddedTime: x?.SocialMediaData?.Posts?.CreatedDateTime,
+                    AddedTime: x?.SocialMediaData?.Posts?.PostText?.InsertionDateTime,
                     AgentId: '',
                     Channel: '',
                     CreatedBy: '',
@@ -1193,7 +1193,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         RouteReason: '',
                         HasAttachment: x?.HasAttachments,
                         IsEmailProbableSpam: false,
-                        RejectReason: ''
+                        RejectReason: '',
+                        IsItemEdited: x?.SocialMediaData?.Posts?.IsEdited,
+                        IsItemDeleted: x?.SocialMediaData?.Posts?.IsDeleted
                     }
                 };
             });

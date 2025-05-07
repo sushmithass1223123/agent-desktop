@@ -569,7 +569,7 @@
             "supervisorTakeover": "Interaction disconnected by supervisor - Supervisor Takeover",
             "interactionDisconnect": "Interaction disconnected",
             "agentDisconnectedMsg": "#agentName has disconnected from chat",
-            "agentRequestRejected": "#agentName has rejected your request with comment: #comment",
+            "agentRequestRejected": "#agentName has rejected your #type request with comment: #comment",
             "freezeAutoResponseFailed": "Freeze auto response failed!",
             "freezeAutoResponseError": "Error in freezing auto response failed!",
             "chatAnswerSuccess": "Answer chat success",
@@ -701,7 +701,7 @@
             "muteAudio": "Mute Audio",
             "unmuteVideo": "Unmute Video",
             "muteVideo": "Mute Video",
-            "switchToVideo": "Change to Video",
+            "switchToVideo": "Turn on video",
             "stopScreenShare": "Stop Screen Share",
             "screenShare": "Screen Share",
             "requestScreenShare": "Request Screen Share",
@@ -937,6 +937,8 @@
             "snooze": "Snooze"
         },
         "email": {
+            "noClipboardEmail": "No valid email ID(s) found from the clipboard!",
+            "emailAlreadyIncluded": "One or more email ID(s) already included!",
             "getFrequentlyUsedEmailFailed": "Unable to fetch frequently used email addresses",
             "uploadFileLoading": "Uploading File",
             "uploadFileSizeWarning": "Attachment size exceeds maximum payload limit for this mailbox!",
@@ -1000,6 +1002,8 @@
             "spamEmailFailed": "Unable to spam the email",
             "emptyEmailWarning": "Email cannot be empty",
             "getEmailsLoading": "Loading emails",
+            "maxRecordLimitExceeded":"Number of emails present in the search has reached maximum limit, Please select a shorter date range",
+            "dateRangeExceeded":"Selected date range exceeds allowed limit, please reduce the date range",
             "getEmailsFailed": "Error occured while fetching emails",
             "loadEmailsFailed": "Unable to load emails",
             "replyEmailLoading": "Replying to email",
@@ -1039,7 +1043,7 @@
             "emailSendErrorExchangeMessageNotCreated": "Exchange message not created",
             "emailSendErrorMailboxInstanceCreationError": "Mailbox creation error",
             "emailSendErrorUnknown": "Unknown",
-            "emailSendErrorEwsApiAdaptorDown": "EWS adapter down",
+            "emailSendErrorEwsApiAdaptorDown": "EWS adaptor down",
             "emailSendErrorPayloadTooLarge": "Attachments exceed maximum file size",
             "emailSendErrorEmailManagerLoading": "Email manager service is still loading, pls retry after a minute",
             "emailTransferFailed": "Failed to transfer email - reason : ",
@@ -1048,8 +1052,10 @@
             "emailTransferErrorFailedToTransferEmailToAgentInOutlookPlugin": "Error in transferring email to agent in outlook plugin",
             "emailTransferErrorFailedToTransferEmailToSkill": "Error in transferring email to skill",
             "emailTransferErrorFailedToTransferEmailToAgent": "Error in transferring email to agent",
+            "emailTransferErrorEmailMaxTabCountReached": "Error in transferring email to agent - maximum email tab count reached",
             "emailDeleteFailed": "Failed to delete email - reason : ",
             "emailsDeleteFailed": "Failed to delete emails",
+            "emailDeleteSuccess":"Draft deleted successfully",
             "emailDeleteErrorFailedToDeleteEmail": "Failed to delete email",
             "emailDeleteErrorFailedToBulkDeleteDraftEmail": "Failed to bulk delete drafted emails",
             "emailSpamFailed": "Failed to mark email as spam - reason : ",
@@ -1155,6 +1161,7 @@
             "uploadFileSizeWarning": "File size exceeded!",
             "fileTypeNotSupported": "Selected file type is not allowed to upload!",
             "noCommentsFoundMessage": "No comments found!",
+            "noRepliesFoundMessage": "No replies found!",
             "closePostsLoading": "Closing post..",
             "closePostsSuccess": "Successfully closed posts!",
             "closePostsFailed": "Error closing posts!",
@@ -1215,7 +1222,9 @@
         },
         "previewDialog": {
             "agentReadingEmail": "Agent is viewing this email...",
-            "agentWorkingOnEmail": "#agent is working on this email..."
+            "agentWorkingOnEmail": "#agent is working on this email...",
+            "closedDraft": "#agent has closed drafting interaction",
+            "sentMail": "#agent has sent email successfully"
         }
     },
     "widgetPreview": {

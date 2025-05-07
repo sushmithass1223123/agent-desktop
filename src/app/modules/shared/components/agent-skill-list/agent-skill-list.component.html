@@ -13,6 +13,7 @@
                             [ngClass]="customFuse?.content"
                         >
                             <div class="twd-flex twd-flex-col twd-flex-1">
+                                <!-- conditional !allowDirectEdit can be removed after 2 future releases, since there is no need of a configuration -->
                                 <div class="twd-flex" *ngIf="!allowDirectEdit">
                                     <mat-form-field
                                         *ngIf="!tabConf.freeText.active"

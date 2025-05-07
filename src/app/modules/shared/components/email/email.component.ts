@@ -2,7 +2,7 @@ import { COMMA, ENTER, SEMICOLON } from '@angular/cdk/keycodes';
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
+import { MatChipInput, MatChipInputEvent } from '@angular/material/chips';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -385,7 +385,12 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     urls: [`${this.fileUploadUrl.MediaStreamer}/meta/restore/${file.FileId}`],
                     requestArgs: {
                         agentId: agent.agentId,
-                        tmacServer: agent.tmacServer
+                        tmacServer: agent.tmacServer,
+                        sessionId: this.email?.SessionID ?? (this.email as any)?.InSessionId ?? '',
+                        sessionType: 'email'
+                    },
+                    header: {
+                        'Content-Type': 'application/json'
                     },
                     method: 'PUT',
                     responseType: 'json'
@@ -436,6 +441,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                         this.translocoService.translate('sharedComponents.email.uploadFileSizeWarning'),
                         'failure'
                     );
+                    ref.dismiss();
                     return;
                 }
 
@@ -586,6 +592,11 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             return false;
         }
 
+        if(this._email[key]?.includes(emailId)) {
+            this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.emailAlreadyIncluded'), 'failure');
+            return false;
+        }
+
         this._email[key].push(emailId);
         this._addressFG.patchValue({ [key]: '' });
         return true;
@@ -688,6 +699,29 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 return;
             }
             this.sendEmail.emit(email)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    onPasteEmailIds(event: ClipboardEvent, chipInput: MatChipInputEvent, key: string): void {
+        try {
+            const pastedData = event.clipboardData?.getData('text') || '';
+            const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+            const matchedEmails = pastedData.match(emailRegex);
+            if(!matchedEmails?.length) {
+                this._appUiService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.email.noClipboardEmail'),
+                    'failure'
+                );
+                return;
+            } else {
+                matchedEmails.forEach((email: string) => {
+                    this.validateEmailIdAndPush(key, email)
+                })
+                chipInput.value = '';
+            }
+            event.preventDefault();
         } catch (error) {
             console.error(error)
         }

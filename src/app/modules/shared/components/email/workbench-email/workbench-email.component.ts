@@ -697,7 +697,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         const searchRange = (this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange
                             ? (this.channelConf.Config as TwEmailWorkbenchConfig).MaxSearchRange
                             : 30;
-                        this.setComponentState('emails/search/failure', { msg: 'Please select dates within the range of ' + searchRange + ' days' });
+                        this.setComponentState('emails/search/failure', { msg: 'Please select shorter date range' });
                         return;
                 }
             }
@@ -745,7 +745,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     agent: searchFields.agent || '',
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
-                    subject: searchFields.subject,
+                    subject: searchFields.subject === '' ? globalKey : searchFields.subject,
                     content: searchFields.content,
                     listOfMailboxes: searchFields.listOfMailboxes.join(',')
                 };
@@ -780,9 +780,16 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
 
                             if (resultStr?.errorcode && resultStr.errorcode == '-101') {
                                 this.appUiService.showSnackbar(
-                                    'Number of emails present in the search has reached maximum limit, Please select a shorter date range',
+                                    this.translocoService.translate('sharedComponents.email.maxRecordLimitExceeded'),
                                     'warning'
                                 );
+                                return;
+                              }
+                            if (resultStr?.errorCode && resultStr.errorCode == '-102') {
+                                this.appUiService.showSnackbar(
+                                    this.translocoService.translate('sharedComponents.email.dateRangeExceeded'),
+                                    'warning'
+                                );                         
                                 return;
                             }
 
@@ -889,6 +896,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         'failure'
                     );
                 }
+                else if (EMAIL_SEND_STATUS[result.response] && EMAIL_SEND_STATUS[result.response] === 'Success') {
+                    this.appUiService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.email.emailDeleteSuccess'),
+                        'success'
+                    );
+                }   
             } else if (this.currentTab === 'queue') {
                 const { tmacServer, agentId } = SDKClient.getAgentData();
                 const res$ = this.http
