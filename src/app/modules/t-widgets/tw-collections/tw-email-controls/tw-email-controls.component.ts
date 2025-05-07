@@ -850,6 +850,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     // check the response
                     if (dt.response && dt.response.ResultCode === 0) {
                         this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
+                        if(this.data?.Data?.RedirectPath && this.interactionList?.length === 1) this._contentPageService.mode = this.data.Data.RedirectPath;
                         // remove the interaction reference
                         this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                     } else {
