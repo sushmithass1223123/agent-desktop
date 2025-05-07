@@ -1125,7 +1125,11 @@
                                                     "SendSMSAllowed": true,
                                                     "CloseInteractionOnEnd": false,
                                                     "disableResetCall": true,
-                                                    "connectionTimeout": 10
+                                                    "connectionTimeout": 10,
+                                                    "DisableConfirmation": {
+                                                        "OnEndCall": false,
+                                                        "OnCloseInteraction": true
+                                                    }
                                                 }
                                             },
                                             {
@@ -3245,7 +3249,7 @@
                                                     "SearchDuration": 24,
                                                     "InternetHeadersAllowed": true,
                                                     "TemplatesByHierarchy": false,
-                                                    "MaxSearchRange": 30,
+                                                    "MaxSearchRange": 31,
                                                     "MaxSelection": 10
                                                 }
                                             },
@@ -3303,7 +3307,7 @@
                                                     },
                                                     "Tabs": ["queue", "inbox", "sentitem", "draft", "posts"],
                                                     "SearchPollingInterval": 0,
-                                                    "MaxSearchRange": 30,
+                                                    "MaxSearchRange": 31,
                                                     "SearchDuration": 24,
                                                     "ShowPostDetails": false
                                                 }
@@ -3654,5 +3658,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.11.0"
+    "Version": "5.12.0"
 }

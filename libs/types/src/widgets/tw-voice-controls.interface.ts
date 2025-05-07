@@ -222,7 +222,18 @@ export type TwVoiceControlsDataConfig = {
      disableResetCall: boolean;
 
      connectionTimeout: number;
+
+     /**
+      * Flag to disable confirmation on end call & close interaction
+      * @type {ConfirmFeatureTypes}
+      */
+     DisableConfirmation: ConfirmFeatureTypes;
 };
+
+export type ConfirmFeatureTypes = {
+    "OnEndCall": boolean;
+    "OnCloseInteraction": boolean;
+}
 
 /**
  * Data config of voice interaction within component

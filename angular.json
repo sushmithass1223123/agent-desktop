@@ -4,6 +4,7 @@
         "analytics": false
     },
     "version": 1,
+    "defaultProject": "agent-desktop",
     "newProjectRoot": "projects",
     "projects": {
         "agent-desktop": {

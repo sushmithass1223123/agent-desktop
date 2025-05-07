@@ -483,15 +483,46 @@
                                     'last-of-group': isLastMessageOfGroup(message, i)
                                 }"
                             >
-                                <div
+                                 <div
                                     *ngIf="message.dividerMessage"
-                                    class="twd-bg-primary-100 twd-text-primary-contrast-100 dark:twd-bg-primary-900 dark:twd-bg-contrast-900 my-8 border-radius-4 text-center py-4 px-8 mx-auto font-size-12 font-weight-600 mat-elevation-z1"
+                                    class="twd-bg-primary-100 twd-text-primary-contrast-100 dark:twd-bg-primary-900 dark:twd-bg-contrast-900 my-8 border-radius-4 text-center py-4 px-8 mx-auto font-size-12 font-weight-600 mat-elevation-z1 divider-message"
                                 >
-                                <span [innerHTML]="message.message"></span>
-                                <br />
-                                {{ (message.time | customDate: 'shortTime') ?? message.time }} &nbsp;
-                            </div>
-                          
+                                    <ng-container *ngIf="!message.attachment?.src">
+                                        <span [innerHTML]="message.message"></span>
+                                    </ng-container>
+                                    <!-- For local snapshots -->
+                                    <ng-container *ngIf="message.attachment?.src">
+                                        <div class="attachments">
+                                            <div
+                                                *ngIf="message.attachment.type === 'image'"
+                                                class="image"
+                                                (click)="previewMedia(message)"
+                                            >
+                                                <img
+                                                    title="Attachment"
+                                                    [ngClass]="{
+                                                        'rotate-0': message.attachment?.angle === 0,
+                                                        'rotate-90-inverse': message.attachment?.angle === 1,
+                                                        'rotate-180': message.attachment?.angle === 2,
+                                                        'rotate-90': message.attachment?.angle === 3,
+                                                        '!twd-max-w-[64px] !twd-max-h-[64px] !twd-rounded-[5px]':
+                                                            mode === 'reply' || replied,
+                                                        '!twd-min-h-[64px]': replied
+                                                    }"
+                                                    [src]="message.attachment.src"
+                                                />
+                                            </div>
+                                            <!-- To show attachment captions -->
+                                            <span
+                                                *ngIf="message.message"
+                                                class="mt-4"
+                                                [innerHTML]="message.message"
+                                            ></span>
+                                        </div>
+                                    </ng-container>
+                                    <br />
+                                    {{ (message.time | customDate: 'shortTime') ?? message.time }} &nbsp;
+                                </div>
 
                                 <ng-container *ngIf="!message.dividerMessage">
                                     <!-- animate__animated animate__slideInUp animate__faster -->
@@ -597,7 +628,7 @@
                                             (emojiClick)="addEmoji($event)"
                                             [darkMode]="customFuse.config.colorTheme.includes('dark')"
                                             [showPreview]="false"
-                                            isNative="true"
+                                           
                                         ></emoji-mart>
                                     </ng-template>
                                 </button>
