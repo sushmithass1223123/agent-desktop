@@ -785,7 +785,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                 );
                                 return;
                               }
-                            if (resultStr?.errorCode && resultStr.errorCode == '-102') {
+                            if (resultStr?.errorcode && resultStr.errorcode == '-102') {
                                 this.appUiService.showSnackbar(
                                     this.translocoService.translate('sharedComponents.email.dateRangeExceeded'),
                                     'warning'
