@@ -1195,6 +1195,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         try {
             // check the message
             if (this.isValidJson(evt.Message)) {
+                console.log('datachecking1',data);
                 // parse the message
                 json = JSON.parse(evt.Message);
                 // check if the message is from SMM
@@ -1211,11 +1212,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         };
                         data.message = json.msg?.content?.text ?? '';
                     } else {
+                        console.log('datachecking3',data);
                         // not an attachment from SMM
                         data.message = json.msg;
                         data.attachment = null;
                     }
                 } else {
+                    console.log('datachecking45',data);
                     // message from livechat
                     data.messageId = json.messageId;
                     data.type = json.type === 'attachment' ? json.attachment.type : json.type;
@@ -1235,7 +1238,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     } else {
                         // get the file upload url
                         const fileServerUrl: string = this.fileUploadUrl?.MediaProxy;
-
+                        console.log('datachecking5',data);
                         // check if we need to get full path of attachment
                         if (
                             data.attachment && // check if attachment is there
@@ -1245,6 +1248,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         ) {
                             // get the attachment src
                             data.attachment.src = `${fileServerUrl}/${this.sessionID}/${data.attachment.name}`;
+                            console.log('datachecking7',data);
                         }
                     }
                 }
