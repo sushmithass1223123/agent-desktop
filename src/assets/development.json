@@ -1683,7 +1683,7 @@
                                                     },
                                                     "DisableAvConstraints": {
                                                         "Devices": ["android", "ios"],
-                                                        "SocialChannels": ["whatsapp", "instagram", "fb", "twitter"],
+                                                        "SocialChannels": ["whatsapp", "instagram", "fb", "twitter", "youtube"],
                                                         "EscalateAudioCall": false,
                                                         "EscalateVideoCall": false,
                                                         "RequestAudioCall": false,
@@ -1770,7 +1770,7 @@
                                                     },
                                                     "SMM": {
                                                         "attachments": {
-                                                            "allowedChannels": "line,whatsapp,we,fb,viber,telegram,twitter"
+                                                            "allowedChannels": "line,whatsapp,we,fb,viber,telegram,youtube,twitter"
                                                         }
                                                     }
                                                 }

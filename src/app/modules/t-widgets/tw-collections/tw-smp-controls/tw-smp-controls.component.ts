@@ -42,7 +42,8 @@ declare var document: any;
 const channelMapper: any = {
     fb: 'facebook',
     instagram: 'instagram',
-    twitter: 'x'
+    twitter: 'x',
+    youtube: 'youtube'
 };
 
 type SmpEventGeneric = IncomingEmailEvent;

@@ -71,6 +71,10 @@ export class AppComponent implements OnInit, OnDestroy {
             name: 'telegram'
         },
         {
+            label: 'custom-youtube',
+            name: 'youtube'
+        },
+        {
             label: 'custom-twitter',
             name: 'twitter'
         },
@@ -129,6 +133,10 @@ export class AppComponent implements OnInit, OnDestroy {
         {
             label: 'custom-sminstagram',
             name: 'sminstagram'
+        },
+        {
+            label: 'custom-smyoutube',
+            name: 'smyoutube'
         }
     ];
 
