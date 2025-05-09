@@ -196,7 +196,10 @@
             "assignedTo": "Assigned To (by agentID)",
             "sessionId": "Session Id",
             "Email": "Email",
-            "Chat": "Chat"
+            "Chat": "Chat",
+            "commentText": "Comment Text",
+            "postText": "Post Text",
+            "outboundStatus": "Outbound Status"
         },
         "workcodes": {
             "searchWorkcodes": "Search Workcodes...",
@@ -999,6 +1002,8 @@
             "spamEmailFailed": "Unable to spam the email",
             "emptyEmailWarning": "Email cannot be empty",
             "getEmailsLoading": "Loading emails",
+            "maxRecordLimitExceeded":"Number of emails present in the search has reached maximum limit, Please select a shorter date range",
+            "dateRangeExceeded":"Selected date range exceeds allowed limit, please reduce the date range",
             "getEmailsFailed": "Error occured while fetching emails",
             "loadEmailsFailed": "Unable to load emails",
             "replyEmailLoading": "Replying to email",
@@ -1038,7 +1043,7 @@
             "emailSendErrorExchangeMessageNotCreated": "Exchange message not created",
             "emailSendErrorMailboxInstanceCreationError": "Mailbox creation error",
             "emailSendErrorUnknown": "Unknown",
-            "emailSendErrorEwsApiAdaptorDown": "EWS adapter down",
+            "emailSendErrorEwsApiAdaptorDown": "EWS adaptor down",
             "emailSendErrorPayloadTooLarge": "Attachments exceed maximum file size",
             "emailSendErrorEmailManagerLoading": "Email manager service is still loading, pls retry after a minute",
             "emailTransferFailed": "Failed to transfer email - reason : ",
@@ -1047,8 +1052,10 @@
             "emailTransferErrorFailedToTransferEmailToAgentInOutlookPlugin": "Error in transferring email to agent in outlook plugin",
             "emailTransferErrorFailedToTransferEmailToSkill": "Error in transferring email to skill",
             "emailTransferErrorFailedToTransferEmailToAgent": "Error in transferring email to agent",
+            "emailTransferErrorEmailMaxTabCountReached": "Error in transferring email to agent - maximum email tab count reached",
             "emailDeleteFailed": "Failed to delete email - reason : ",
             "emailsDeleteFailed": "Failed to delete emails",
+            "emailDeleteSuccess":"Draft deleted successfully",
             "emailDeleteErrorFailedToDeleteEmail": "Failed to delete email",
             "emailDeleteErrorFailedToBulkDeleteDraftEmail": "Failed to bulk delete drafted emails",
             "emailSpamFailed": "Failed to mark email as spam - reason : ",
@@ -1173,7 +1180,9 @@
             "editedItem": "This item has been edited",
             "deletedItem": "This item has been deleted",
             "postFullscreen": "Focus on this item",
-            "nonPullItemWarning": "Posts can only pulled in queue, inbox and draft sections. Deleted comments / posts cannot be pulled."
+            "nonPullItemWarning": "Posts can only pulled in queue, inbox and draft sections. Deleted comments / posts cannot be pulled.",   
+            "listOfSocialMediaAccounts": "List of social media accounts",
+            "socialMediaAccountsNotFound": "No social media accounts available"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",

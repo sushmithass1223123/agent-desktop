@@ -438,6 +438,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                         this.translocoService.translate('sharedComponents.email.uploadFileSizeWarning'),
                         'failure'
                     );
+                    ref.dismiss();
                     return;
                 }
 
