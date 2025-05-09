@@ -33,7 +33,9 @@ export const initSmpostsSearchState = {
     pageSize: 10,
     pageNumber: 1,
     deviceid: '',
-    accountName: ''
+    accountName: '',
+    // Sent
+    outboundStatus: ''
 };
 
 const searchParams = new FormGroup({  
@@ -64,7 +66,10 @@ const searchParams = new FormGroup({
     pageSize: new FormControl(initSmpostsSearchState.pageSize),
     pageNumber: new FormControl(initSmpostsSearchState.pageNumber),
     deviceid: new FormControl(initSmpostsSearchState.deviceid),
-    accountName: new FormControl(initSmpostsSearchState.accountName)
+    accountName: new FormControl(initSmpostsSearchState.accountName),
+
+    // Sent
+    outboundStatus: new FormControl(initSmpostsSearchState.outboundStatus)
   });  
 
 @Injectable({

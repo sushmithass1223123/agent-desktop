@@ -517,12 +517,12 @@
                                     [ngClass]="{ 'twd-hidden': currentTab == 'posts' }"
                                 >
                                     <mat-label>{{ locale('widgets.workbench.commentText') }} </mat-label>
-                                    <input matInput formControlName="subject" type="text" />
+                                    <input matInput formControlName="commentText" type="text" />
                                 </mat-form-field>
 
                                 <mat-form-field class="twd-text-sm" appearance="outline">
                                     <mat-label>{{ locale('widgets.workbench.postText') }} </mat-label>
-                                    <input matInput formControlName="content" type="text" />
+                                    <input matInput formControlName="postText" type="text" />
                                 </mat-form-field>
 
                                 <mat-form-field
@@ -542,7 +542,7 @@
                                     [ngClass]="{ 'twd-hidden': currentTab === 'queue' }"
                                 >
                                     <mat-label>{{ locale('widgets.workbench.sessionId') }} </mat-label>
-                                    <input matInput formControlName="inSessionId" type="text" />
+                                    <input matInput formControlName="sessionid" type="text" />
                                 </mat-form-field>
 
                                 <mat-form-field
@@ -559,8 +559,12 @@
                                         <mat-label>
                                             {{
                                                 selectedSocialMediaAccounts && selectedSocialMediaAccounts.length
-                                                    ? locale('sharedComponents.socialMediaPosts.listOfSocialMediaAccounts')
-                                                    : locale('sharedComponents.socialMediaPosts.socialMediaAccountsNotFound')
+                                                    ? locale(
+                                                          'sharedComponents.socialMediaPosts.listOfSocialMediaAccounts'
+                                                      )
+                                                    : locale(
+                                                          'sharedComponents.socialMediaPosts.socialMediaAccountsNotFound'
+                                                      )
                                             }}
                                         </mat-label>
                                         <mat-select formControlName="listOfSocialMediaAccounts" multiple>
@@ -582,21 +586,26 @@
                                     </ng-container>
                                 </mat-form-field>
                                 <!-- Outbound Status Drop down-->
-                                <mat-form-field appearance="fill"
-                                 [ngClass]="{ 'twd-hidden': currentTab !== 'sentitem' }">
-                                 <mat-label>{{ locale('widgets.workbench.outboundStatus') }} </mat-label>
-                                 <mat-select [formControl]="outboundStatus" multiple>
-                                        <mat-select-trigger>
+                                <mat-form-field
+                                    appearance="outline"
+                                    class="twd-text-sm"
+                                    [ngClass]="{ 'twd-hidden': currentTab !== 'sentitem' }"
+                                >
+                                    <mat-label>{{ locale('widgets.workbench.outboundStatus') }} </mat-label>
+                                    <mat-select formControlName="outboundStatus">
+                                        <!-- <mat-select-trigger>
                                             {{outboundStatus.value?.[0] || ''}}
                                             <span
                                                 *ngIf="(outboundStatus.value?.length || 0) > 1">
                                                 (+{{ (outboundStatus.value?.length || 0) - 1 }}
                                                 {{ outboundStatus.value?.length === 2 ? 'other' : 'others' }})
                                             </span>
-                                        </mat-select-trigger>
-                                        <mat-option *ngFor="let outboundStatus of outboundStatusList" [value]="outboundStatus">{{
-                                            outboundStatus
-                                        }}</mat-option>
+                                        </mat-select-trigger> -->
+                                        <mat-option
+                                            *ngFor="let outboundStatus of outboundStatusList"
+                                            [value]="outboundStatus"
+                                            >{{ outboundStatus }}</mat-option
+                                        >
                                     </mat-select>
                                 </mat-form-field>
 

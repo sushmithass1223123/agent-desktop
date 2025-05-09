@@ -295,8 +295,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     isFullscreen: boolean = false;
     currentTheme: string = 'theme-default-2';
 
-    outboundStatus = new FormControl('');
-
     outboundStatusList: string[] = ['Pending', 'Failed', 'Success'];
 
     constructor(
@@ -603,6 +601,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 searchParams.deviceid = searchFields.deviceid;
                 searchParams.agent = searchFields.agent;
                 searchParams.sessionid = searchFields.sessionid;
+                searchParams.outboundStatus = searchFields.outboundStatus;
             } else if (this.currentTab === 'draft') {
                 searchParams.agent = searchFields.agent;
                 searchParams.sessionid = searchFields.sessionid;
