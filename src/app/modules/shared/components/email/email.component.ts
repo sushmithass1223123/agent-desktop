@@ -386,8 +386,11 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     requestArgs: {
                         agentId: agent.agentId,
                         tmacServer: agent.tmacServer,
-                        sessionId: this.email?.SessionID ?? '',
+                        sessionId: this.email?.SessionID ?? (this.email as any)?.InSessionId ?? '',
                         sessionType: 'email'
+                    },
+                    header: {
+                        'Content-Type': 'application/json'
                     },
                     method: 'PUT',
                     responseType: 'json'
