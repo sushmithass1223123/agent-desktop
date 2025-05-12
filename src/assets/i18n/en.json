@@ -1141,7 +1141,7 @@
             "reset": "Reset",
             "getPostsFailed": "Error occured while fetching posts",
             "getPostsLoading": "Loading posts",
-            "postIsBeingSent": "Post is being sent. Please wait!",
+            "postIsBeingSent": "Reply has been sent to social media server to process, Please wait!",
             "postsNotFound": "There are no posts",
             "openPostFailed": "Unable to open post",
             "fileMetaError": "Error occurred while connecting to file server - if it fails again please raise as an incident",
