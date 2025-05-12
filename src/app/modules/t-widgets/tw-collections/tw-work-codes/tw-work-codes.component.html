@@ -86,7 +86,7 @@
             </mat-chip-list>
         </mat-form-field>
     </div>
-
+    <div class="workcode-dialog-body">
     <!-- Display a message if no work code available for the search criteria -->
     <ng-container *ngIf="!workCodesAvailable" class="twd-w-full twd-h-full twd-grid twd-place-items-center">
         <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">{{ locale('widgets.workcodes.noWorkCodeToDisplay') }}</p>
@@ -103,4 +103,5 @@
             </ng-container>
         </mat-chip-list>
     </ng-container>
+</div>
 </ng-template>
