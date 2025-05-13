@@ -413,6 +413,14 @@
                         </span>
                     </div>
 
+                    <mat-paginator *ngIf="totalPostCount"
+                    (page)="onPaginatorPageChange($event)"
+                    [length]="totalPostCount"
+                    [pageSize]="pageSize"
+                    [pageSizeOptions]="pageSizeOptions"
+                    >
+                    </mat-paginator>
+
                     <!-- Getting post error UI -->
                     <div *ngIf="!postSearchRes.loading && postSearchRes.error"
                         class="h-80-p twd-flex twd-justify-center twd-items-center">

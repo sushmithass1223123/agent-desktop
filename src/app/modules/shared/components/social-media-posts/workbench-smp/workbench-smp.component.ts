@@ -307,6 +307,25 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     postBodies: any = {};
     isFullscreen: boolean = false;
     currentTheme: string = 'theme-default-2';
+    /**
+     * Holds the count of posts for paginator
+     */    
+    totalPostCount: number = 0;
+    
+    /**
+     * Holds the pageIndex to be shown for paginator
+     */    
+    pageIndex: number = 0;
+    
+    /**
+     * Holds the count of posts to be shown for paginator
+     */  
+    pageSize: number = 2;
+    
+    /**
+     * Holds the list of options for page size to be shown for paginator
+     */  
+    pageSizeOptions: number[] = [5, 10, 20, 50, 100, 200];
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -636,6 +655,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 sentitem: this.mapSentItemPosts
             };
 
+            searchFields.pageSize = this.pageSize
+            searchFields.pageIndex = this.pageIndex;
+
             const { response } = await SDKClient.workbenchSearch(
                 (this.currentTab === 'sentitem'
                     ? 'sent'
@@ -645,6 +667,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 ).toLowerCase(),
                 searchParams
             );
+            console.log("Response:", response); //response: is of type AdvanceSearchResponse
+
             if (response?.Status !== 'SUCCESS') {
                 if (response?.ErrorCode && response.ErrorCode == '-101') {
                     this._appUiService.showSnackbar(
@@ -664,6 +688,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 this.setComponentState('smposts/failure', { silent });
                 this.setComponentState('smposts/polling/inactive', { silent });
             } else {
+                // this.setPageSizeOptions(response.Result.length);
+                this.totalPostCount = response.Result.length;
                 this.rawResponse = maps[this.currentTab](response.Result ? response.Result : []);
                 this.sortPosts();
                 this.setComponentState('smposts/success', { silent });
@@ -2130,4 +2156,41 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     trackByItem(index: number, item: SMPost): any {
         return item.PostData.SessionId;
     }
+
+    /**
+     * Method to handle paginator page change
+     * @param {PageEvent} $event Page event
+     */
+    onPaginatorPageChange($event) {
+        console.log('Page change:', $event);
+        this.pageIndex = $event.pageIndex;
+        this.doAdvancedSearch(true);
+      }
+
+        /**
+         * Method to set page size options dynamically not needed for
+         * @param {number} totalPostCount Total post count
+         */
+      setPageSizeOptions(totalPostCount: number) {  
+        // this.totalPostCount = totalPostCount; // set total post count
+        // if(!totalPostCount) {
+        //     return;
+        // }
+        
+        // if(this.totalPostCount < this.pageSize) { // if no. of posts is less than page size, set page size = total post count 
+        //     this.pageSize = this.totalPostCount;
+        // } 
+
+        // otherwise set page size options to multiple of page size 
+        // this.pageSizeOptions = [];   
+        // let i = 1;
+        // let nextPageSizeOption = this.pageSize;
+        // while (nextPageSizeOption < this.totalPostCount) {
+        //     this.pageSizeOptions.push(nextPageSizeOption * i);
+        //     i++;
+        //     nextPageSizeOption = this.pageSize * i;
+        // }
+        // this.pageSizeOptions.push(this.totalPostCount); //add total post count as the last option
+      }
+      
 }
