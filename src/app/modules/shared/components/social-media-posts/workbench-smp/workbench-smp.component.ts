@@ -302,7 +302,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      /**
       * Holds the pageIndex to be shown for paginator
       */    
-     pageNumber: number = 0;
+     pageNumber: number = 1;
      
      /**
       * Holds the count of posts to be shown for paginator
