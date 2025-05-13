@@ -75,7 +75,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         this.widgetData = this.data.Data;
 
         // Read config flag
-        this.disableSocialMediaNotification = !this.widgetData.disableSocialMediaNotification;
+        this.disableSocialMediaNotification = this.widgetData.disableSocialMediaNotification;
 
         // Observe all active post interactions
         this._interactionManagerService.interactions
