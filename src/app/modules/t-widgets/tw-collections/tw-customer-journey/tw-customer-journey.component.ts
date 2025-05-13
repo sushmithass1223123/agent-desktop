@@ -316,7 +316,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             EmailID: {
                 title: this.translocoService.translate('channels.email'),
                 searchable: true,
-                truncate: true
+                truncate: true,
+                tooltip: true
             },
             GroupID: {
                 searchable: true
