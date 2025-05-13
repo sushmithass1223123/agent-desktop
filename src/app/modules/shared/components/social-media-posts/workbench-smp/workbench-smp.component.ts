@@ -307,7 +307,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      /**
       * Holds the count of posts to be shown for paginator
       */  
-     pageSize: number = 2;
+     pageSize: number = 10;
      
      /**
       * Holds the list of options for page size to be shown for paginator
