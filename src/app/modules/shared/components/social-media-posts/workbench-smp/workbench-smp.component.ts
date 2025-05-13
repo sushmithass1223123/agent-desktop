@@ -2021,6 +2021,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      onPaginatorPageChange($event) {
         console.log('Page change:', $event);
         this.pageNumber = $event.pageIndex;
+        this.pageSize = $event.pageSize;
         this.doAdvancedSearch(true);
       }
 
