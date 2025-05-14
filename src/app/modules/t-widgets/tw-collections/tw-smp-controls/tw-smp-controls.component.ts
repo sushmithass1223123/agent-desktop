@@ -545,7 +545,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             this.actionStatus.disableUIButtons = true;
             this._fuseProgressBarService.show();
 
-            SDKClient.closeInteraction(this.interactionId.toString(), null, true)
+            SDKClient.closeInteraction(this.interactionId.toString())
                 .then((dt: IResponse) => {
                     delete this.smpService.postBodies[this.sessionId];
                     delete this.smpService.postBodies[this.outSessionId];
@@ -610,15 +610,13 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 if (attachments) delete attachments[0]?.Url;
                 const res = await SDKClient.sendItem({
                     attachmentFileList: attachments && attachments.length ? JSON.stringify(attachments) : '',
-                    body: body,
+                    engagementFileList: "",
+                    text: body,
                     inboxSessionId: this.sessionId,
                     outboxSessionId: !this.outSessionId && this.draftOutsessionId[this.activeSessionId] ? this.draftOutsessionId[this.activeSessionId] : (this.outSessionId || ''),
                     routeId: '',
-                    toList: '',
-                    bccList: '',
-                    typeOfResponse: 'reply',
-                    ccList: '',
-                    subject: this.smpService.postBodies[this.activeSessionId]?.Subject ?? ''
+                    to: '',
+                    typeOfResponse: 'reply'
                 }).catch((e) => errCallback(e));
                 ref.dismiss();
                 if (!res || !res.response) {
@@ -725,24 +723,21 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             this.prevAttachments,
             this.postDraftData[this.interactionId].attachments
         );
-        SDKClient.saveEmailDraft(
+        SDKClient.saveSMDraft(
             {
-                bccList: '',
-                body: postBody,
-                ccList: '',
+                text: postBody,
                 inboxSessionId: this.sessionId,
                 outboxSessionId: this.draftOutsessionId[this.activeSessionId]
                     ? this.draftOutsessionId[this.activeSessionId]
                     : this.outSessionId || '',
                 routeId: '',
-                subject: this.smpService.postBodies[this.activeSessionId]?.Subject ?? '',
-                toList: '',
+                to: '',
                 typeOfResponse: '',
                 attachmentList: changes,
-                isAttachmentModified: isModified
-            },
-            undefined,
-            true
+                isAttachmentModified: isModified,
+                engagementFileList: [],
+                isEngagementModified: false,
+            }
         )
             .then((x) => {
                 if (x.response.replace(/^"(.*)"$/, '$1')) {
@@ -1001,16 +996,14 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
      */
     closePost(): void {
         this._fuseProgressBarService.show();
-        SDKClient.changeEmailStatus(
+        SDKClient.changeSMStatus(
             {
                 routeId: this.smpService.postBodies[this.activeSessionId].RouteId,
-                sessionId: this.smpService.postBodies[this.activeSessionId].SessionId,
+                inboxSessionId: this.smpService.postBodies[this.activeSessionId].SessionId,
                 status: SMP_SENT_REASONS.concat(SMP_DRAFT_REASONS).includes(this.routeReason)
                     ? `Outbox,Closed,sent,${this.smpService.postBodies[this.activeSessionId].OutSessionId}`
                     : 'CloseTab'
-            },
-            undefined,
-            true
+            }
         )
             .then(() => {
                 this.closeInteraction(true);

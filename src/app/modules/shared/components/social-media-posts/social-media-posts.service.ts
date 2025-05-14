@@ -131,7 +131,7 @@ export class SocialMediaPostsService {
 
     async setMailboxes(): Promise<void> {
         try {
-            const res = await SDKClient.getMailboxes('agent', undefined, true);
+            const res = await SDKClient.getSMAccounts();
             if (!res.response) {
                 throw new Error(`Invalid Server response ${JSON.stringify(res.response, null, 2)}`);
             }

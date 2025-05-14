@@ -3003,7 +3003,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["http://dicedev.tetherfi.cloud:55080/TMACSDKProxy/TmacProxy.asmx"],
+                "urls": ["http://15.206.182.15:5001/api/v1/TmacProxy"],
                 "type": "soap",
                 "timeout": 60
             },

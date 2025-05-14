@@ -3632,8 +3632,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://15.206.182.15:8445/api/v1/TmacProxy"],
-                "mediaMatrixUrls": ["https://15.206.182.15:8449/api/v1/TmacProxy"],
+                "urls": ["http://15.206.182.15:5001/api/v1/TmacProxy"],
                 "type": "soap",
                 "timeout": 60
             },
