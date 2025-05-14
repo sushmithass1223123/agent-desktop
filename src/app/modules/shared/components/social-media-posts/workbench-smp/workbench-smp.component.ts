@@ -23,7 +23,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { addHours, format, format as formatDate } from 'date-fns';
 import { isEqual, merge } from 'lodash';
 import { maticonByExtension, throwADError } from 'app/utils';
-import { GetInboxItemResult, SDKClient, TUtils } from '@tmac/sdk';
+import { GetItemResult, SDKClient, TUtils } from '@tmac/sdk';
 import { AppDataService } from '@services/app-data.service';
 import { SMP_OUTBOX_REASONS } from 'app/constants';
 import { MatDialog } from '@angular/material/dialog';
@@ -1358,8 +1358,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             this.setComponentState('smposts/open/loading');
 
             let fetchFromOutbox = this.currentTab === 'draft' || this.currentTab === 'sentitem';
-            let inboxRes: GetInboxItemResult | any;
-            let outboxRes: GetInboxItemResult | any;
+            let inboxRes: GetItemResult | any;
+            let outboxRes: GetItemResult | any;
 
             const getRequestedSession = () => post.PostData.SessionId;
 
@@ -1696,11 +1696,11 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      */
     async getValidDataForSelectedPost(): Promise<void> {
         try {
-            const inboxRes: GetInboxItemResult = (await SDKClient.getInboxItem(this.selectedPostSessionId)).response;
+            const inboxRes: GetItemResult = (await SDKClient.getInboxItem(this.selectedPostSessionId)).response;
             const postData: SMPost = new SMPost();
 
             postData.PostData.RouteId = inboxRes.RouteId;
-            postData.PostData.SessionId = inboxRes.SessionID;
+            postData.PostData.SessionId = inboxRes.CommentInSessionId;
             this.pullPosts([postData]);
         } catch (e) {
             this.logger.error(
@@ -1911,23 +1911,21 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     }
                     return curr.PostData.RouteId;
                 });
-                await SDKClient.closeBulkEmailsInQueue(routeIds.join(','), undefined, true);
+                await SDKClient.closeBulkSMInQueue(routeIds.join(','));
             } else {
                 await Promise.all(
                     posts.map((curr) => {
                         if (this.selectedPostSessionId === curr.PostData.SessionId) {
                             this.openPostRes.data.next(null);
                         }
-                        return SDKClient.changeEmailStatus(
+                        return SDKClient.changeSMStatus(
                             {
                                 routeId: curr.PostData.RouteId,
-                                sessionId: curr.PostData.SessionId,
+                                inboxSessionId: curr.PostData.SessionId,
                                 status: ['sentitem', 'draft'].includes(this.currentTab)
                                     ? `Outbox,Closed,sent,${curr.PostData.SessionId}`
                                     : 'Close'
-                            },
-                            undefined,
-                            true
+                            }
                         );
                     })
                 );

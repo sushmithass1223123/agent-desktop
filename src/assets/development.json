@@ -3625,8 +3625,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx"],
-                "mediaMatrixUrls": ["https://13.200.106.178:8445/api/v1/tmacproxy"],
+                "urls": ["http://15.206.182.15:5001/api/v1/TmacProxy"],
                 "type": "soap",
                 "timeout": 60
             },

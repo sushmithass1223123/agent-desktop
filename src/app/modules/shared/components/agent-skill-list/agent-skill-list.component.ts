@@ -1245,7 +1245,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     private transferEmail(): void {
         this.loading += 1;
         const emails: any[] = this._dialogData.OtherData.emails;
-        const useMediaMatrixProxyUrl: any = this._dialogData.OtherData?.useMediaMatrixProxyUrl;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         const transferTo = freeTextConf.active ? freeTextConf.value : this.selectedItem;
 
@@ -1258,7 +1257,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     routeId: RouteId,
                     sessionId: SessionId,
                     toAgentId: transferTo
-                }, undefined, useMediaMatrixProxyUrl)
+                })
                     .then((res) => {
                         this.loading -= 1;
                         const dynamicLabels = [
@@ -1324,7 +1323,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     routeId: RouteId,
                     sessionId: SessionId,
                     skillId: transferTo
-                }, undefined, useMediaMatrixProxyUrl)
+                })
                     .then((res) => {
                         this.loading -= 1;
                         const dynamicLabels = [
@@ -1382,16 +1381,16 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         const transferTo = freeTextConf.active ? freeTextConf.value : this.selectedItem;
 
-        // SDKClient.transferEmailToAgent used when transfer is either from Agent List or Speed Dial
+        // SDKClient.transferSMToAgent used when transfer is either from Agent List or Speed Dial
         if (this.selectedRow?.type !== 'Skill List') {
             posts.forEach((post) => {
                 if(this._dialogData.InteractionId) this.saveToDataServer('sm', post);
                 const { RouteId, SessionId } = post;
-                SDKClient.transferEmailToAgent({
+                SDKClient.transferSMToAgent({
                     routeId: RouteId,
                     sessionId: SessionId,
                     toAgentId: transferTo
-                }, undefined, true)
+                })
                     .then((res) => {
                         this.loading -= 1;
                         const dynamicLabels = [
@@ -1442,11 +1441,11 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         } else {
             posts.forEach((post) => {
                 const { RouteId, SessionId } = post;
-                SDKClient.transferEmailToSkill({
+                SDKClient.transferSMToSkill({
                     routeId: RouteId,
                     sessionId: SessionId,
-                    skillId: transferTo
-                }, undefined, true)
+                    skill: transferTo
+                })
                     .then((res) => {
                         this.loading -= 1;
                         const dynamicLabels = [
