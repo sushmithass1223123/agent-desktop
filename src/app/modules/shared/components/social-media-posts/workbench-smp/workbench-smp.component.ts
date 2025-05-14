@@ -684,7 +684,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 this.setComponentState('smposts/polling/inactive', { silent });
             } else {
                 console.log('*****Response from workbench search:', response);
-                this.totalPostCount = response.TotalTRecordCount;
+                this.totalPostCount = response.TotalRecordCount;
                 this.rawResponse = maps[this.currentTab](response.Result ? response.Result : []);
                 this.sortPosts();
                 this.setComponentState('smposts/success', { silent });
