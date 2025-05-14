@@ -1,5 +1,5 @@
 import { AgentSkillListData, IVRTransferMenu, TwVoiceControls, TwVoiceControlsData } from '@ad/types';
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -34,6 +34,7 @@ import {
     IncomingCallUpdateEvent,
     InteractionDataEvent,
     IResponse,
+    IUIEvent,
     IVRDataEvent,
     MediaServerEvent,
     OutgoingCallEvent,
@@ -51,6 +52,7 @@ import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwComposeMessagingComponent } from '../tw-compose-messaging/tw-compose-messaging.component';
 import { TwVoiceControlsService } from './tw-voice-controls.service';
 import { TranslocoService } from '@ngneat/transloco';
+import { SharedService } from '@services/shared.service';
 
 /**
  * Voice Controls Component
@@ -341,6 +343,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /** flag to check the state of transfer */
     isTransferCompleted = false;
 
+    @ViewChild('holdBtn') holdBtn!: ElementRef<MatButton>;
+
     constructor(
         private _fuseFacadeService: FuseFacadeService,
         private _fuseProgressBarService: FuseProgressBarService,
@@ -352,7 +356,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private _matDialog: MatDialog,
         private _contentPageService: ContentPageService,
         public voiceControlsService: TwVoiceControlsService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private _sharedService: SharedService
     ) {
         super('TwVoiceControlsComponent');
     }
@@ -387,6 +392,26 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // filter out the textchat interaction
             this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'voice');
         });
+
+        this._sharedService.getHoldActiveVoiceCalls().subscribe((interactionId) => {
+            if(this.interaction.InteractionID === interactionId) {
+                this.holdCall(this.holdBtn.nativeElement)
+            }
+        })
+
+        this._tmacEventService
+            .getConstructDisposeEvents<IUIEvent>(['InteractionClosedEvent', 'AutoCloseTabEvent'])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evts) =>
+                evts.forEach((evt) => {
+                    setTimeout(() => {
+                        if (evt.EventName === 'InteractionClosedEvent' || evt.EventName === 'AutoCloseTabEvent') {
+                            if (this.data?.Data?.RedirectPath && !this.interactionList?.length)
+                                this._contentPageService.mode = this.data.Data.RedirectPath;
+                        }
+                    });
+                })
+            );
 
         this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
             try{
@@ -751,7 +776,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
                     
                     this._tmacEventService._uiControlsEvents.next({eventName: 'enableStatusChange'});
-                    
                     // remove the interaction reference
                     this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                 } else {
@@ -1245,7 +1269,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     connection = this.createAVConnection(evt.SessionID, 'in');
                     connection?.directCall(TEnums.WrcCallTypes.Audio, 'in');
                     // play incoming call sound
-                    this._appUIService.playAudio('incoming-call', 0.5, true);
+                    this._appUIService.playAudio('incoming-call', 0.5, this.getRepeatFlag());
                     break;
                 case 'call-connecting':
                     // create WebRTC peer connection
@@ -1286,6 +1310,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         } catch (error) {
             this.logger.error('Error in MediaServerEvent', error);
         }
+    }
+
+    getRepeatFlag(): boolean {
+        if(this.interactionList.find((i) => i.status === 'connected')) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -1500,63 +1531,121 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @method answerCall
      * @param {MatButton} btn
      */
-    answerCall(btn: MatButton): void {
+    answerCall(btn: MatButton): Promise<void> {
         this.isAnswerLoading = true;
         // toggle the button
         this.toggleButton(true, btn);
         // check if ms call then do not call api, just process the media server messages
         if (this.isMSCall) {
-            // get the connection variable
-            let connection: AVChannel = this.getAVConnection();
-            // this.avConns[this.sessionID];
-            // check if the connection found for session id
-            if (!connection) {
-                // get connection by first callLines
-                connection = this.getAVConnection(this.callLines[0]);
-                // this.avConns[this.callLines[0]];
-            }
-            // check if the connection is there and media server messages are there
-            if (connection && this.mediaServerMessages.length > 0) {
-                // process the media server messages
-                this.mediaServerMessages.forEach((item: string) => {
-                    connection.onMessage(item);
-                });
-                // clear the array after processing
-                this.mediaServerMessages = [];
+            // check if agent is answering a call when another active call going on
+            if(this.interactionList?.length > 1 && this.interactionList.find((i) => i.status === 'connected')) {
+                // check if auto hold other calls on answer call is enabled
+                if(this.widgetData?.AutoHoldActiveCallOnNewCallAnswer) {
+                    // check if prompt is needed
+                    if(this.widgetData?.ShowPromptForAutoHold) {
+                        const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic',
+                            '',
+                            this.translocoService.translate('widgets.voiceControls.holdActiveCallConfirmationMessage'),
+                        );
+                        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+                            if (dialogResult) {
+                                this.holdOtherActiveCalls('answer'); 
+                            } else {
+                                this.isAnswerLoading = false;
+                                // toggle the button
+                                this.toggleButton(false, btn);
+                                return;
+                            }
+                        });
+                    } else { // if prompt is not needed
+                        this.holdOtherActiveCalls('answer');
+                    }
+                } else {
+                    // show a warning message that it is not allowed to answer call when an active call is on
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.activeCallPresentWarningOnAnswer'), 'warning');
+                    return;
+                }
             } else {
-                this.logger.warn(`answerCall: AV connection is not found - ${this.msSessionId}`, true);
-                this._appUIService.showAppSnackbar({
-                    'message': this.translocoService.translate('widgets.voiceControls.answerCallFailed') + ' <br> AV Connection not found !!',
-                    'state': 'danger',
-                    'vPos':'top',
-                    'hPos': 'center'
-                });
+                this.answerMSCall();
             }
-            // set the process media message to true for further messages
-            this.processMediaMessages = true;
-            this.isAnswerLoading = false;
-            this.checkIfConnected();
-            return;
-        }
-        
-        SDKClient.answerCall(this.interaction.InteractionID.toString(), null).then((dt: IResponse) => {
-            this.isAnswerLoading = false;
-            // toggle the button
-            this.toggleButton(false, btn);
-            // check for the response
-            if (dt.response && dt.response.ResultCode === 0) {
-                // answer call success
-            } else {
+        } else {
+            SDKClient.answerCall(this.interaction.InteractionID.toString(), null).then((dt: IResponse) => {
+                this.isAnswerLoading = false;
+                // toggle the button
+                this.toggleButton(false, btn);
+                // check for the response
+                if (dt.response && dt.response.ResultCode === 0) {
+                    // answer call success
+                } else {
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
+                    this.handleCallFailure('Answer call');
+                    this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + ':' + JSON.stringify(dt),true);
+                }
+            })
+            .catch((e) => {
                 this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
                 this.handleCallFailure('Answer call');
-                this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + ':' + JSON.stringify(dt),true);
+                this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + JSON.stringify(e),true);
+                this.isAnswerLoading = false;
+            });
+        }
+    }
+
+    /**
+     * Answer MS call
+     * @method answerMSCall
+     */
+    answerMSCall() {
+        // get the connection variable
+        let connection: AVChannel = this.getAVConnection();
+        // this.avConns[this.sessionID];
+        // check if the connection found for session id
+        if (!connection) {
+            // get connection by first callLines
+            connection = this.getAVConnection(this.callLines[0]);
+            // this.avConns[this.callLines[0]];
+        }
+        // check if the connection is there and media server messages are there
+        if (connection && this.mediaServerMessages.length > 0) {
+            // process the media server messages
+            this.mediaServerMessages.forEach((item: string) => {
+                connection.onMessage(item);
+            });
+            // clear the array after processing
+            this.mediaServerMessages = [];
+        } else {
+            this.logger.warn(`answerCall: AV connection is not found - ${this.msSessionId}`, true);
+            this._appUIService.showAppSnackbar({
+                'message': this.translocoService.translate('widgets.voiceControls.answerCallFailed') + ' <br> AV Connection not found !!',
+                'state': 'danger',
+                'vPos':'top',
+                'hPos': 'center'
+            });
+        }
+        // set the process media message to true for further messages
+        this.processMediaMessages = true;
+        this.isAnswerLoading = false;
+        this.checkIfConnected();
+    }
+
+    holdOtherActiveCalls(type) {
+        const waitingForHoldSnackbarRef = this._appUIService.showSnackbar('Please wait while, keeping other interactions on hold..', 'loading');
+        this.interactionList.forEach((i) => {
+            if(i.status === 'connected') this._sharedService.triggerHoldActiveVoiceCalls(i.interactionId)
+        });
+        const actionType = type;
+
+        const waitForHoldSubscribe =  this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
+            // filter out the textchat interaction
+            this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'voice' && i.status !== 'hold' && i.status !== 'disconnected' && i.interactionId !== this.interaction.InteractionID);
+            // check if all interactions are on hold
+            if(this.interactionList.length === 0) {
+                // hide the snackbar
+                waitingForHoldSnackbarRef?.dismiss();
+                // unsubscribe
+                waitForHoldSubscribe.unsubscribe();
+                actionType === 'answer' ? this.answerMSCall() : this.unholdMSCall();
             }
-        })
-        .catch((e) => {
-            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
-            this.handleCallFailure('Answer call');
-            this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + JSON.stringify(e),true);
-            this.isAnswerLoading = false;
         });
     }
 
@@ -1662,7 +1751,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this.toggleButton(false, btn);
             // check for the response
             if (dt.response && dt.response.ResultCode === 0) {
-                // disconnect call success
+                // hold call success
             } else {
                 this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.holdCallFailed'), 'failure');
             }
@@ -1678,26 +1767,58 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.toggleButton(true, btn);
         // check if ms call then do not call api, invoke webclient api hold
         if (this.isMSCall) {
-            // unhold all call lines
-            this.callLines.forEach((sessionId) => {
-                // get the connection variable
-                const connection: AVChannel = this.getAVConnection(sessionId);
-                // this.avConns[sessionId];
-                // check if the connection is there and interaction is on hold
-                if (connection && this.status === 'hold') {
-                    connection.unHold();
+
+            // check if agent is answering a call when another active call going on
+            if(this.interactionList?.length > 1 && this.interactionList.find((i) => i.status === 'connected')) {
+                // check if auto hold other calls on answer call is enabled
+                if(this.widgetData?.AutoHoldActiveCallOnUnhold) {
+                    // check if prompt is needed
+                    if(this.widgetData?.ShowPromptForAutoHold) {
+                        const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic',
+                            '',
+                            this.translocoService.translate('widgets.voiceControls.holdActiveCallConfirmationMessageOnUnhold'),
+                        );
+                        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+                            if (dialogResult) {
+                                this.holdOtherActiveCalls('unhold');
+                            } else {
+                                this.toggleButton(false, btn);
+                                return;
+                            }
+                        });
+                    } else { // if prompt is not needed
+                        this.holdOtherActiveCalls('unhold');
+                    }
+                } else {
+                    // show a warning message that it is not allowed to answer call when an active call is on
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.activeCallPresentWarningOnUnHold'), 'warning');
+                    return;
+                }
+            } else this.unholdMSCall();
+        } else {
+            SDKClient.unHoldCall(this.interaction.InteractionID.toString(), null).then((dt: IResponse) => {
+                // toggle the button
+                this.toggleButton(false, btn);
+                // check for the response
+                if (dt.response && dt.response.ResultCode === 0) {
+                    // disconnect call success
+                } else {
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.unHoldCallFailed'), 'failure');
                 }
             });
-            return;
         }
-        SDKClient.unHoldCall(this.interaction.InteractionID.toString(), null).then((dt: IResponse) => {
-            // toggle the button
-            this.toggleButton(false, btn);
-            // check for the response
-            if (dt.response && dt.response.ResultCode === 0) {
-                // disconnect call success
-            } else {
-                this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.unHoldCallFailed'), 'failure');
+        
+    }
+
+    unholdMSCall() {
+        // unhold all call lines
+        this.callLines.forEach((sessionId) => {
+            // get the connection variable
+            const connection: AVChannel = this.getAVConnection(sessionId);
+            // this.avConns[sessionId];
+            // check if the connection is there and interaction is on hold
+            if (connection && this.status === 'hold') {
+                connection.unHold();
             }
         });
     }

@@ -301,7 +301,11 @@
             "sendDTMFError": "Error in sending DTMF",
             "ivrTransferSuccess": "Transferred to IVR successfully",
             "ivrTransferError": "Error in transfer to IVR",
-            "customerDisconnected": "Customer has disconnected!"
+            "customerDisconnected": "Customer has disconnected!",
+            "holdActiveCallConfirmationMessage": "On answering the new call, the active call will be put on hold. Do you want to continue?",
+            "activeCallPresentWarningOnAnswer": "You have an active call, please end / hold the call before answering the new call.",
+            "holdActiveCallConfirmationMessageOnUnhold": "On unholding the active call, the current call will be put on hold. Do you want to continue?",
+            "activeCallPresentWarningOnUnHold": "You have an active call, please end / hold the call before unholding the current call."
         },
         "userLocation": {
             "locationNotFound": "Location not found",
@@ -1137,7 +1141,7 @@
             "reset": "Reset",
             "getPostsFailed": "Error occured while fetching posts",
             "getPostsLoading": "Loading posts",
-            "postIsBeingSent": "Post is being sent. Please wait!",
+            "postIsBeingSent": "Reply has been sent to social media server to process, Please wait!",
             "postsNotFound": "There are no posts",
             "openPostFailed": "Unable to open post",
             "fileMetaError": "Error occurred while connecting to file server - if it fails again please raise as an incident",
