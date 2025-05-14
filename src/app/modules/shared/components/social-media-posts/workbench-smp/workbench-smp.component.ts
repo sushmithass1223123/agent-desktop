@@ -294,6 +294,26 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     postBodies: any = {};
     isFullscreen: boolean = false;
     currentTheme: string = 'theme-default-2';
+     /**
+     * Holds the count of posts for paginator
+     */    
+     totalPostCount: number = 0;
+    
+     /**
+      * Holds the pageIndex to be shown for paginator
+      */    
+     pageNumber: number = 1;
+     
+     /**
+      * Holds the count of posts to be shown for paginator
+      */  
+     pageSize: number = 10;
+     
+     /**
+      * Holds the list of options for page size to be shown for paginator
+      */  
+     pageSizeOptions: number[] = [5, 10, 20, 50, 100, 200];
+ 
 
     outboundStatusList: string[] = ['Pending', 'Failed', 'Success'];
 
@@ -581,8 +601,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     accountName: searchFields.accountName,
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
-                    pageSize: 10,
-                    pageNumber: 1
+                    pageSize: this.pageSize,
+                    pageNumber: this.pageNumber
                 };
             }
             if (!globalKey || (globalKey && this.advancedSearch.data[this.currentTab].changed)) {
@@ -593,8 +613,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     commentText: searchFields.commentText,
                     accountName: searchFields.accountName,
                     listOfSocialMediaAccounts: searchFields.listOfSocialMediaAccounts.join(','),
-                    pageSize: 10,
-                    pageNumber: 1
+                    pageSize: this.pageSize,
+                    pageNumber: this.pageNumber
                 };
             }
             if (this.currentTab === 'sentitem') {
@@ -663,6 +683,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 this.setComponentState('smposts/failure', { silent });
                 this.setComponentState('smposts/polling/inactive', { silent });
             } else {
+                console.log('*****Response from workbench search:', response);
+                this.totalPostCount = response.TotalRecordCount;
                 this.rawResponse = maps[this.currentTab](response.Result ? response.Result : []);
                 this.sortPosts();
                 this.setComponentState('smposts/success', { silent });
@@ -1989,4 +2011,16 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     trackByItem(index: number, item: SMPost): any {
         return item.PostData.SessionId;
     }
+
+     /**
+     * Method to handle paginator page change
+     * @param {PageEvent} $event Page event
+     */
+     onPaginatorPageChange($event) {
+        console.log('Page change:', $event);
+        this.pageNumber = $event.pageIndex;
+        this.pageSize = $event.pageSize;
+        this.doAdvancedSearch(true);
+      }
+
 }

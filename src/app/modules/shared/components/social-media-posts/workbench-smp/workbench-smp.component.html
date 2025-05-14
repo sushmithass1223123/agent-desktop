@@ -641,6 +641,16 @@
                         </span>
                     </div>
 
+                    <!-- Paginator for post -->
+                    <mat-paginator *ngIf="totalPostCount"
+                    (page)="onPaginatorPageChange($event)"
+                    [length]="totalPostCount"
+                    [pageSize]="pageNumber"
+                    [pageSizeOptions]="pageSizeOptions"
+                    >
+                    </mat-paginator>
+
+
                     <!-- Getting post error UI -->
                     <div
                         *ngIf="!postSearchRes.loading && postSearchRes.error"

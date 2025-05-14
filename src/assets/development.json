@@ -1129,7 +1129,11 @@
                                                     "DisableConfirmation": {
                                                         "OnEndCall": false,
                                                         "OnCloseInteraction": true
-                                                    }
+                                                    },
+                                                    "AutoHoldActiveCallOnNewCallAnswer": true,
+                                                    "ShowPromptForAutoHold": true,
+                                                    "AutoHoldActiveCallOnUnhold": true,
+                                                    "RedirectPath": "/home"
                                                 }
                                             },
                                             {
@@ -1631,7 +1635,7 @@
                                                             "Blind": true,
                                                             "Comments": true,
                                                             "Source": {
-                                                                "Use": "vdn",
+                                                                "Use": "skill",
                                                                 "Display": "skill",
                                                                 "FreeTextAllowed": false
                                                             },
@@ -1683,7 +1687,7 @@
                                                     },
                                                     "DisableAvConstraints": {
                                                         "Devices": ["android", "ios"],
-                                                        "SocialChannels": ["whatsapp", "instagram", "fb", "twitter", "youtube"],
+                                                        "SocialChannels": ["whatsapp", "instagram", "fb", "twitter"],
                                                         "EscalateAudioCall": false,
                                                         "EscalateVideoCall": false,
                                                         "RequestAudioCall": false,
@@ -1770,9 +1774,10 @@
                                                     },
                                                     "SMM": {
                                                         "attachments": {
-                                                            "allowedChannels": "line,whatsapp,we,fb,viber,telegram,youtube,twitter"
+                                                            "allowedChannels": "line,whatsapp,we,fb,viber,telegram,twitter"
                                                         }
-                                                    }
+                                                    },
+                                                    "RedirectPath": "/home"
                                                 }
                                             },
                                             {
@@ -2289,7 +2294,8 @@
                                                     "TemplatesByHierarchy": false,
                                                     "AsyncEmailSendTimeout": 60000,
                                                     "DefaultMaxPayloadSize": 29359488,
-                                                    "ShowPayloadSizeStats": true
+                                                    "ShowPayloadSizeStats": true,
+                                                    "RedirectPath": "/home"
                                                 }
                                             },
                                             {
@@ -2603,7 +2609,8 @@
                                                         }
                                                     },
                                                     "MaxFileUploadSize": 20971520,
-                                                    "AsyncReplySendTimeout": 60000
+                                                    "AsyncReplySendTimeout": 60000,
+                                                    "RedirectPath": "/home"
                                                 }
                                             },
                                             {
