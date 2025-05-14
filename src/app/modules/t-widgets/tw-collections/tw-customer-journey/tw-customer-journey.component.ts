@@ -130,10 +130,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Maximized flag
      */
     maximized: boolean;
-     /**
-     * Added property to control sort direction binding in template 
-     */
-    sortDirection: 'asc' | 'desc' = 'desc';
+
     /**
      * Ad-table's mat table for pagination
      */
@@ -688,15 +685,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     onMaximized(max: boolean): void {
         this.maximized = max;
         this.maximizeEvent.emit(max);
-    // Keeping sorting direction descending for both maximized and minimized states
-        this.sortDirection = 'desc';
-    // Sorting data descending by InteractionDate
-        if (this.table?.source?.data) {
-                this.table.source.data.sort((a, b) => new Date(b.InteractionDate).getTime() - new Date(a.InteractionDate).getTime());
 
-            }
     }
-
     /**
      * Fetches interaction data and assings to this.interactionNotesReq.data
      * @param {InteractionHistory} record
@@ -1102,13 +1092,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 this.table.collapseExpanded();
                 this.table.selected = null;
             }
-        }
-        // Sorting descending by InteractionDate on close/minimize as well
-        this.sortDirection = 'desc';
-        if (this.table?.source?.data) {
-            this.table.source.data.sort((a, b) => new Date(b.InteractionDate).getTime() - new Date(a.InteractionDate).getTime());
-        }
-    }
+        }}
 }
 
 interface WidgetData {
