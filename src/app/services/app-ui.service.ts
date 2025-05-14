@@ -778,4 +778,30 @@ export class AppUiService extends SharedWrapper {
         });
         return dialogRef;
     }
+
+    public findMaxZIndexElement(): number {
+        const allElements = document.body.getElementsByTagName('*');
+        let maxZIndex = -Infinity;
+
+        for (let i = 0; i < allElements.length; i++) {
+            const el = allElements[i] as HTMLElement;
+
+            if (!el.offsetParent || el.style.display === 'none' || el.style.visibility === 'hidden') {
+                continue;
+            }
+
+            const z = window.getComputedStyle(el).zIndex;
+
+            if (!z || isNaN(+z)) {
+                continue;
+            }
+
+            const zIndex = +z;
+            if (zIndex > maxZIndex) {
+                maxZIndex = zIndex;
+            }
+        }
+
+        return maxZIndex;
+    }
 }
