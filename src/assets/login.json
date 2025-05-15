@@ -70,7 +70,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://testlabsd.productqa.tetherfi.cloud/SDKProxy/TmacProxy.asmx"],
+                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx"],
                 "mediaMatrixUrls": [],
                 "type": "soap",
                 "timeout": 60

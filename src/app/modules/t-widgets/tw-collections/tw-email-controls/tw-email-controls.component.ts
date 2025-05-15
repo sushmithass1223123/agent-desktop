@@ -1220,7 +1220,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             for (const obj of arr2) {
                 if (obj.IsUploaded) {
                     isModified = true;
-                    result.push(`${obj.URL}|1`);
+                    result.push(`${obj?.Name}|${obj.URL}|1`);
                 }
             }
             return { isModified: isModified, changes: result };
@@ -1230,12 +1230,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         for (const obj of arr2) {
             const match = arr1.find((item) => item.URL === obj.URL);
             if (match) {
-                result.push(`${obj.URL}|0`);
+                result.push(`${obj?.Name}|${obj.URL}|0`);
             } else {
                 if (obj.IsUploaded) {
                     isModified = true;
                 }
-                result.push(`${obj.URL}|${obj.IsUploaded ? '1' : '0'}`);
+                result.push(`${obj?.Name}|${obj.URL}|${obj.IsUploaded ? '1' : '0'}`);
             }
         }
 
@@ -1244,7 +1244,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             const match = arr2.find((item) => item.URL === obj.URL);
             if (!match) {
                 isModified = true;
-                result.push(`${obj.URL}|2`);
+                result.push(`${obj?.Name}|${obj.URL}|2`);
             }
         }
 
