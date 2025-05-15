@@ -552,7 +552,7 @@
                                 >
                                     <ng-container
                                         *ngIf="
-                                            advancedSearch.form.controls.listOfSocialMediaAccounts
+                                            advancedSearch.form.controls.socialMediaAccounts
                                                 ?.value as selectedSocialMediaAccounts
                                         "
                                     >
@@ -560,14 +560,14 @@
                                             {{
                                                 selectedSocialMediaAccounts && selectedSocialMediaAccounts.length
                                                     ? locale(
-                                                          'sharedComponents.socialMediaPosts.listOfSocialMediaAccounts'
+                                                          'sharedComponents.socialMediaPosts.socialMediaAccounts'
                                                       )
                                                     : locale(
                                                           'sharedComponents.socialMediaPosts.socialMediaAccountsNotFound'
                                                       )
                                             }}
                                         </mat-label>
-                                        <mat-select formControlName="listOfSocialMediaAccounts" multiple>
+                                        <mat-select formControlName="socialMediaAccounts" multiple>
                                             <mat-select-trigger>
                                                 {{ selectedSocialMediaAccounts ? selectedSocialMediaAccounts[0] : '' }}
                                                 <span *ngIf="selectedSocialMediaAccounts?.length > 1">
@@ -578,7 +578,7 @@
                                                 </span>
                                             </mat-select-trigger>
                                             <mat-option
-                                                *ngFor="let eachAccount of listOfSocialMediaAccounts"
+                                                *ngFor="let eachAccount of socialMediaAccounts"
                                                 [value]="eachAccount"
                                                 >{{ eachAccount }}</mat-option
                                             >

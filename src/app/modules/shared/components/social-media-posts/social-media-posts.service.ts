@@ -29,7 +29,7 @@ export const initSmpostsSearchState = {
     commentText: '',
     sessionid: '',
     global: '',
-    listOfSocialMediaAccounts: [],
+    socialMediaAccounts: [],
     pageSize: 10,
     pageNumber: 1,
     deviceid: '',
@@ -62,7 +62,7 @@ const searchParams = new FormGroup({
     commentText: new FormControl(initSmpostsSearchState.commentText),
     sessionid: new FormControl(initSmpostsSearchState.sessionid),
     global: new FormControl(initSmpostsSearchState.global),
-    listOfSocialMediaAccounts: new FormControl(initSmpostsSearchState.listOfSocialMediaAccounts),
+    socialMediaAccounts: new FormControl(initSmpostsSearchState.socialMediaAccounts),
     pageSize: new FormControl(initSmpostsSearchState.pageSize),
     pageNumber: new FormControl(initSmpostsSearchState.pageNumber),
     deviceid: new FormControl(initSmpostsSearchState.deviceid),
@@ -84,7 +84,7 @@ export class SocialMediaPostsService {
             searchParams,
             globalSearchKey: new FormControl(''),
             defaultEmail: new FormControl(''),
-            listOfSocialMediaAccounts: new FormControl([])
+            socialMediaAccounts: new FormControl([])
         }
     };
     /**
@@ -136,14 +136,14 @@ export class SocialMediaPostsService {
                 throw new Error(`Invalid Server response ${JSON.stringify(res.response, null, 2)}`);
             }
             if (res.response.length) {
-                const listOfSocialMediaAccounts =
+                const socialMediaAccounts =
                     res.response.map((email) => {
                         const [mail] = email.split(',');
                         return mail;
                     }) || [];
-                this.globalSmpWorkbenchState$.searchParams.patchValue({ listOfSocialMediaAccounts });
+                this.globalSmpWorkbenchState$.searchParams.patchValue({ socialMediaAccounts });
                 this.globalSmpWorkbenchState$.defaultEmail.setValue(res.response[0]);
-                this.globalSmpWorkbenchState$.listOfSocialMediaAccounts.setValue(res.response);
+                this.globalSmpWorkbenchState$.socialMediaAccounts.setValue(res.response);
             }
         } catch (e) {
             console.error(e);
@@ -158,7 +158,7 @@ export class SocialMediaPostsService {
         this.globalSmpWorkbenchState$.searchParams.setValue({
             ...initSmpostsSearchState,
             ...update,
-            listOfSocialMediaAccounts: this.globalSmpWorkbenchState$.listOfSocialMediaAccounts.value
+            socialMediaAccounts: this.globalSmpWorkbenchState$.socialMediaAccounts.value
         });
     }
 }

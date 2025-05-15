@@ -259,7 +259,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     /**
      * List of available social media accounts
      */
-    listOfSocialMediaAccounts: string[] = [];
+    socialMediaAccounts: string[] = [];
 
     selectedPostSessionId: string;
     selectedPostId: string | any;
@@ -350,7 +350,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     async ngOnInit() {
         try {
             // get and set the list of available social media accounts
-            await this.setListOfSocialMediaAccounts();
+            await this.setsocialMediaAccounts();
 
             this.validateAvailabletabsFromConfiguration();
 
@@ -594,8 +594,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 searchParams = {
                     commentText: globalKey,
                     global: 'GLOBAL',
-                    listOfSocialMediaAccounts:
-                        this._smpService.globalSmpWorkbenchState$.searchParams.value.listOfSocialMediaAccounts.join(
+                    socialMediaAccounts:
+                        this._smpService.globalSmpWorkbenchState$.searchParams.value.socialMediaAccounts.join(
                             ','
                         ),
                     accountName: searchFields.accountName,
@@ -612,7 +612,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     endDate: searchFields.endDate,
                     commentText: searchFields.commentText,
                     accountName: searchFields.accountName,
-                    listOfSocialMediaAccounts: searchFields.listOfSocialMediaAccounts.join(','),
+                    socialMediaAccounts: searchFields.socialMediaAccounts.join(','),
                     pageSize: this.pageSize,
                     pageNumber: this.pageNumber
                 };
@@ -684,8 +684,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 this.setComponentState('smposts/polling/inactive', { silent });
             } else {
                 console.log('*****Response from workbench search:', response);
-                this.totalPostCount = response.ToTalRecordCount;
-                this.rawResponse = maps[this.currentTab](response.Result ? response.Result : []);
+                this.totalPostCount = response.TotalCount;
+                this.rawResponse = maps[this.currentTab](response.ResultData ? response.ResultData : []);
                 this.sortPosts();
                 this.setComponentState('smposts/success', { silent });
                 if (this.chosenPostData && !silent) {
@@ -1242,21 +1242,21 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     /**
      * Methos to set available mailboxes
      */
-    private async setListOfSocialMediaAccounts(): Promise<void> {
+    private async setsocialMediaAccounts(): Promise<void> {
         try {
-            if (!this._smpService.globalSmpWorkbenchState$.listOfSocialMediaAccounts.value?.length) {
+            if (!this._smpService.globalSmpWorkbenchState$.socialMediaAccounts.value?.length) {
                 await this._smpService.init();
             }
 
-            this.listOfSocialMediaAccounts = this._smpService.globalSmpWorkbenchState$.listOfSocialMediaAccounts.value;
-            this._smpService.globalSmpWorkbenchState$.listOfSocialMediaAccounts.valueChanges
+            this.socialMediaAccounts = this._smpService.globalSmpWorkbenchState$.socialMediaAccounts.value;
+            this._smpService.globalSmpWorkbenchState$.socialMediaAccounts.valueChanges
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((res) => {
-                    this.listOfSocialMediaAccounts = res;
+                    this.socialMediaAccounts = res;
                 });
         } catch (e) {
             this.logger.error(
-                '[WorkbenchSmpComponent.setListOfSocialMediaAccounts] - Error occured while setting available mailboxes:',
+                '[WorkbenchSmpComponent.setsocialMediaAccounts] - Error occured while setting available mailboxes:',
                 JSON.stringify(e),
                 true
             );

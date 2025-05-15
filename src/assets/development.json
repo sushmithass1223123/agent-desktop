@@ -9,7 +9,7 @@
         "Password": { "Agent": false, "Station": false },
         "StationEnabled": false,
         "DisableLanId": false,
-        "PromptAgentIdOnInvalidLanId": false,
+        "PromptAgentIdOnInvalidLanId": true,
         "MultiWindowMode": { "Enabled": false, "Width": 100, "Height": 100, "PixelDimension": false },
         "SSOLinkExpiry": 10,
         "LogoutUrl": "",
