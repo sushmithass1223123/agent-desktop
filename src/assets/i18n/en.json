@@ -452,7 +452,9 @@
             "emailDownloadFailed": "Unable to download email",
             "emailSendConnectionError": "Error connecting to email server",
             "comment": "Comment",
-            "reasonTags": "Reason Tags"
+            "reasonTags": "Reason Tags",
+            "draftSuccess": "Saved drafted email successfully",
+            "draftFailed": "Something went wrong, unable to save drafted email!!"
         },
         "deflectToDigital": {
             "commentPlaceholder": "Please enter comment...",

@@ -1288,12 +1288,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     if (x.response) {
                         this.currentInteraction.CurrOutSessionId = x.response;
                     } else {
+                        if(closeEmail)this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.draftFailed'), 'failure');
                         throwADError('Unable to save as draft', new Error('Invalid server response'));
                     }
                     if (btn) {
                         btn.disabled = false;
                     }
                     if (closeEmail) {
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.draftSuccess'), 'success');
                         this.closeInteraction(btn, true);
                         this.sendDataToSupervisor({
                             DraftStatus: 'closed'
@@ -1342,7 +1344,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             if (dialogResult) {
                 this.saveEmailAsDraft(true, btn);
                 // this.replyInfo = null;
-                this.emailComponentMode = 'preview';
+                
+                if(this.emailRef?.mode !== 'compose') this.emailComponentMode = 'preview';
             } else {
                 // this checks if the user clicked on cancel, or on the overlay
                 // if the user clicks on cancel, this will be boolean false. Else it will be undefined
@@ -1359,7 +1362,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         DraftStatus: 'preview'
                     });
                     // this.replyInfo = null;
-                    this.emailComponentMode = 'preview';
+                    if(this.emailRef?.mode !== 'compose') this.emailComponentMode = 'preview';
                 }
                 if (btn) {
                     btn.disabled = false;
