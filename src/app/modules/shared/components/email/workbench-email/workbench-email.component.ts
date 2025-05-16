@@ -1802,7 +1802,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 InSessionId: x.inSessionID,
                 uiId: `${x.inSessionID}|${x.sessionID}`,
                 RouteId: x.routeId,
-                HasAttachment: x.hasAttachment,
+                HasAttachment: x.hasAttachments,
                 ConversationID: x.conversationID,
                 // not available in drafts search
                 IsEmailProbableSpam: x.IsEmailProbableSpam
@@ -1838,7 +1838,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 InSessionId: x.inSessionID,
                 uiId: `${x.inSessionID}|${x.sessionID}`,
                 RouteId: x.routeId,
-                HasAttachment: x.hasAttachment,
+                HasAttachment: x.hasAttachments,
                 ConversationID: x.conversationID,
                 // not available in inbox search
                 IsEmailProbableSpam: x.IsEmailProbableSpam
