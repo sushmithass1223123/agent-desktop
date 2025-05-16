@@ -30,3 +30,7 @@ email-editor {
 .tox-toolbar__overflow {
     max-width: none !important;
 }
+
+.tox .tox-statusbar__resize-handle {
+    display: none !important;
+}

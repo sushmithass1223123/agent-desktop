@@ -97,7 +97,9 @@
                                 "Description": "",
                                 "Type": "tw-notifications",
                                 "Config": { "Enabled": true },
-                                "Data": {}
+                                "Data": {
+                                    "disableSocialMediaNotifications": true
+                                }
                             },
                             {
                                 "Name": "Available Media Devices",

@@ -785,7 +785,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                 );
                                 return;
                               }
-                            if (resultStr?.errorCode && resultStr.errorCode == '-102') {
+                            if (resultStr?.errorcode && resultStr.errorcode == '-102') {
                                 this.appUiService.showSnackbar(
                                     this.translocoService.translate('sharedComponents.email.dateRangeExceeded'),
                                     'warning'
@@ -1802,7 +1802,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 InSessionId: x.inSessionID,
                 uiId: `${x.inSessionID}|${x.sessionID}`,
                 RouteId: x.routeId,
-                HasAttachment: x.HasAttachment,
+                HasAttachment: x.hasAttachment,
                 ConversationID: x.conversationID,
                 // not available in drafts search
                 IsEmailProbableSpam: x.IsEmailProbableSpam
@@ -1838,7 +1838,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 InSessionId: x.inSessionID,
                 uiId: `${x.inSessionID}|${x.sessionID}`,
                 RouteId: x.routeId,
-                HasAttachment: x.HasAttachment,
+                HasAttachment: x.hasAttachment,
                 ConversationID: x.conversationID,
                 // not available in inbox search
                 IsEmailProbableSpam: x.IsEmailProbableSpam

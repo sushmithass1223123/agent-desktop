@@ -28,7 +28,7 @@ import { map, takeUntil } from 'rxjs/operators';
 import { AppUiService } from '@services/app-ui.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { SharedService } from '@services/shared.service';
-import { EMAIL_SEND_STATUS, SMP_SEND_STATUS } from 'app/constants';
+import { EMAIL_SEND_STATUS, SMP_SEND_STATUS, EMAIL_CURRENTSTATUS_CODES } from 'app/constants';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 
 /**
@@ -361,11 +361,22 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
                 );
             }
         } else {
-            if (EMAIL_SEND_STATUS[JsonData?.StatusCode] === 'Success')
-                this._appUIService.showSnackbar(
-                    this.translocoService.translate('sharedComponents.email.asyncEmailSendSuccess')
-                );
-            else {
+            if (EMAIL_SEND_STATUS[JsonData?.StatusCode] === 'Success') {
+                
+                // check if the email is sent to customer successfully or it has any other status & display message accordingly
+                const currentStatusMessage = EMAIL_CURRENTSTATUS_CODES[JsonData?.OutboundData?.CurrentStatus];
+
+                if (currentStatusMessage) {
+                    this._appUIService.showSnackbar(
+                        this.translocoService.translate(currentStatusMessage)
+                    );
+                } else {
+                    this._appUIService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.email.asyncEmailSendSuccess')
+                    );
+                }
+
+            } else {
                 let errReason = '';
                 let errorMsg = EMAIL_SEND_STATUS[JsonData?.StatusCode]
                     ? EMAIL_SEND_STATUS[JsonData?.StatusCode]
@@ -401,9 +412,6 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             SMP_SEND_STATUS[JsonData?.StatusCode] === 'Success'
         ) {
             this._sharedService.triggerEmailFailure(evt.InteractionID);
-            this._appUIService.showSnackbar(
-                this.translocoService.translate('sharedComponents.email.asyncEmailSendSuccess')
-            );
             SDKClient.closeInteraction(evt.InteractionID.toString(), null)
                 .then((dt: IResponse) => {
                     // check the response
