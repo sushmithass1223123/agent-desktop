@@ -1539,6 +1539,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                 this.doAdvancedSearch(true);
                             }, 1000);
                             this.setComponentState('email/reply/success');
+                            widget.Config.Class = ''; // remove the class so that user can add/remove more emails or do other activities
                             this._aotWidgetService.destroyWidget(widget.ID);
                         } else {
                             this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.emptyEmailWarning'), 'failure');
@@ -1552,6 +1553,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 templateRef: this.ReplyEditorDialog
             };
             widget.Data = this.replyEditorModal;
+            widget.Config.Class = 'disable-backgorund'; // added so that user cannot add/remove more emails or do other activities
             this._aotWidgetService.addWidget(widget as AOTWidget);
         } catch (e) {
             console.error(e);

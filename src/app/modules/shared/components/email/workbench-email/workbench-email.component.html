@@ -112,6 +112,28 @@
                                 >
                                     <mat-icon>refresh</mat-icon>
                                 </button>
+
+                                <button
+                                mat-icon-button
+                                (click)="replyToSelectedEmails(getSelectedEmails())"
+                                [ngClass]="{ 'twd-animate-spin': polling.active }"
+                                [disabled]="polling.active"
+                                [matTooltip]="testReplyAll"
+                            >
+                            R
+                            </button>
+
+                            <button
+                            mat-icon-button
+                            (click)="transferEmail(getSelectedEmails())"
+                            [ngClass]="{ 'twd-animate-spin': polling.active }"
+                            [disabled]="polling.active"
+                            [matTooltip]="testtransfer"
+                        >
+                        T
+                        </button>
+
+
                                 <button
                                     mat-icon-button
                                     (click)="advancedSearch.show = !advancedSearch.show"
