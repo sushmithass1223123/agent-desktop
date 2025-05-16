@@ -177,6 +177,13 @@ tw-panel.disable-backgorund {
         z-index: 1000;
 }
 
-// tw-card.disable-backgorund {
-//         position: relative;
-// }
+tw-card.disable-backgorund {
+
+    top: 50% !important;;
+    left: 50% !important;;
+    transform: translate(-50%, -50%) !important;
+    position: fixed !important;
+    // top: 50%;
+    // left: 50%;
+    // transform: translate(-50%, -50%);
+}
