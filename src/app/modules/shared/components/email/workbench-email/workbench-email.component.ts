@@ -1554,6 +1554,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             };
             widget.Data = this.replyEditorModal;
             widget.Config.Class = 'disable-background';
+            widget.Config.Actions = ["destroy"];
+
             this._aotWidgetService.addWidget(widget as AOTWidget);
         } catch (e) {
             console.error(e);
