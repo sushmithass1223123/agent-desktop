@@ -99,7 +99,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     rejectReason = {
         allReasons: [],
-        reasonTags: '',
+        reasonTags: [],
         comment: ''
     };
 
@@ -368,7 +368,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
                 if (this.currentInteraction.RejectReason && typeof this.currentInteraction.RejectReason === 'string') {
                     this.currentInteraction.RejectReason = JSON.parse(this.currentInteraction.RejectReason);
-                    this.currentInteraction.RejectReason.reasonTags = this.currentInteraction.RejectReason.reasonTags?.join(',') || '';
+                    this.currentInteraction.RejectReason.reasonTags = this.currentInteraction.RejectReason.reasonTags?.join(',') || [];
                 }
                 this.getInboxMessageReq = { error: false, loading: false };
             } catch (err) {
@@ -1389,7 +1389,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 this._fuseProgressBarService.hide();
                 return;
             }
-            const { comment, reasonTags } = this.rejectReason;
+            const { comment, reasonTags } = this.rejectReason; 
             if (comment) {
                 SDKClient.rejectEmail({
                     reason: JSON.stringify({ comment, reasonTags }),
