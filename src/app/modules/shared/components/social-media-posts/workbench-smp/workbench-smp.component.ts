@@ -294,26 +294,25 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     postBodies: any = {};
     isFullscreen: boolean = false;
     currentTheme: string = 'theme-default-2';
-     /**
+    /**
      * Holds the count of posts for paginator
-     */    
-     totalPostCount: number = 0;
-    
-     /**
-      * Holds the pageIndex to be shown for paginator
-      */    
-     pageNumber: number = 1;
-     
-     /**
-      * Holds the count of posts to be shown for paginator
-      */  
-     pageSize: number = 10;
-     
-     /**
-      * Holds the list of options for page size to be shown for paginator
-      */  
-     pageSizeOptions: number[] = [5, 10, 20, 50, 100, 200];
- 
+     */
+    totalPostCount: number = 0;
+
+    /**
+     * Holds the pageIndex to be shown for paginator
+     */
+    pageNumber: number = 1;
+
+    /**
+     * Holds the count of posts to be shown for paginator
+     */
+    pageSize: number = 10;
+
+    /**
+     * Holds the list of options for page size to be shown for paginator
+     */
+    pageSizeOptions: number[] = [5, 10, 20, 50, 100, 200];
 
     outboundStatusList: string[] = ['Pending', 'Failed', 'Success'];
 
@@ -595,9 +594,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     commentText: globalKey,
                     global: 'GLOBAL',
                     socialMediaAccounts:
-                        this._smpService.globalSmpWorkbenchState$.searchParams.value.socialMediaAccounts.join(
-                            ','
-                        ),
+                        this._smpService.globalSmpWorkbenchState$.searchParams.value.socialMediaAccounts.join(','),
                     accountName: searchFields.accountName,
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
@@ -659,7 +656,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 (this.currentTab === 'sentitem'
                     ? 'sent'
                     : this.currentTab === 'posts'
-                    ? 'inbox'
+                    ? 'post'
                     : this.currentTab
                 ).toLowerCase(),
                 searchParams
@@ -1144,7 +1141,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     PostData: {
                         SessionId: x?.SessionID,
                         PostId: x?.PostID,
-                        From: x?.From,
+                        From: x?.AccountName,
                         To: x?.AccountName,
                         Subject: x?.PostText,
                         IsItemEdited: x?.IsPostEdited,
@@ -1275,19 +1272,15 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             let backupChannelIdentifier = 'EmailType';
             let skillIdentifier = 'SkillName';
             let backupSkillIdentifier = 'SkillId';
-            if (this.currentTab === 'sentitem' || this.currentTab === 'draft') skillIdentifier = 'Mailbox';
+            if (this.currentTab === 'sentitem' || this.currentTab === 'draft' || this.currentTab === 'posts')
+                skillIdentifier = 'Mailbox';
             let availableChannels = Array.from(new Set(response.map((r: SMPost) => r[channelIdentifier])));
 
             const getSegregatedPostsBySkill = (channel: string) => {
                 let filteredPostsByChannel: SMPost[] = response.filter(
                     (res: SMPost) => (res[channelIdentifier] ?? res[backupChannelIdentifier]) === channel
                 );
-                // Show only unique posts for posts tab
-                if (this.currentTab === 'posts') {
-                    filteredPostsByChannel = [
-                        ...new Map(filteredPostsByChannel.map((item) => [item?.PostData?.PostId, item])).values()
-                    ];
-                }
+
                 let availableSkills = Array.from(
                     new Set(filteredPostsByChannel.map((r: SMPost) => r[skillIdentifier] ?? r[backupSkillIdentifier]))
                 );
@@ -1404,7 +1397,11 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             this.selectedPostId = post.PostData.PostId;
 
             if (!fetchFromOutbox) {
-                inboxRes = (await SDKClient.getInboxItem(post.PostData.SessionId)).response;
+                inboxRes = (
+                    await SDKClient[this.currentTab === 'posts' ? 'getPostItem' : 'getInboxItem'](
+                        post.PostData.SessionId ?? post.PostData.PostId
+                    )
+                ).response;
                 if (!inboxRes) {
                     if (this.currentTab === 'queue') {
                         fetchFromOutbox = true;
@@ -1462,7 +1459,11 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
 
             if (fetchFromOutbox) {
-                outboxRes = (await SDKClient.getOutboxItem(post.PostData.SessionId)).response;
+                outboxRes = (
+                    await SDKClient[this.currentTab === 'posts' ? 'getPostItem' : 'getOutboxItem'](
+                        post.PostData.SessionId ?? post.PostData.PostId
+                    )
+                ).response;
                 if (!outboxRes) {
                     throwADError('Error in WorkbenchSmpComponent.getOutboxItem', 'Unexpected Response from server');
                 }
@@ -1644,10 +1645,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             const { items } = posts.reduce(
                 (acc: any, curr) => {
                     acc.items.push({
-                        routeId: curr.PostData.RouteId || '',
+                        routeId: (curr as any).RouteId || '',
                         sessionId: curr.PostData.SessionId,
                         inSessionId: curr.PostData.SessionId,
-                        mailbox: curr?.Mailbox || ''
+                        account: curr?.Mailbox || ''
                     });
                     return acc;
                 },
@@ -1940,15 +1941,13 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         if (this.selectedPostSessionId === curr.PostData.SessionId) {
                             this.openPostRes.data.next(null);
                         }
-                        return SDKClient.changeSMStatus(
-                            {
-                                routeId: curr.PostData.RouteId,
-                                inboxSessionId: curr.PostData.SessionId,
-                                status: ['sentitem', 'draft'].includes(this.currentTab)
-                                    ? `Outbox,Closed,sent,${curr.PostData.SessionId}`
-                                    : 'Close'
-                            }
-                        );
+                        return SDKClient.changeSMStatus({
+                            routeId: curr.PostData.RouteId,
+                            inboxSessionId: curr.PostData.SessionId,
+                            status: ['sentitem', 'draft'].includes(this.currentTab)
+                                ? `Outbox,Closed,sent,${curr.PostData.SessionId}`
+                                : 'Close'
+                        });
                     })
                 );
             }
@@ -2012,15 +2011,14 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         return item.PostData.SessionId;
     }
 
-     /**
+    /**
      * Method to handle paginator page change
      * @param {PageEvent} $event Page event
      */
-     onPaginatorPageChange($event) {
+    onPaginatorPageChange($event) {
         console.log('Page change:', $event);
         this.pageNumber = $event.pageIndex;
         this.pageSize = $event.pageSize;
         this.doAdvancedSearch(true);
-      }
-
+    }
 }

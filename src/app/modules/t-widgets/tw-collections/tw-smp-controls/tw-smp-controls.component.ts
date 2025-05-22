@@ -734,9 +734,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 routeId: '',
                 to: '',
                 typeOfResponse: '',
-                attachmentList: changes,
+                attachmentFileList: changes.join(","),
                 isAttachmentModified: isModified,
-                engagementFileList: [],
+                engagementFileList: [].join(","),
                 isEngagementModified: false,
             }
         )
