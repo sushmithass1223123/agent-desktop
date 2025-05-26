@@ -29,5 +29,5 @@ export const SMP_SEND_STATUS = smpErrorCodes;
 export const SMP_CURRENTSTATUS_CODES = {
     SentToCustomer: 'sharedComponents.socialMediaPosts.replySendToCustomer',
     SentToCheckerSession: 'sharedComponents.socialMediaPosts.replySendToChecker',
-    EmailSending: 'sharedComponents.socialMediaPosts.postIsBeingSent'
+    ItemSending: 'sharedComponents.socialMediaPosts.postIsBeingSent'
 };

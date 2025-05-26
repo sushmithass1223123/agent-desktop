@@ -11,6 +11,7 @@ export class SharedService {
     private holdMethodSubject = new Subject<void>();
     private changeStatusSubject = new Subject<any>();
     private emailErrorNotifySubject = new Subject<number>();
+    private smErrorNotifySubject = new Subject<number>();
     private appConfirmDialog = new Subject<void>();
     private whiteboardOpenSubject = new BehaviorSubject<boolean>(false);
     whiteboardOpen$ = this.whiteboardOpenSubject.asObservable();
@@ -26,6 +27,9 @@ export class SharedService {
     triggerEmailFailure(interactionId: number) {
         this.emailErrorNotifySubject.next(interactionId);
     }
+    triggerSmFailure(interactionId: number) {
+        this.smErrorNotifySubject.next(interactionId);
+    }
     
     triggerChangeStatus(auxData: any): void {
     this.changeStatusSubject.next(auxData);
@@ -37,6 +41,9 @@ export class SharedService {
 
     getEmailFailure() {
         return this.emailErrorNotifySubject.asObservable();
+    }
+    getSMFailure() {
+        return this.smErrorNotifySubject.asObservable();
     }
 
     triggerHoldMethod() {

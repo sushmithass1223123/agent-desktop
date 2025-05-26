@@ -1059,13 +1059,16 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
 
             return result.map((x: any): SMPost => {
+                const parsedData = JSON.parse(x?.Data);
                 return {
                     AddedTime: x?.AddedTime,
                     SkillId: x?.SkillId,
                     SkillName: x?.SkillName,
                     SubChannel: channelMapper[x?.SubChannel?.toLowerCase()],
                     PostData: {
-                        ...JSON.parse(x?.Data)
+                        ...parsedData,
+                        Subject: parsedData?.Text,
+                        IsItemEdited: x.IsEdited
                     }
                 };
             });
@@ -1101,9 +1104,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         SessionId: x?.SessionID,
                         PostId: x?.PostID,
                         ActiveCommentId: x?.CommentID,
-                        From: x?.From,
+                        From: x?.FromName,
                         RouteId: '',
-                        To: x?.AccountName,
+                        To: x?.ToName,
                         Subject: x?.CommentText,
                         IsItemDeleted: x?.IsCommentDeleted || x?.IsPostDeleted,
                         IsItemEdited: x?.IsCommentEdited || x?.IsPostEdited
@@ -1180,8 +1183,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     SubChannel: channelMapper[x?.Label?.split('Draft_')?.pop()?.toLowerCase()],
                     PostData: {
                         SessionId: x?.SessionID,
-                        From: x?.From,
-                        To: x?.AccountName,
+                        From: x?.FromName,
+                        To: x?.ToName,
                         Subject: x?.CommentText,
                         RouteId: ''
                     }
@@ -1217,8 +1220,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     SkillName: '',
                     PostData: {
                         SessionId: x?.SessionID,
-                        From: x?.From,
-                        To: x?.From,
+                        From: x?.FromName,
+                        To: x?.ToName,
                         Subject: x?.CommentText,
                         ActiveCommentId: x?.CommentID,
                         ParentCommentId: x?.ParentCommentId,

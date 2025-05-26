@@ -36,6 +36,7 @@ import { merge, sortBy } from 'lodash';
 import { filter, take, takeUntil } from 'rxjs/operators';
 import { TMACEventService } from '@services/tmac-event.service';
 import { format } from 'date-fns';
+import { SharedService } from '../../../../services/shared.service';
 
 declare var document: any;
 
@@ -149,7 +150,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         private cdr: ChangeDetectorRef,
         private _appDataService: AppDataService,
         private _matDialog: MatDialog,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private _sharedService: SharedService
     ) {
         super('TwSmpControlsComponent');
     }
@@ -168,6 +170,12 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
+        });
+
+        this._sharedService.getSMFailure().subscribe((interactionId: number) => {
+            if (this.data.InteractionDetails.InteractionID === interactionId) {
+                clearTimeout(this.sendTimerId);
+            }
         });
 
         this._tmacEventService
@@ -263,6 +271,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     }
 
     ngOnDestroy(): void {
+        this.sendTimerId && clearTimeout(this.sendTimerId);
         SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
