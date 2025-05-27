@@ -322,7 +322,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         Pending: 'orange',
         Success: 'green',
         Failed: 'red'
-    }
+    };
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -792,7 +792,17 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 startDate.setHours(searchFields.fromTime?.split(':')[0] || '00');
                 startDate.setMinutes(searchFields.fromTime?.split(':')[1] || '00');
                 startDate.setSeconds(0);
-                startDate = formatDate(startDate, 'yyyyMMddHHmmss');
+                const utcDate = new Date(
+                    Date.UTC(
+                        startDate.getUTCFullYear(),
+                        startDate.getUTCMonth(),
+                        startDate.getUTCDate(),
+                        startDate.getUTCHours(),
+                        startDate.getUTCMinutes(),
+                        startDate.getUTCSeconds()
+                    )
+                );
+                startDate = formatDate(utcDate, 'yyyyMMddHHmmss');
             }
 
             if (searchFields.toDate) {
@@ -800,7 +810,17 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 endDate.setHours(searchFields.toTime?.split(':')[0] || '00');
                 endDate.setMinutes(searchFields.toTime?.split(':')[1] || '00');
                 endDate.setSeconds(0);
-                endDate = formatDate(endDate, 'yyyyMMddHHmmss');
+                const utcDate = new Date(
+                    Date.UTC(
+                        endDate.getUTCFullYear(),
+                        endDate.getUTCMonth(),
+                        endDate.getUTCDate(),
+                        endDate.getUTCHours(),
+                        endDate.getUTCMinutes(),
+                        endDate.getUTCSeconds()
+                    )
+                );
+                endDate = formatDate(utcDate, 'yyyyMMddHHmmss');
             }
 
             return { ...searchParams, endDate, startDate };
