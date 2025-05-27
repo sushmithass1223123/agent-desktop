@@ -145,11 +145,11 @@ export class AppComponent implements OnInit, OnDestroy {
         {
             label: 'custom-smyoutube',
             name: 'smyoutube'
-        }
+        },
         {
             label: 'custom-smappstore',
             name: 'smappstore'
-        }
+        },
         {
             label: 'custom-smplaystore',
             name: 'smplaystore'

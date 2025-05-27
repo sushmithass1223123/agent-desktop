@@ -52,6 +52,7 @@ interface PostData {
     IsItemDeleted?: boolean;
     IsItemEdited?: boolean;
     RouteId: string;
+    OutboundStatus?: string;
 }
 
 const channelMapper: any = {
@@ -317,6 +318,11 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     pageSizeOptions: number[] = [5, 10, 20, 50, 100, 200];
 
     outboundStatusList: string[] = ['Pending', 'Failed', 'Success'];
+    outboundStatusBg = {
+        Pending: 'orange',
+        Success: 'green',
+        Failed: 'red'
+    }
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -1028,20 +1034,24 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
     /**
      * Method to parse dotnet date to js format
-     * @param {string} dotnetDate Dotnet date format
+     * @param {string} dateToParse Dotnet date format
      */
-    parseDotnetDate(dotnetDate: string): Date {
+    parseDate(dateToParse: string): Date {
         try {
-            const regex = /\/Date\((\d+)\)\//;
-            const match = dotnetDate.match(regex);
-            if (match && match.length > 1) {
-                const timestamp = parseInt(match[1], 10);
-                return new Date(timestamp);
+            if (!dateToParse?.includes('Date')) {
+                return new Date(dateToParse);
+            } else {
+                const regex = /\/Date\((\d+)\)\//;
+                const match = dateToParse.match(regex);
+                if (match && match.length > 1) {
+                    const timestamp = parseInt(match[1], 10);
+                    return new Date(timestamp);
+                }
             }
             return new Date();
         } catch (e) {
             this.logger.error(
-                '[WorkbenchSmpComponent.parseDotnetDate] - Error occured while parsing dotnet date format:',
+                '[WorkbenchSmpComponent.parseDate] - Error occured while parsing dotnet date format:',
                 JSON.stringify(e),
                 true
             );
@@ -1227,7 +1237,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         Subject: x?.CommentText,
                         ActiveCommentId: x?.CommentID,
                         ParentCommentId: x?.ParentCommentId,
-                        RouteId: ''
+                        RouteId: '',
+                        OutboundStatus: x?.OutboundStatus
                     }
                 };
             });
@@ -1747,8 +1758,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         try {
             if (this.sortControls.sortBy === 'Date') {
                 this.rawResponse.sort((a, b) => {
-                    const dateA = new Date(this.parseDotnetDate(a.AddedTime));
-                    const dateB = new Date(this.parseDotnetDate(b.AddedTime));
+                    const dateA = new Date(this.parseDate(a.AddedTime));
+                    const dateB = new Date(this.parseDate(b.AddedTime));
 
                     if (this.sortControls.ascending) {
                         if (dateA < dateB) {

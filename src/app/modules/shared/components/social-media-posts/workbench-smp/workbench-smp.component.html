@@ -334,6 +334,17 @@
                                                                         <div class="date-holder">
                                                                             <p>{{ parsedDate.formatted.date }}</p>
                                                                         </div>
+                                                                        <div
+                                                                            class="status_dot"
+                                                                            [matTooltip]="post.PostData.OutboundStatus"
+                                                                            *ngIf="post.PostData.OutboundStatus"
+                                                                            [ngStyle]="{
+                                                                                backgroundColor:
+                                                                                    outboundStatusBg[
+                                                                                        post.PostData.OutboundStatus
+                                                                                    ]
+                                                                            }"
+                                                                        ></div>
                                                                     </div>
                                                                     <p class="time">{{ parsedDate.formatted.time }}</p>
                                                                 </div>
@@ -559,9 +570,7 @@
                                         <mat-label>
                                             {{
                                                 selectedSocialMediaAccounts && selectedSocialMediaAccounts.length
-                                                    ? locale(
-                                                          'sharedComponents.socialMediaPosts.socialMediaAccounts'
-                                                      )
+                                                    ? locale('sharedComponents.socialMediaPosts.socialMediaAccounts')
                                                     : locale(
                                                           'sharedComponents.socialMediaPosts.socialMediaAccountsNotFound'
                                                       )
@@ -642,14 +651,14 @@
                     </div>
 
                     <!-- Paginator for post -->
-                    <mat-paginator *ngIf="totalPostCount"
-                    (page)="onPaginatorPageChange($event)"
-                    [length]="totalPostCount"
-                    [pageSize]="pageNumber"
-                    [pageSizeOptions]="pageSizeOptions"
+                    <mat-paginator
+                        *ngIf="totalPostCount"
+                        (page)="onPaginatorPageChange($event)"
+                        [length]="totalPostCount"
+                        [pageSize]="pageNumber"
+                        [pageSizeOptions]="pageSizeOptions"
                     >
                     </mat-paginator>
-
 
                     <!-- Getting post error UI -->
                     <div
