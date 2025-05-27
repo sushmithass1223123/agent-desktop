@@ -56,7 +56,9 @@ const channelMapper: any = {
     fb: 'facebook',
     instagram: 'instagram',
     twitter: 'x',
-    youtube: 'youtube'
+    youtube: 'youtube',
+    appstore: 'appstore',
+    playstore: 'playstore'
 };
 
 /**
@@ -242,10 +244,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             fb: 'custom-fb',
             telegram: 'custom-telegram',
             youtube: 'custom-youtube',
+            appstore: 'custom-appstore',
+            playstore: 'custom-playstore',
             smfb: 'custom-smfb',
             smtwitter: 'custom-smtwitter',
             sminstagram: 'custom-sminstagram',
             smyoutube: 'custom-smyoutube',
+            smappstore: 'custom-smappstore',
+            smplaystore: 'custom-smplaystore',
             store: 'store',
             in: 'south',
             out: 'north'

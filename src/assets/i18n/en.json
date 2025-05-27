@@ -149,6 +149,8 @@
         "facebook": "Facebook",
         "telegram": "Telegram",
         "youtube": "Youtube",
+        "appstore": "Appstore",
+        "playstore": "Playstore",
         "store": "Store",
         "field": "Field"
     },

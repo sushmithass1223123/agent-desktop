@@ -75,6 +75,14 @@ export class AppComponent implements OnInit, OnDestroy {
             name: 'youtube'
         },
         {
+            label: 'custom-playstore',
+            name: 'playstore'
+        },
+        {
+            label: 'custom-appstore',
+            name: 'appstore'
+        },
+        {
             label: 'custom-twitter',
             name: 'twitter'
         },
@@ -137,6 +145,14 @@ export class AppComponent implements OnInit, OnDestroy {
         {
             label: 'custom-smyoutube',
             name: 'smyoutube'
+        }
+        {
+            label: 'custom-smappstore',
+            name: 'smappstore'
+        }
+        {
+            label: 'custom-smplaystore',
+            name: 'smplaystore'
         }
     ];
 

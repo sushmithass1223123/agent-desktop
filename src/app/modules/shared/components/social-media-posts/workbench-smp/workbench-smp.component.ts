@@ -58,7 +58,9 @@ const channelMapper: any = {
     fb: 'facebook',
     instagram: 'instagram',
     twitter: 'x',
-    youtube: 'youtube'
+    youtube: 'youtube',
+    appstore: 'appstore',
+    playstore: 'playstore'
 };
 
 /**
