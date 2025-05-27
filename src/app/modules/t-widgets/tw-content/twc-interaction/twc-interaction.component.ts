@@ -344,11 +344,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             isReplySent: true
         });
         if (JsonData?.OutboundData?.SocialMediaData) {
-            if (SMP_SEND_STATUS[JsonData?.StatusCode] === 'Success')
-                this._appUIService.showSnackbar(
-                    this.translocoService.translate('sharedComponents.socialMediaPosts.asyncCommentReplySendSuccess')
-                );
-            else {
+            if (SMP_SEND_STATUS[JsonData?.StatusCode] !== 'Success') {
                 let errorMsg = SMP_SEND_STATUS[JsonData?.StatusCode]
                     ? SMP_SEND_STATUS[JsonData?.StatusCode]
                     : 'Unknown';
