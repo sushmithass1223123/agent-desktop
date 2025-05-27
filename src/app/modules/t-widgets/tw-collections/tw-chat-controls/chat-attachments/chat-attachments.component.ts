@@ -108,6 +108,10 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
      * On init
      */
     ngOnInit(): void {
+       // Add event listeners for drag events on the window
+        window.addEventListener('dragover', this.onDragOver.bind(this));
+        window.addEventListener('dragleave', this.onDragLeave.bind(this));
+        window.addEventListener('drop', this.onDrop.bind(this));
         // add accept type for file input
         this.attachAcceptTypes = this.attachPreviewMode === 'uploadMedia' ? 'image/*,video/mp4,video/3gpp,video/quicktime' : this.attachmentConstraints.length ? this.attachmentConstraints.join(',') : '*';
     }
@@ -134,6 +138,10 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
      * On destroy
      */
     ngOnDestroy(): void {
+        // Remove event listeners
+        window.removeEventListener('dragover', this.onDragOver.bind(this));
+        window.removeEventListener('dragleave', this.onDragLeave.bind(this));
+        window.removeEventListener('drop', this.onDrop.bind(this));
         this.stopCamera();
         this.uploadingFiles = [];
         this.attachPreviewMode = '';
@@ -157,7 +165,16 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         }
         return type;
     }
-
+   // Handle drag over event (when a file is dragged over the placeholder)
+    onDragOver(event: DragEvent): void {
+    event.preventDefault(); 
+    event.stopPropagation();
+    }
+    // Handle drag leave event (when a file is dragged away from the placeholder)
+    onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();  
+    }
     // Handle drop event (when a file is dropped onto the placeholder)
     onDrop(event: DragEvent): void {
     event.preventDefault();
@@ -172,24 +189,39 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
     private handleFiles(files: FileList): void {
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        this.uploadFile(file);
-       }
+        this.processFile(file);
     }
-    // Upload the file after converting it to base64 format
-    private async uploadFile(file: File): Promise<void> {
-    const base64 = await this.convertToBase64(file);
-    const fileName = file.name;
-    this.uploadingFiles.push({
-        file,
-        fileName,
-        base64: base64, 
-        size: file.size,
-        type: file.type,
-        ext: fileName.split('.').pop()
-    });
-
-    this.attachPreviewMode = 'preview';
     }
+    // Process a single file
+   private async processFile(file: File): Promise<void> {
+    const fileMime = file.type.split('/');
+    // Validate file type based on attachPreviewMode
+    if (this.attachPreviewMode === 'uploadMedia' && !['video', 'image'].includes(fileMime[0])) {
+        this.notifyInvalidFileSelection(fileMime[1]);
+        return;
+    }
+    // Validate against attachment constraints
+    if (this.attachmentConstraints.length && !this.attachmentConstraints.includes(file.type)) {
+        this.notifyInvalidFileSelection(fileMime[1]);
+        return;
+    }
+    // Edit uploaded image if it's an image
+    if (fileMime[0] === 'image') {
+        await this.editUploadedImage(file);
+    } else {
+        const base64 = await this.convertToBase64(file);
+        const fileName = file.name;
+        this.uploadingFiles.push({
+            file,
+            fileName,
+            base64: this.sanitizeUrl(base64),
+            size: file.size,
+            type: file.type,
+            ext: fileName.split('.').pop()
+        });
+        this.attachPreviewMode = 'preview';
+    }
+}
     /**
      * To start camera
      */
