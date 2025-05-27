@@ -1563,7 +1563,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         let messageData = inputMessage;
         let templateId = template?.ID ?? '';
         const attachment = template?.Attachment ?? null;
-        const type = attachment ? 'attachment' : 'text';
+        const type = template?.Type ? 'attachment' : 'text';
 
         // Message
         const message = {
