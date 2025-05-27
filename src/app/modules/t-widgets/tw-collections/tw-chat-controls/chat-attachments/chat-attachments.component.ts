@@ -94,6 +94,13 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
      */
     isPlaybackNotSupported: boolean = false;
 
+    /**
+     * Index of the file being edited
+     * -1 means no file is being edited
+     * @type {number}
+     */
+    currentEditFileIndex: number;
+
     constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService,
         private translocoService: TranslocoService, private sanitizer: DomSanitizer) {}
 
@@ -552,8 +559,9 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         } catch (error) {}
     }
 
-    edit() {
+    edit(index?: number): void {
         this.attachPreviewMode = this.attachPreviewMode + '-edit';
+        this.currentEditFileIndex = index !== undefined ? index : 0;
     }
 
     save(image, index) {
