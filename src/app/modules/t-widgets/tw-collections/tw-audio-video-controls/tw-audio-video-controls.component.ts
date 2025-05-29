@@ -1199,7 +1199,7 @@ if (error === 'Screenshare Was Cancelled') {
                     if (resp) {
                         this.showUI = true;
                         this.agentAvRequestConsented = true;
-                        if (this.isCustomerAcknowledged) this.startAVCall();
+                        if (this.isCustomerAcknowledged || this.interactionDetails.ConferenceType.includes('conf') ) this.startAVCall();
                     } else {
                          // close the call widget
                          this.destroyWidget();
