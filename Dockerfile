@@ -24,7 +24,7 @@ FROM nginx:1.24-alpine
 COPY --from=builder /app/dist/agent-desktop /usr/share/nginx/html/agent-desktop
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose the port Nginx will use
-EXPOSE 13032
+EXPOSE 5000
 
 # Run Nginx in the foreground
 CMD ["nginx", "-g", "daemon off;"]

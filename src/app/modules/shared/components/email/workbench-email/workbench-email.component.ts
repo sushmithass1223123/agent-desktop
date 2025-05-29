@@ -1539,6 +1539,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                 this.doAdvancedSearch(true);
                             }, 1000);
                             this.setComponentState('email/reply/success');
+                            widget.Config.Class = '';
                             this._aotWidgetService.destroyWidget(widget.ID);
                         } else {
                             this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.emptyEmailWarning'), 'failure');
@@ -1552,6 +1553,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 templateRef: this.ReplyEditorDialog
             };
             widget.Data = this.replyEditorModal;
+            widget.Config.Class = 'disable-background';
+            widget.Config.Actions = ["destroy"];
+
             this._aotWidgetService.addWidget(widget as AOTWidget);
         } catch (e) {
             console.error(e);
@@ -1802,7 +1806,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 InSessionId: x.inSessionID,
                 uiId: `${x.inSessionID}|${x.sessionID}`,
                 RouteId: x.routeId,
-                HasAttachment: x.hasAttachment,
+                HasAttachment: x.hasAttachments,
                 ConversationID: x.conversationID,
                 // not available in drafts search
                 IsEmailProbableSpam: x.IsEmailProbableSpam
@@ -1838,7 +1842,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 InSessionId: x.inSessionID,
                 uiId: `${x.inSessionID}|${x.sessionID}`,
                 RouteId: x.routeId,
-                HasAttachment: x.hasAttachment,
+                HasAttachment: x.hasAttachments,
                 ConversationID: x.conversationID,
                 // not available in inbox search
                 IsEmailProbableSpam: x.IsEmailProbableSpam

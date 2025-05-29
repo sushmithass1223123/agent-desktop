@@ -97,9 +97,7 @@
                                 "Description": "",
                                 "Type": "tw-notifications",
                                 "Config": { "Enabled": true },
-                                "Data": {
-                                    "disableSocialMediaNotifications": true
-                                }
+                                "Data": { "disableSocialMediaNotifications": true }
                             },
                             {
                                 "Name": "Available Media Devices",
@@ -3666,5 +3664,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.12.0"
+    "Version": "5.13.0-beta.1"
 }
