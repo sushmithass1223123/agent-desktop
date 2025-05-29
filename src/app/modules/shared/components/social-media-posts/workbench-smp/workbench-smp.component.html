@@ -550,7 +550,7 @@
                                 <mat-form-field
                                     class="twd-text-sm"
                                     appearance="outline"
-                                    [ngClass]="{ 'twd-hidden': currentTab === 'queue' }"
+                                    [ngClass]="{ 'twd-hidden': (currentTab === 'queue' || currentTab === 'posts') }"
                                 >
                                     <mat-label>{{ locale('widgets.workbench.sessionId') }} </mat-label>
                                     <input matInput formControlName="sessionid" type="text" />
