@@ -417,7 +417,7 @@
                                                                             "
                                                                             class="not-rimg"
                                                                             src="assets/images/vectors/{{
-                                                                                chosenPostData?.SocialMediaData?.Engagement?.reactionType?.replaceAll(
+                                                                                chosenPostData?.Engagement?.reactionType?.replaceAll(
                                                                                     ' ',
                                                                                     ''
                                                                                 )
@@ -843,11 +843,11 @@
                         <smp-template
                             *ngIf="!(openPostRes.loading || openPostRes.error) && state.openPostResData !== null"
                             [engagementFromNotification]="
-                                notificationAction === 'smrc_a' ? chosenPostData?.SocialMediaData?.Engagement : ''
+                                notificationAction === 'smrc_a' ? chosenPostData?.Engagement : ''
                             "
                             [previousCommentFromNotification]="
                                 notificationAction === 'smc_e' || notificationAction === 'smco_e'
-                                    ? [chosenPostData?.SocialMediaData?.Comments]
+                                    ? [chosenPostData?.Comments]
                                     : []
                             "
                             [isActiveCommentEdited]="state.openPostResData.IsCommentEdited"

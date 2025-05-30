@@ -8,6 +8,7 @@ import {
     GenericInteractionEvent,
     IncomingCallEvent,
     IncomingEmailEvent,
+    IncomingSMEvent,
     InteractionClosedEvent,
     IUIEvent,
     OutgoingCallEvent,
@@ -126,7 +127,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
                 eventNames = ['IncomingEmailEvent', 'OutgoingEmailEvent'];
                 break;
             case 'smp':
-                eventNames = ['IncomingEmailEvent'];
+                eventNames = ['IncomingSMEvent'];
                 break;
             case 'fax':
                 eventNames = ['FaxReceivedEvent'];
@@ -315,11 +316,16 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      */
     IncomingEmailEvent(evt: IncomingEmailEvent): void {
         // create email widgets
-        if(this.type === 'smp' && evt.EmailType === 'NewSocialMediaItemFromMakerQueue') {
-            this.createWidgetList(evt, 'connected', evt.From, false, evt);
-        } else if (this.type === 'email' && evt.EmailType !== 'NewSocialMediaItemFromMakerQueue') {
-            this.createWidgetList(evt, 'connected', evt.From, false, evt);
-        }
+        this.createWidgetList(evt, 'connected', evt.From, false, evt);
+    }
+
+    /**
+     * To process IncomingSMEvent
+     * @param {IncomingSMEvent} evt
+     */
+    IncomingSMEvent(evt: IncomingSMEvent): void {
+        // create email widgets
+        this.createWidgetList(evt, 'connected', evt.From, false, evt);
     }
 
     /**

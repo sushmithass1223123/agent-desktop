@@ -701,23 +701,23 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     ) {
                         const filteredPost = this.getPostObjectByPostId(
                             this.segregatedPosts,
-                            this.chosenPostData?.SocialMediaData?.Posts?.PostId
+                            this.chosenPostData?.Posts?.PostId
                         );
                         if (filteredPost.length) this.openPost(filteredPost[0], true);
                     } else if (this.notificationAction === 'smco_e' || this.notificationAction === 'smco_d') {
                         const filteredPost = this.rawResponse.find(
                             (rres) =>
                                 rres?.PostData?.ActiveCommentId ===
-                                    this.chosenPostData?.SocialMediaData?.Comments?.CommentId ||
+                                    this.chosenPostData?.Comments?.CommentId ||
                                 rres?.PostData?.ParentCommentId ===
-                                    this.chosenPostData?.SocialMediaData?.Comments?.CommentId
+                                    this.chosenPostData?.Comments?.CommentId
                         );
                         if (filteredPost) this.openPost(filteredPost, true);
                     } else {
                         const filteredPost = this.rawResponse.find(
                             (rres) =>
                                 rres?.PostData?.ActiveCommentId ===
-                                this.chosenPostData?.SocialMediaData?.Comments?.CommentId
+                                this.chosenPostData?.Comments?.CommentId
                         );
                         if (filteredPost) this.openPost(filteredPost, true);
                     }
@@ -1504,8 +1504,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     throwADError('Error in WorkbenchSmpComponent.getOutboxItem', 'Unexpected Response from server');
                 }
                 let modifiedAttachmentData: any[] = [];
-                if (outboxRes?.SocialMediaData?.Comments?.CommentAttachments?.length) {
-                    modifiedAttachmentData = outboxRes.SocialMediaData.Comments.CommentAttachments.map((attdat) => {
+                if (outboxRes?.Comments?.CommentAttachments?.length) {
+                    modifiedAttachmentData = outboxRes.Comments.CommentAttachments.map((attdat) => {
                         return {
                             IsCloud: true,
                             Url: attdat?.MediaUrl,
@@ -1553,7 +1553,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
 
             this.hidePostActions =
-                inboxRes?.SocialMediaData?.Posts?.IsDeleted || outboxRes?.SocialMediaData?.Posts?.IsDeleted;
+                inboxRes?.Posts?.IsDeleted || outboxRes?.Posts?.IsDeleted;
 
             this.openPostRes.data.next(
                 Object.assign(post, this.postBodies[getRequestedSession()], {

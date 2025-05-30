@@ -315,7 +315,7 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             this.getCustomerDetails();
         }
         this._tmacEventService
-        .getAllSubscribedEvents<IUIEvent>(['IncomingEmailEvent'])
+        .getAllSubscribedEvents<IUIEvent>(['IncomingSMEvent'])
         .pipe(takeUntil(this.unsubscribeAll))
         .subscribe((evts) =>
             evts.forEach((evt) => {
@@ -361,7 +361,7 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
     }
     
     //set customerId & interactionId
-    IncomingEmailEvent(evt) {
+    IncomingSMEvent(evt) {
         if(evt.EmailType === 'NewSocialMediaItemFromMakerQueue') {
         console.log("Event: ", evt);  
         if(JSON.parse(evt.JsonData)?.CustomerId) {

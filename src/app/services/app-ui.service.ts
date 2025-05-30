@@ -1,7 +1,12 @@
 import { AppRootConfig } from '@ad/types';
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarRef, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import {
+    MatSnackBar,
+    MatSnackBarHorizontalPosition,
+    MatSnackBarRef,
+    MatSnackBarVerticalPosition
+} from '@angular/material/snack-bar';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AlertDialogComponent } from '@modules/shared/components/alert-dialog/alert-dialog.component';
 import { AppConfirmDialogComponent } from '@modules/shared/components/app-confirm-dialog/app-confirm-dialog.component';
@@ -100,7 +105,6 @@ export class AppUiService extends SharedWrapper {
      */
     private onlineStatus: BehaviorSubject<boolean>;
 
-    
     /**
      * Constructor
      * @param {MatSnackBar} _matSnackBar
@@ -118,14 +122,14 @@ export class AppUiService extends SharedWrapper {
         this.init();
 
         this.onlineStatus = new BehaviorSubject<boolean>(navigator.onLine);
-    
+
         // Add event listeners for online and offline events
         window.addEventListener('online', () => {
-          this.onlineStatus.next(true);
+            this.onlineStatus.next(true);
         });
-    
+
         window.addEventListener('offline', () => {
-          this.onlineStatus.next(false);
+            this.onlineStatus.next(false);
         });
     }
 
@@ -155,9 +159,8 @@ export class AppUiService extends SharedWrapper {
         hPos: MatSnackBarHorizontalPosition = 'center',
         duration: number = this._appConfig?.AppConfigs?.Notifications?.AppAlertTimeout || 5000,
         onClick?: () => void
-    ){
+    ) {
         if (message) {
-
             // configuration for icons
             const icons = {
                 info: 'info',
@@ -184,12 +187,11 @@ export class AppUiService extends SharedWrapper {
             };
 
             // using custom snackbar
-            if(customSnackbarConfig.enable){ 
+            if (customSnackbarConfig.enable) {
                 return this._tSnackbarService.loadSnackbar(input, customSnackbarConfig);
             }
 
-
-            // using angular material snackbar    
+            // using angular material snackbar
             const durationField = state === 'loading' ? {} : { duration };
             this._matSnackBar.dismiss();
             return this._matSnackBar.openFromComponent(SnackbarComponent, {
@@ -285,7 +287,11 @@ export class AppUiService extends SharedWrapper {
      * @param type Type of app alert
      * @param heading [OPTIONAL] Heading for app alert
      */
-    public showAlertModal(message: string, type: AppAlertDialogTypes = 'success', heading?: string): MatDialogRef<AlertDialogComponent> {
+    public showAlertModal(
+        message: string,
+        type: AppAlertDialogTypes = 'success',
+        heading?: string
+    ): MatDialogRef<AlertDialogComponent> {
         // play new chat sound
         this.playAudio('alert', 0.5, false);
 
@@ -312,7 +318,11 @@ export class AppUiService extends SharedWrapper {
      * @param type Type of reminder task dialog
      * @param message [OPTIONAL] Message to show in reminder task dialog
      */
-    public showRemiderTaskModal(type: ReminderTaskDialogTypes, message?: string, title?: string): MatDialogRef<ReminderTaskDialogComponent> {
+    public showRemiderTaskModal(
+        type: ReminderTaskDialogTypes,
+        message?: string,
+        title?: string
+    ): MatDialogRef<ReminderTaskDialogComponent> {
         // play new chat sound
         this.playAudio('alert', 0.5, false);
         const dialogRef = this._matDialog.open(ReminderTaskDialogComponent, {
@@ -340,7 +350,12 @@ export class AppUiService extends SharedWrapper {
      * @param message [OPTIONAL] Message for the confirmation
      * @param customActionButtons [OPTIONAL] Confirmation custom action button names
      */
-    public showAppConfirmDialog(type: AppConfirmDialogTypes, title?: string, message?: string, customActionButtons?: string): MatDialogRef<AppConfirmDialogComponent> {
+    public showAppConfirmDialog(
+        type: AppConfirmDialogTypes,
+        title?: string,
+        message?: string,
+        customActionButtons?: string
+    ): MatDialogRef<AppConfirmDialogComponent> {
         const dialogRef = this._matDialog.open(AppConfirmDialogComponent, {
             data: {
                 title,
@@ -481,27 +496,29 @@ export class AppUiService extends SharedWrapper {
         // check whether to show an alert
         if (notification.showAlert) {
             let message = '';
-            if(notification.icon.includes('external_av_widget_creds')) {
-                message = `External AV Widget Credentials Saved!`
+            if (notification.icon.includes('external_av_widget_creds')) {
+                message = `External AV Widget Credentials Saved!`;
             } else if (!notification.icon.includes('sm')) {
                 message = notification.message;
             } else {
                 if (notification.icon.includes('smrc')) {
-                    message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Reaction to ${notification.message?.SocialMediaData?.Engagement?.smmType} on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                    message = `${notification.message?.Comments?.ToName}: Reaction to ${notification.message?.Engagement?.smmType} on ${notification.message?.Posts?.Channel}`;
                 } else if (notification.icon.includes('smrp')) {
-                    message = `${notification.message?.SocialMediaData?.Posts?.AccountName}: Reaction to ${notification.message?.SocialMediaData?.Engagement?.smmType} on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                    message = `${notification.message?.Posts?.AccountName}: Reaction to ${notification.message?.Engagement?.smmType} on ${notification.message?.Posts?.Channel}`;
                 } else if (notification.icon.includes('smm_a')) {
-                    message = `${notification.message?.SocialMediaData?.Posts?.AccountName}: Got mentioned on ${notification.message?.SocialMediaData?.Comments?.CommentId ? 'comment' : 'post'} in ${notification.message?.SocialMediaData?.Posts?.Channel}`
+                    message = `${notification.message?.Posts?.AccountName}: Got mentioned on ${
+                        notification.message?.Comments?.CommentId ? 'comment' : 'post'
+                    } in ${notification.message?.Posts?.Channel}`;
                 } else if (notification.icon.includes('smc_e') || notification.icon.includes('smco_e')) {
-                    message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Comment edited on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                    message = `${notification.message?.Comments?.ToName}: Comment edited on ${notification.message?.Posts?.Channel}`;
                 } else if (notification.icon.includes('smpc_e')) {
-                    message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Parent comment edited on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                    message = `${notification.message?.Comments?.ToName}: Parent comment edited on ${notification.message?.Posts?.Channel}`;
                 } else if (notification.icon.includes('smc_d') || notification.icon.includes('smco_d')) {
-                    message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Comment deleted on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                    message = `${notification.message?.Comments?.ToName}: Comment deleted on ${notification.message?.Posts?.Channel}`;
                 } else if (notification.icon.includes('smp_d')) {
-                    message = `${notification.message?.SocialMediaData?.Posts?.AccountName}: Post deleted on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                    message = `${notification.message?.Posts?.AccountName}: Post deleted on ${notification.message?.Posts?.Channel}`;
                 } else if (notification.icon.includes('smp_e')) {
-                    message = `${notification.message?.SocialMediaData?.Posts?.AccountName}: Post edited on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                    message = `${notification.message?.Posts?.AccountName}: Post edited on ${notification.message?.Posts?.Channel}`;
                 }
             }
 
@@ -743,9 +760,9 @@ export class AppUiService extends SharedWrapper {
         try {
             this.isAvInteractionOnHold[interactionId] = {
                 onHold
-            }
+            };
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
     }
 

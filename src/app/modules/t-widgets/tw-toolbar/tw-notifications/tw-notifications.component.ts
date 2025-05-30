@@ -63,6 +63,10 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         private _interactionManagerService: InteractionManagerService
     ) {
         super('TwNotificationsComponent');
+
+        setTimeout(() => {
+            
+        }, 5000);
     }
 
     /**
@@ -234,8 +238,8 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
     onChoosePost(postData: any, action: string): void {
         const isActiveInteractionAvailable = this.postInteractionList.findIndex(
             (intData: InteractionRef) =>
-                intData.otherData?.SessionId === postData.message?.SocialMediaData?.Comments?.SessionId ||
-                intData.otherData?.OutSessionID === postData.message?.SocialMediaData?.Comments?.SessionId
+                intData.otherData?.SessionId === postData.message?.Comments?.SessionId ||
+                intData.otherData?.OutSessionID === postData.message?.Comments?.SessionId
         );
         this.closeMenu();
         if (isActiveInteractionAvailable >= 0) {
