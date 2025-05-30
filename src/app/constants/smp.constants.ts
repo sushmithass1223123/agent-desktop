@@ -1,4 +1,5 @@
 import * as smpErrorCodes from '../../assets/constants/codes/smp.errorcodes.json';
+import * as smpOutboundCodes from '../../assets/constants/codes/smp.outboundcodes.json';
 
 // route reasons
 export const SMP_OUTBOX_REASONS = ['CheckerQueue', 'CheckerPull'];
@@ -25,6 +26,7 @@ export const SMP_REASONCODE_VALUES = {
 };
 
 export const SMP_SEND_STATUS = smpErrorCodes;
+export const SMP_OUTBOUND_STATUS = smpOutboundCodes;
 
 export const SMP_CURRENTSTATUS_CODES = {
     SentToCustomer: 'sharedComponents.socialMediaPosts.replySendToCustomer',

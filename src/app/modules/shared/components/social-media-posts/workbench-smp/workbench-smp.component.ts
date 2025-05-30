@@ -33,6 +33,7 @@ declare var document: any;
 
 export class SMPost {
     Mailbox?: string;
+    LastCommentActivity?: Date | string;
     AddedTime: Date | string;
     SubChannel: string;
     SkillName: string;
@@ -625,10 +626,12 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             if (this.currentTab === 'sentitem') {
                 searchParams.deviceid = searchFields.deviceid;
                 searchParams.agent = searchFields.agent;
+                searchParams.postText = searchFields.postText;
                 searchParams.sessionid = searchFields.sessionid;
                 searchParams.outboundStatus = searchFields.outboundStatus;
             } else if (this.currentTab === 'draft') {
                 searchParams.agent = searchFields.agent;
+                searchParams.postText = searchFields.postText;
                 searchParams.sessionid = searchFields.sessionid;
             } else if (this.currentTab === 'inbox') {
                 searchParams.deviceid = searchFields.deviceid;
@@ -707,17 +710,13 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     } else if (this.notificationAction === 'smco_e' || this.notificationAction === 'smco_d') {
                         const filteredPost = this.rawResponse.find(
                             (rres) =>
-                                rres?.PostData?.ActiveCommentId ===
-                                    this.chosenPostData?.Comments?.CommentId ||
-                                rres?.PostData?.ParentCommentId ===
-                                    this.chosenPostData?.Comments?.CommentId
+                                rres?.PostData?.ActiveCommentId === this.chosenPostData?.Comments?.CommentId ||
+                                rres?.PostData?.ParentCommentId === this.chosenPostData?.Comments?.CommentId
                         );
                         if (filteredPost) this.openPost(filteredPost, true);
                     } else {
                         const filteredPost = this.rawResponse.find(
-                            (rres) =>
-                                rres?.PostData?.ActiveCommentId ===
-                                this.chosenPostData?.Comments?.CommentId
+                            (rres) => rres?.PostData?.ActiveCommentId === this.chosenPostData?.Comments?.CommentId
                         );
                         if (filteredPost) this.openPost(filteredPost, true);
                     }
@@ -1170,6 +1169,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 return {
                     Mailbox: x?.AccountName,
                     AddedTime: x?.PostDatetime,
+                    LastCommentActivity: x?.LastCommentActivity,
                     SkillId: x?.Skill,
                     SkillName: x?.SkillName,
                     SubChannel: channelMapper[x?.SubChannel?.toLowerCase()],
@@ -1258,7 +1258,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         ActiveCommentId: x?.CommentID,
                         ParentCommentId: x?.ParentCommentId,
                         RouteId: '',
-                        OutboundStatus: x?.OutboundStatus
+                        OutboundStatus: x?.OutboundStatus,
+                        IsItemDeleted: x?.IsCommentDeleted || x?.IsPostDeleted,
+                        IsItemEdited: x?.IsCommentEdited || x?.IsPostEdited
                     }
                 };
             });
@@ -1552,8 +1554,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 });
             }
 
-            this.hidePostActions =
-                inboxRes?.Posts?.IsDeleted || outboxRes?.Posts?.IsDeleted;
+            this.hidePostActions = inboxRes?.Posts?.IsDeleted || outboxRes?.Posts?.IsDeleted;
 
             this.openPostRes.data.next(
                 Object.assign(post, this.postBodies[getRequestedSession()], {
@@ -1681,7 +1682,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             const { items } = posts.reduce(
                 (acc: any, curr) => {
                     acc.items.push({
-                        routeId: (curr as any).RouteId || '',
+                        routeId: (this.currentTab === 'queue' && (curr as any).RouteId) || null,
                         sessionId: curr.PostData.SessionId,
                         inSessionId: curr.PostData.SessionId,
                         account: curr?.Mailbox || ''
@@ -1778,8 +1779,12 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         try {
             if (this.sortControls.sortBy === 'Date') {
                 this.rawResponse.sort((a, b) => {
-                    const dateA = new Date(this.parseDate(a.AddedTime));
-                    const dateB = new Date(this.parseDate(b.AddedTime));
+                    const dateA = new Date(
+                        this.parseDate(this.currentTab === 'posts' ? a.LastCommentActivity : a.AddedTime)
+                    );
+                    const dateB = new Date(
+                        this.parseDate(this.currentTab === 'posts' ? a.LastCommentActivity : b.AddedTime)
+                    );
 
                     if (this.sortControls.ascending) {
                         if (dateA < dateB) {

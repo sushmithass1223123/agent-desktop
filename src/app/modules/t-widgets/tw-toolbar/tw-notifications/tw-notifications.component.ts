@@ -12,6 +12,7 @@ import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { MatMenuTrigger } from '@angular/material/menu';
 import {TwSmpControlsData } from '@ad/types';
+import { SMP_OUTBOUND_STATUS } from '../../../../constants/smp.constants';
 
 /**
  * Notfications Component
@@ -63,10 +64,6 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         private _interactionManagerService: InteractionManagerService
     ) {
         super('TwNotificationsComponent');
-
-        setTimeout(() => {
-            
-        }, 5000);
     }
 
     /**
@@ -214,6 +211,19 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
                 status: 'new',
                 showAlert: true
             });
+            return;
+        }
+
+        if (type === 'smoutboundstatus') {
+            const errorMessage = SMP_OUTBOUND_STATUS[(JSON.parse(evt.Message)?.ErrorCode ?? '').toString()];
+            if (errorMessage) {
+                this._appUIService.addNotification({
+                    icon: 'info',
+                    message: errorMessage,
+                    status: 'new',
+                    showAlert: true
+                });
+            }
             return;
         }
 

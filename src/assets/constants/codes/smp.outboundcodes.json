@@ -1,0 +1,4 @@
+{
+    "500": "Comment reply failed due to internal server error",
+    "403": "Comment reply failed due to rate limit error and queued for retry after rate limit resets"
+}
