@@ -43,6 +43,7 @@ import { from, merge, Subject, timer } from 'rxjs';
 import { delay, filter, take, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { SharedService } from '@services/shared.service';
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 
 /**
  * Audio Video Controls
@@ -270,6 +271,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     snapshotResponseTimeoutRef$: Subject<boolean>;
 
+    
+    snapshotLoadingRef;
     /**
      * Interaction details
      */
@@ -1384,10 +1387,12 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                             case 'success':
                                 message = this.translocoService.translate('widgets.audioVideoControls.snapshotSuccess');
                                 status = 'success';
+                                this.snapshotLoadingRef.dismiss();
                                 break;
                             default:
                                 message = this.translocoService.translate('widgets.audioVideoControls.snapshotFailed');
                                 status = 'failure';
+                                this.snapshotLoadingRef.dismiss();
                                 break;
                         }
 
@@ -1405,11 +1410,16 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                         if (message) {
                             const snapshotMatRef = this._appUIService.showSnackbar(message, status);
                             if (status === 'loading') {
+                                if (this.snapshotLoadingRef) {
+                                    // if there is a reference of loading then dismiss it
+                                    this.snapshotLoadingRef.dismiss();
+                                }
+                                this.snapshotLoadingRef = snapshotMatRef;
                                 // if there a reference of timer then return
                                 if (this.snapshotResponseTimeoutRef$ && !this.snapshotResponseTimeoutRef$.isStopped) return;
 
                                 this.snapshotResponseTimeoutRef$ = new Subject<boolean>();
-
+                               
                                 from([0])
                                     .pipe(
                                         delay(this.data.Data.Snapshot?.RemoteResponseTimeout * 1000 || 10000),
@@ -1830,7 +1840,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         } else {
             // request customer to initiate screenshare
             SDKClient.sendActionMessage({
-                interactionId: this.interactionId as any,
+                interactionId: this.interactionId.toString(),
                 message: JSON.stringify({
                     source: 'agent',
                     options: {},
@@ -1979,7 +1989,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
 
                 try {
                     await SDKClient.sendActionMessage({
-                        interactionId: this.interactionId as any,
+                        interactionId: this.interactionId.toString(),
                         message: JSON.stringify({
                             source: 'agent',
                             options: {},
@@ -1991,6 +2001,17 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                             eventName: 'ActionMessage',
                             id: TUtils.Generic.uuid()
                         })
+                    }).then(() => {
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.snapshotRequestSent'),
+                            'success'
+                        );
+                        snackRef?.dismiss();
+                    }).catch(() => {
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.snapshotRequestFailed'),
+                            'failure'
+                        );
                     });
                 } catch (error) {}
 
@@ -2014,7 +2035,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
 
                         try {
                             await SDKClient.sendActionMessage({
-                                interactionId: this.interactionId as any,
+                                interactionId: this.interactionId.toString(),
                                 message: JSON.stringify({
                                     source: 'agent',
                                     options: {},
@@ -2207,7 +2228,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
 
                 if (Customer) {
                     await SDKClient.sendActionMessage({
-                        interactionId: this.interactionId as any,
+                        interactionId: this.interactionId.toString(),
                         message: JSON.stringify({
                             source: 'agent',
                             options: {},
@@ -2365,7 +2386,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         try{
             const messageType = response ? 'accepted_call' : 'rejected_call';
             SDKClient.sendActionMessage({
-            interactionId: this.interactionId as any,
+            interactionId: this.interactionId.toString(),
             message: JSON.stringify({
                 source: 'agent',
                 options: {},
