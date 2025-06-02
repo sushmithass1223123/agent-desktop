@@ -785,6 +785,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
             let startDate: any = '';
             let endDate: any = '';
+            const pad = (n) => n.toString().padStart(2, '0');
 
             if (searchFields.fromDate) {
                 startDate = new Date(searchFields.fromDate);
@@ -801,7 +802,11 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         startDate.getUTCSeconds()
                     )
                 );
-                startDate = formatDate(utcDate, 'yyyyMMddHHmmss');
+                console.log(formatDate(utcDate, 'yyyyMMddHHmmss'));
+
+                startDate = `${startDate.getUTCFullYear()}${pad(startDate.getUTCMonth() + 1)}${pad(
+                    startDate.getUTCDate()
+                )}${pad(startDate.getUTCHours())}${pad(startDate.getUTCMinutes())}${pad(startDate.getUTCSeconds())}`;
             }
 
             if (searchFields.toDate) {
@@ -819,7 +824,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         endDate.getUTCSeconds()
                     )
                 );
-                endDate = formatDate(utcDate, 'yyyyMMddHHmmss');
+                endDate = `${endDate.getUTCFullYear()}${pad(endDate.getUTCMonth() + 1)}${pad(
+                    endDate.getUTCDate()
+                )}${pad(endDate.getUTCHours())}${pad(endDate.getUTCMinutes())}${pad(endDate.getUTCSeconds())}`;
             }
 
             return { ...searchParams, endDate, startDate };
@@ -1682,7 +1689,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             const { items } = posts.reduce(
                 (acc: any, curr) => {
                     acc.items.push({
-                        routeId: (this.currentTab === 'queue' && (curr as any).RouteId) || null,
+                        routeId: (this.currentTab === 'queue' && (curr as any).RouteId) || '',
                         sessionId: curr.PostData.SessionId,
                         inSessionId: curr.PostData.SessionId,
                         account: curr?.Mailbox || ''
