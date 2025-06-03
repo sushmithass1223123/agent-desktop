@@ -1689,7 +1689,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             const { items } = posts.reduce(
                 (acc: any, curr) => {
                     acc.items.push({
-                        routeId: (this.currentTab === 'queue' && (curr as any).RouteId) || '',
+                        routeId: (curr as any).RouteId || '',
                         sessionId: curr.PostData.SessionId,
                         inSessionId: curr.PostData.SessionId,
                         account: curr?.Mailbox || ''
