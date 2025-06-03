@@ -142,7 +142,7 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
      * @param {any} event
      */
     onSelectDepartment(event: any): void {
-        const value = event?.value?.ID;
+        const value = event?.value?.ID.toString();
 
         // check if value is there
         if (!value) {
