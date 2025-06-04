@@ -649,16 +649,19 @@
                             >{{ locale('sharedComponents.socialMediaPosts.postsNotFound') }}
                         </span>
                     </div>
+                    
+ <!-- Paginator for post -->
+ <ng-container *ngIf="segregatedPosts.length && !postSearchRes.loading && !postSearchRes.error">
+ <mat-paginator 
+ [length]="totalPostCount"
+ [pageSize]="pageSize"
+ [pageSizeOptions]="[5, 10, 20]"
+ showFirstLastButtons
+ (page)="onPageChange($event)">
+</mat-paginator>
 
-                    <!-- Paginator for post -->
-                    <mat-paginator
-                        *ngIf="totalPostCount"
-                        (page)="onPaginatorPageChange($event)"
-                        [length]="totalPostCount"
-                        [pageSize]="pageNumber"
-                        [pageSizeOptions]="pageSizeOptions"
-                    >
-                    </mat-paginator>
+</ng-container>
+                   
 
                     <!-- Getting post error UI -->
                     <div

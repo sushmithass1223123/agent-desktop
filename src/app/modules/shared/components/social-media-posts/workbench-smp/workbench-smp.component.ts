@@ -28,6 +28,7 @@ import { AppDataService } from '@services/app-data.service';
 import { SMP_OUTBOX_REASONS } from 'app/constants';
 import { MatDialog } from '@angular/material/dialog';
 import { AgentSkillListDataModel } from 'app/models';
+import { PageEvent } from '@angular/material/paginator';
 
 declare var document: any;
 
@@ -298,6 +299,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     postBodies: any = {};
     isFullscreen: boolean = false;
     currentTheme: string = 'theme-default-2';
+
+
     /**
      * Holds the count of posts for paginator
      */
@@ -306,7 +309,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     /**
      * Holds the pageIndex to be shown for paginator
      */
-    pageNumber: number = 1;
+    pageIndex: number = 0;
 
     /**
      * Holds the count of posts to be shown for paginator
@@ -567,6 +570,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      */
     async doAdvancedSearch(silent?: boolean): Promise<void> {
         try {
+            this.totalPostCount = 0;
+
             const errorInDate = this.checkForErrorInDate();
             if (errorInDate) {
                 switch (errorInDate.type) {
@@ -608,7 +613,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
                     pageSize: this.pageSize,
-                    pageNumber: this.pageNumber
+                    pageIndex: this.pageIndex + 1 // +1 because we are using 0 based index for pagination
                 };
             }
             if (!globalKey || (globalKey && this.advancedSearch.data[this.currentTab].changed)) {
@@ -620,7 +625,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     accountName: searchFields.accountName,
                     socialMediaAccounts: searchFields.socialMediaAccounts.join(','),
                     pageSize: this.pageSize,
-                    pageNumber: this.pageNumber
+                    pageIndex: this.pageIndex + 1 // +1 because we are using 0 based index for pagination
                 };
             }
             if (this.currentTab === 'sentitem') {
@@ -1019,6 +1024,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      */
     switchTab(tab: AvailableTabs, preserveChosenPostData?: boolean): void {
         try {
+            this.resetPaginator(); //  reset paginator when switching tabs
             if (tab === this.currentTab && !preserveChosenPostData) return;
             if (!preserveChosenPostData) {
                 this.chosenPostData = undefined;
@@ -2059,14 +2065,20 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         return item.PostData.SessionId;
     }
 
-    /**
+ 
+    resetPaginator() {
+        this.pageIndex = 0;
+        this.pageSize = 10;
+        this.totalPostCount = 0;
+    }
+
+   /**
      * Method to handle paginator page change
      * @param {PageEvent} $event Page event
-     */
-    onPaginatorPageChange($event) {
-        console.log('Page change:', $event);
-        this.pageNumber = $event.pageIndex;
-        this.pageSize = $event.pageSize;
+     */  
+    onPageChange(event: PageEvent) {
+        this.pageIndex = event.pageIndex; // assuming API is 1-based
+        this.pageSize = event.pageSize;
         this.doAdvancedSearch(true);
-    }
+      }
 }
