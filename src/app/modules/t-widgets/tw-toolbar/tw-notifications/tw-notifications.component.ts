@@ -215,7 +215,8 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         }
 
         if (type === 'smoutboundstatus') {
-            const errorMessage = SMP_OUTBOUND_STATUS[(JSON.parse(evt.Message)?.ErrorCode ?? '').toString()];
+            const statusDetail = JSON.parse(evt.Message);
+            const errorMessage = SMP_OUTBOUND_STATUS[(statusDetail?.ErrorCode ? statusDetail.ErrorCode : 200).toString()];
             if (errorMessage) {
                 this._appUIService.addNotification({
                     icon: 'info',

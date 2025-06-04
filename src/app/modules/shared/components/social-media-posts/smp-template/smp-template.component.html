@@ -44,7 +44,7 @@
                         >
                         <mat-icon
                             *ngIf="
-                                postData.IsPostEdited || (isPostEdited && !(postData.IsPostDeleted || isPostDeleted))
+                                (postData.IsPostEdited || isPostEdited) && !(postData.IsPostDeleted || isPostDeleted)
                             "
                             style="height: 18px"
                             class="comment-icon theme-icon"
