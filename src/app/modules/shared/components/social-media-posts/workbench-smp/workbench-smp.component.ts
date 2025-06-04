@@ -1225,7 +1225,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         From: x?.FromName,
                         To: x?.ToName,
                         Subject: x?.CommentText,
-                        RouteId: ''
+                        RouteId: '',
+                        IsItemDeleted: x?.IsCommentDeleted || x?.IsPostDeleted,
+                        IsItemEdited: x?.IsCommentEdited || x?.IsPostEdited
                     }
                 };
             });
