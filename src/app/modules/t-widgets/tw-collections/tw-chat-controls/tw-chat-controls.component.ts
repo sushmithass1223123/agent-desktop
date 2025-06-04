@@ -60,7 +60,8 @@ import {
     TextChatUserMessageWaitTimerEvent,
     CallConferenceCompletedEvent,
     TextTemplate,
-    TUtils
+    TUtils,
+    IUIEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, INVALID_CHARS } from 'app/constants';
@@ -891,6 +892,20 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 type: 'reqVideoCall'
             })
         }
+
+         this._tmacEventService
+                            .getConstructDisposeEvents<IUIEvent>(['InteractionClosedEvent', 'AutoCloseTabEvent'])
+                            .pipe(takeUntil(this.unsubscribeAll))
+                            .subscribe((evts) =>
+                                evts.forEach((evt) => {
+                                    setTimeout(() => {
+                                        if (evt.EventName === 'InteractionClosedEvent' || evt.EventName === 'AutoCloseTabEvent') {
+                                            if (this.data?.Data?.RedirectPath && !this.interactionList?.length)
+                                                this._contentPageService.mode = this.data.Data.RedirectPath;
+                                        }
+                                    });
+                                })
+                            );
     }
 
     /**
@@ -2056,7 +2071,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
 
                 this._tmacEventService._uiControlsEvents.next({eventName: 'enableStatusChange'});
-                if(this.data?.Data?.RedirectPath && this.interactionList?.length === 1) this._contentPageService.mode = this.data.Data.RedirectPath;
                 // remove the interaction reference
                 this._interactionManagerService.removeInteraction(response.InteractionID);
 
