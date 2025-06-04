@@ -613,7 +613,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
                     pageSize: this.pageSize,
-                    pageIndex: this.pageIndex + 1 // +1 because we are using 0 based index for pagination
+                    pageNumber: this.pageIndex + 1 // +1 because we are using 0 based index for pagination
                 };
             }
             if (!globalKey || (globalKey && this.advancedSearch.data[this.currentTab].changed)) {
@@ -625,7 +625,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     accountName: searchFields.accountName,
                     socialMediaAccounts: searchFields.socialMediaAccounts.join(','),
                     pageSize: this.pageSize,
-                    pageIndex: this.pageIndex + 1 // +1 because we are using 0 based index for pagination
+                    pageNumber: this.pageIndex + 1 // +1 because we are using 0 based index for pagination
                 };
             }
             if (this.currentTab === 'sentitem') {
