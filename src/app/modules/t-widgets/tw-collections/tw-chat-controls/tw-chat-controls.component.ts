@@ -3281,7 +3281,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {MatButton} btn End chat button reference
      */
     public confirmEndChat(): void {
-        this.status = 'disconnected';
         this.confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
         //subscribe to the observable for dialog close
         this.sharedService.getAppConfirmDialogClose().subscribe(() => {
@@ -3289,6 +3288,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         })
         this.confirmDialogRef.afterClosed().subscribe(async (dialogResult: boolean) => {
             if (dialogResult) {
+                this.status = 'disconnected'; 
                 // End chat logic
                 await this.endChat('AgentChatDisconnected');
                 // Destroy whiteboard widget
