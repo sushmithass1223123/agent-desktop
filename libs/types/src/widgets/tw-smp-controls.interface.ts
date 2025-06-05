@@ -37,7 +37,10 @@ export interface TwSmpControls<T> extends InteractionWidget<TwSmpControlsData, T
  * Data config for tw-email-controls widget
  */
 export interface TwSmpControlsData {
-    disableSocialMediaNotification: boolean;
+    /**
+     * To disable general social media notifications
+    */
+    disableSocialMediaNotifications: boolean;
     /**
      * Transfer config
     */
