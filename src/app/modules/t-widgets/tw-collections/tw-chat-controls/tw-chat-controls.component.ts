@@ -1129,6 +1129,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             const msg = JSON.parse(evt.Message);
             switch (msg.type?.toLowerCase()) {
                 case 'message_delete':
+                    if(evt.RecoveryEvent) return;
                     {
                         const dynamicLabels = [
                             {
