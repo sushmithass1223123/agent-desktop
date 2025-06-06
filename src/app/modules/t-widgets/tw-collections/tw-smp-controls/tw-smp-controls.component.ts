@@ -736,13 +736,13 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     savePostAsDraft(closePost = false, isLoud: boolean): void {
         const postBody = (this.postDraftData[this.interactionId].body || '').toString();
         let draftSnackbarRef: any;
-        if (!postBody) {
-            this._appUiService.showSnackbar(
-                this.translocoService.translate('widgets.smpControls.invalidDraftTrigger'),
-                'failure'
-            );
-            return;
-        }
+        // if (!postBody) {
+        //     this._appUiService.showSnackbar(
+        //         this.translocoService.translate('widgets.smpControls.invalidDraftTrigger'),
+        //         'failure'
+        //     );
+        //     return;
+        // }
         if (isLoud)
             draftSnackbarRef = this._appUiService.showSnackbar(
                 this.translocoService.translate('widgets.smpControls.savingDraftLabel'),
