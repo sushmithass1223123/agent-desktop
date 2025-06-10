@@ -349,6 +349,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         }).afterClosed().subscribe((result) => {
             if (result) {
                 if(this.phoneNumber.value?.trim() !== ''){
+                    data.User = this.phoneNumber.value;
                     this.makeCall(data);
                 }   else {
                     this._appUIService.showSnackbar('Please enter the number', 'failure');
