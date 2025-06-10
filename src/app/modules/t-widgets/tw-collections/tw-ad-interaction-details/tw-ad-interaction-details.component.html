@@ -43,6 +43,7 @@
         class="border-radius-20"
         mat-button
         color="primary"
+        *ngIf="record.Channel?.toLowerCase() === 'voice'"
         [matTooltip]="locale('widgets.adInteractionDetails.callback')"
         (click)="makeCall(record)"
     >
