@@ -99,13 +99,11 @@
                         <ng-container *ngIf="item.type.includes('image'); else audio">
                             <div class="twd-flex twd-w-4/5">
                                 <img [src]="item.base64" />
-                                <mat-icon
-                                    class="edit-image-icon"
-                                    [matTooltip]="locale('widgets.chatAttachments.edit')"
-                                    *ngIf="uploadingFiles?.length > 1"
-                                    (click)="edit(i)"
-                                    >edit</mat-icon
-                                >
+                                <button mat-icon-button color="primary">
+                                    <mat-icon [matTooltip]="locale('widgets.chatAttachments.edit')" (click)="edit(i)"
+                                        >edit</mat-icon
+                                    >
+                                </button>
                             </div>
                         </ng-container>
 
