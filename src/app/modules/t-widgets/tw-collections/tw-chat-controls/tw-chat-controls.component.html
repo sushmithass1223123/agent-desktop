@@ -735,7 +735,12 @@
                         class="standalone-av-holder"
                         id="standalone-av-holder-{{ interaction.InteractionID }}"
                         *ngIf="StandaloneAv"
-                    ></div>
+                    >
+                    <div class="no-av" *ngIf="!callWidget">
+                        <img src="assets/images/vectors/not-found.svg" alt="No AV interaction found widget">
+                        <span class="mat-headline mt-24">No Audio-Video interaction found yet!</span>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
