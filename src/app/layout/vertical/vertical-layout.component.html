@@ -4,6 +4,7 @@
         <!-- PANEL CONTENT -->
         <!-- CHAT PANEL -->
         <fuse-sidebar
+            [fClose]="forceHideSidebar"
             name="chatPanel"
             position="left"
             class="chat-panel left-chat-panel"
@@ -90,6 +91,7 @@
             [invisibleOverlay]="true"
             [foldedWidth]="0"
             [foldedAutoTriggerOnHover]="false"
+            [fClose]="forceHideSidebar"
         >
             <instant-messaging></instant-messaging>
         </fuse-sidebar>
@@ -98,7 +100,7 @@
     <!-- / SIDE PANEL -->
 
     <!-- QUICK PANEL -->
-    <fuse-sidebar name="quickPanel" position="right" class="quick-panel">
+    <fuse-sidebar [fClose]="forceHideSidebar" name="quickPanel" position="right" class="quick-panel">
         <quick-panel></quick-panel>
     </fuse-sidebar>
     <!-- / QUICK PANEL -->
@@ -122,6 +124,7 @@
     <!-- LEFT NAVBAR -->
     <ng-template #leftNavbar>
         <fuse-sidebar
+            [fClose]="forceHideSidebar"
             name="navbar"
             class="navbar-fuse-sidebar mat-elevation-z0"
             [folded]="customFuse.navbar.folded"
@@ -138,6 +141,7 @@
     <!-- RIGHT NAVBAR -->
     <ng-template #rightNavbar>
         <fuse-sidebar
+            [fClose]="forceHideSidebar"
             name="navbar"
             position="right"
             class="navbar-fuse-sidebar mat-elevation-z0"

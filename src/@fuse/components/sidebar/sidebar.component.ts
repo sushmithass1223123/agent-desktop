@@ -78,6 +78,7 @@ export class FuseSidebarComponent implements OnInit, OnDestroy {
 
     // Private
     private _folded: boolean;
+    private _forceClosed: boolean;
     private _fuseConfig: any;
     private _wasActive: boolean;
     private _wasFolded: boolean;
@@ -128,7 +129,20 @@ export class FuseSidebarComponent implements OnInit, OnDestroy {
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
+    @Input()
+    set fClose(value: boolean) {
+        if (value) {
+            this._forceClosed = true;
+            this.isLockedOpen = false;
 
+            this.unfold();
+
+            this.opened = false;
+
+            this.openedChanged.emit(this.opened);
+            this._hideSidebar();
+        }
+    }
     /**
      * Folded
      *
@@ -306,7 +320,7 @@ export class FuseSidebarComponent implements OnInit, OnDestroy {
             const isActive = this._mediaObserver.isActive(this.lockedOpen);
 
             // If the both status are the same, don't act
-            if (this._wasActive === isActive) {
+            if (this._wasActive === isActive || this._forceClosed) {
                 return;
             }
 

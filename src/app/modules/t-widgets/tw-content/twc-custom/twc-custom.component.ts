@@ -8,6 +8,7 @@ import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { CustomTMACEventTypes, IPostMessage } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Subscription } from 'rxjs';
+import { AppDataService } from '@services/app-data.service';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -64,9 +65,10 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
         public contentPageService: ContentPageService,
         private _sanitizer: DomSanitizer,
         private _tmacEventService: TMACEventService,
-        private _fuseFacadeService: FuseFacadeService
+        private _fuseFacadeService: FuseFacadeService,
+        public appDataService: AppDataService
     ) {
-        super('TwcCustomComponent', hostElement, contentPageService);
+        super('TwcCustomComponent', hostElement, contentPageService, appDataService);
 
         this.excludedEvents = [
             'WallboardRefreshEvent',

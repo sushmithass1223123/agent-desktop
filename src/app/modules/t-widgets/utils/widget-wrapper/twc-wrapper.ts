@@ -4,6 +4,7 @@ import { ILogger, TUtils } from '@tmac/sdk';
 import { IWidget } from 'app/interfaces';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { AppDataService } from '@services/app-data.service';
 
 /**
  * TW content wrapper directive
@@ -62,13 +63,26 @@ export class TWContentWrapper {
     onResize(): void {
         this.setWidthHeight();
     }
+    private _forceHideToolbar: boolean;
 
-    constructor(source: string, public hostElement: ElementRef, public contentPageService: ContentPageService) {
+    constructor(
+        source: string,
+        public hostElement: ElementRef,
+        public contentPageService: ContentPageService,
+        public appDataService: AppDataService
+    ) {
         // set the unsubscribeAll defaults
         this.unsubscribeAll = new Subject();
         this.pageActive = false;
         this.setWidthHeight();
         this.logger = TUtils.Logger.register(source.replace('Twc', '').replace('Component', 'Widget'));
+
+        this.appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            if (Object.keys(config).length) {
+                this._forceHideToolbar = config.Main.Toolbar.Hidden;
+                this.setWidthHeight();
+            }
+        });
     }
 
     /**
@@ -79,7 +93,7 @@ export class TWContentWrapper {
         // this.widgetWidth = window.innerWidth >= 599 ? window.innerWidth - 100 : window.innerWidth;
 
         // default height
-        this.widgetHeight = window.innerHeight - 85;
+        this.widgetHeight = window.innerHeight - (this._forceHideToolbar ? 20 : 85);
 
         // TODO: screen resolution widget height
         // this.widgetHeight = screen.height - 220;

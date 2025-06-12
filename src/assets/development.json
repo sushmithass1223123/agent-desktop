@@ -17,6 +17,7 @@
     },
     "Main": {
         "Toolbar": {
+            "Hidden": true,
             "Widgets": [
                 {
                     "Name": "Interaction indicators",
@@ -202,6 +203,7 @@
             ]
         },
         "Navbar": {
+            "Hidden": true,
             "HoldInteractionOnTabChange": false,
             "Widgets": {
                 "Top": [
@@ -1585,7 +1587,7 @@
                                     "Data": {
                                         "Widgets": [
                                             {
-                                                "Name": "Chat Controls",
+                                                "Name": "Audio-Video Controls",
                                                 "Description": "",
                                                 "Type": "tw-chat-controls",
                                                 "Config": {
@@ -1604,6 +1606,7 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
+                                                    "StandaloneAv": true,
                                                     "ExternalAVWidget": {
                                                         "Enabled": true,
                                                         "Url": "https://dicedev.tetherfi.cloud/adavui?agentId=$agentId&stationId=$stationId"
@@ -1774,416 +1777,13 @@
                                                         }
                                                     }
                                                 }
-                                            },
-                                            {
-                                                "Name": "Customer Details",
-                                                "Description": "",
-                                                "Type": "tw-customer-details",
-                                                "Config": {
-                                                    "Enabled": true,
-                                                    "Hidden": false,
-                                                    "Static": false,
-                                                    "Anchor": true,
-                                                    "AOT": false,
-                                                    "AutoOpen": false,
-                                                    "Icon": "person",
-                                                    "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse"],
-                                                    "ViewState": "restore",
-                                                    "Header": true,
-                                                    "Pinned": false
-                                                },
-                                                "Data": {
-                                                    "CustomerInfo": [
-                                                        {
-                                                            "Title": "Channel",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.JsonData.pChannel",
-                                                            "Unit": "",
-                                                            "DefaultValue": ""
-                                                        },
-                                                        {
-                                                            "Title": "Queue time",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
-                                                            "Unit": "s",
-                                                            "DefaultValue": "00:00:00"
-                                                        },
-                                                        {
-                                                            "Title": "Mobile",
-                                                            "ValueSource": "CCLDataEvent.RegisteredPhone",
-                                                            "Unit": "",
-                                                            "DefaultValue": ""
-                                                        },
-                                                        {
-                                                            "Title": "Name",
-                                                            "ValueSource": "CCLDataEvent.CallerName",
-                                                            "Unit": "",
-                                                            "DefaultValue": ""
-                                                        },
-                                                        {
-                                                            "Title": "Auth Type",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.authType",
-                                                            "Unit": "",
-                                                            "DefaultValue": ""
-                                                        },
-                                                        {
-                                                            "Title": "Auth Status",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.authStatus",
-                                                            "Unit": "",
-                                                            "DefaultValue": ""
-                                                        },
-                                                        {
-                                                            "Title": "Email",
-                                                            "ValueSource": "CCLDataEvent.Email",
-                                                            "Unit": "",
-                                                            "DefaultValue": ""
-                                                        },
-                                                        {
-                                                            "Title": "Address",
-                                                            "ValueSource": "CCLDataEvent.Address",
-                                                            "Unit": "",
-                                                            "DefaultValue": ""
-                                                        },
-                                                        {
-                                                            "Title": "NRIC",
-                                                            "ValueSource": "CCLDataEvent.NRIC",
-                                                            "Unit": "",
-                                                            "DefaultValue": "",
-                                                            "MaskData": {
-                                                                "UnMaskedStartChars": 2,
-                                                                "UnMaskedEndChars": 2
-                                                            }
-                                                        },
-                                                        {
-                                                            "Title": "Account Number",
-                                                            "ValueSource": "CCLDataEvent.AccountNumber",
-                                                            "Unit": "",
-                                                            "DefaultValue": "",
-                                                            "MaskData": {
-                                                                "MaskWith": "*",
-                                                                "MaxMaskedChars": 8,
-                                                                "UnMaskedStartChars": 0,
-                                                                "UnMaskedEndChars": 4
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "Name": "Customer Journey",
-                                                "Description": "",
-                                                "Type": "tw-customer-journey",
-                                                "Config": {
-                                                    "Enabled": true,
-                                                    "Hidden": false,
-                                                    "Static": false,
-                                                    "Anchor": true,
-                                                    "AOT": false,
-                                                    "AutoOpen": false,
-                                                    "Icon": "storage",
-                                                    "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse"],
-                                                    "ViewState": "collapse",
-                                                    "Header": true,
-                                                    "Pinned": false
-                                                },
-                                                "Data": {
-                                                    "IframeBaseUrl": "https://dicedev.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
-                                                    "NoOfRecords": 10,
-                                                    "SentimentDashboardUrl": "https://dicedev.tetherfi.cloud/SentimentDashboard",
-                                                    "Columns": [
-                                                        "InteractionDate",
-                                                        "Channel",
-                                                        "Direction",
-                                                        "InteractionText",
-                                                        "Intent",
-                                                        "LastServicedAgentName",
-                                                        "CIF",
-                                                        "NRIC",
-                                                        "Actions"
-                                                    ]
-                                                }
                                             }
                                         ]
                                     }
                                 }
                             ],
-                            "Dynamic": [
-                                {
-                                    "Name": "User location",
-                                    "Description": "",
-                                    "Key": "UserLocation",
-                                    "Type": "tw-user-location",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "location_on",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["float", "maximize"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {}
-                                },
-                                {
-                                    "Name": "Agent Assist",
-                                    "Description": "",
-                                    "Key": "AgentAssist",
-                                    "Type": "tw-agent-assist",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "verified_user",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dicedev.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${Interaction.UCID}",
-                                        "Title": "Agent Assist",
-                                        "Icon": "assistant",
-                                        "Width": 450,
-                                        "Height": 800,
-                                        "Actions": ["collapse", "maximize", "destroy"],
-                                        "ViewState": "restore"
-                                    }
-                                },
-                                {
-                                    "Name": "Canned Responses",
-                                    "Description": "",
-                                    "Key": "TexCannedResponses",
-                                    "Type": "tw-canned-responses",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": { "ResponseMode": "manual", "EditAllowed": false }
-                                },
-                                {
-                                    "Name": "Realtime Customer Sentiment",
-                                    "Description": "feedback",
-                                    "Key": "CustomerSentiment",
-                                    "Type": "tw-customer-sentiment",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "sentiment_satisfied_alt",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {}
-                                },
-                                {
-                                    "Name": "Speech Transcripts",
-                                    "Description": "",
-                                    "Key": "SpeechTranscript",
-                                    "Type": "tw-voice-bot-transcripts",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {}
-                                },
-                                {
-                                    "Name": "Work Codes",
-                                    "Description": "",
-                                    "Key": "WorkCodes",
-                                    "Type": "tw-work-codes",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": { "Role": "interaction", "ByTeam": false, "ByGroup": true }
-                                }
-                            ],
-                            "AOT": [
-                                {
-                                    "Name": "External Pop",
-                                    "Description": "",
-                                    "Key": "External-Pop",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": false,
-                                        "Hidden": true,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": true,
-                                        "AutoOpen": true,
-                                        "LocalAOT": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": { "X": 1, "Y": 1, "W": 300, "H": 300 },
-                                        "Actions": ["maximize", "destroy", "resize"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": { "OpenInNew": false, "Url": "http://127.0.0.1:5500/index.html" }
-                                },
-                                {
-                                    "Name": "VKYC Audit",
-                                    "Description": "",
-                                    "Key": "VKYC-Audit",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "LocalAOT": true,
-                                        "Icon": "published_with_changes",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 1, "W": 700, "H": 500 },
-                                        "Actions": ["maximize", "destroy", "resize"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "http://localhost:4200?interactionId=${Interaction.InteractionID}&sessionId=${Interaction.UCID}"
-                                    }
-                                },
-                                {
-                                    "Name": "Agent Assist",
-                                    "Description": "",
-                                    "Key": "AgentAssist",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "verified_user",
-                                        "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 450, "H": 800 },
-                                        "Actions": ["minimize", "destroy"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dicedev.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
-                                    }
-                                },
-                                {
-                                    "Name": "Register Callback",
-                                    "Description": "",
-                                    "Key": "RegisterCallback",
-                                    "Type": "tw-register-callback",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "phone_callback",
-                                        "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 300, "H": 300 },
-                                        "Actions": ["collapse", "destroy"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "TCMProxyUrl": "https://dicedev.tetherfi.cloud/TCM_Proxy/api",
-                                        "DataMap": {
-                                            "Name": {
-                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
-                                                "DefaultValue": "Mr. Tan"
-                                            },
-                                            "Phone": {
-                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.mobile",
-                                                "DefaultValue": "6596975347"
-                                            }
-                                        }
-                                    }
-                                },
-                                {
-                                    "Name": "Compose Messaging",
-                                    "Description": "",
-                                    "Key": "Messaging",
-                                    "Type": "tw-compose-messaging",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "sms",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 2, "W": 500, "H": 350 },
-                                        "Actions": ["destroy"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": { "Type": "sms", "Number": "CCLDataEvent.RegisteredPhone" }
-                                }
-                            ]
+                            "Dynamic": [],
+                            "AOT": []
                         }
                     }
                 },
