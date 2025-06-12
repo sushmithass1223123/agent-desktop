@@ -17,7 +17,7 @@
     },
     "Main": {
         "Toolbar": {
-            "Hidden": true,
+            "Hidden": false,
             "Widgets": [
                 {
                     "Name": "Interaction indicators",
@@ -203,7 +203,7 @@
             ]
         },
         "Navbar": {
-            "Hidden": true,
+            "Hidden": false,
             "HoldInteractionOnTabChange": false,
             "Widgets": {
                 "Top": [
@@ -212,7 +212,7 @@
                         "Description": "",
                         "Type": "twn-home",
                         "Config": { "Enabled": true, "Icon": "home" },
-                        "Data": { "Path": "/home", "Active": true }
+                        "Data": { "Path": "/home", "Active": false }
                     },
                     {
                         "Name": "Supervisor",
@@ -233,7 +233,7 @@
                         "Description": "",
                         "Type": "twn-textchat",
                         "Config": { "Enabled": true, "Icon": "chat" },
-                        "Data": { "Path": "/textchat", "Active": false }
+                        "Data": { "Path": "/textchat", "Active": true }
                     },
                     {
                         "Name": "Email",

@@ -64,7 +64,7 @@ import {
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, INVALID_CHARS } from 'app/constants';
-import { ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, SnackbarStateTypes } from 'app/interfaces';
+import { ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, IWidget, SnackbarStateTypes } from 'app/interfaces';
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { format } from 'date-fns';
@@ -75,6 +75,8 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { TwTemplateComponent } from '@modules/t-widgets/tw-template/tw-template.component';
+import { DynamicComponentService } from '@services/dynamic-component.service';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
@@ -574,6 +576,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * socialMediaAVdisable
          */
     socialMedia: boolean;
+    StandaloneAv: boolean;
     /**
      * Method to disable AV escalations when customer connects through mobile device
      */
@@ -690,7 +693,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         private _agentFeaturesService: AgentFeaturesService,
         private translocoService: TranslocoService,
         private sharedService: SharedService,
-        private sanitize: DomSanitizer
+        private sanitize: DomSanitizer,
+        private _dynamicComponentService: DynamicComponentService
     ) {
         super('TwChatControlsComponent');
 
@@ -750,6 +754,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         };
 
         this.DisableAvConstraints = this.widgetData?.DisableAvConstraints;
+
+        this.StandaloneAv = this.widgetData?.StandaloneAv;
 
         this.xssSymbolEntityMap = this.data.Data.XssSymbolEntityMap ?? {
             '&': '&amp;',
@@ -1731,12 +1737,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             icon: param === 'audio' ? 'phone' : 'duo'
         };
         // create a call AOT widget
-        const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon) as AOTWidget<any, any>;
+        const widget: IWidget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon) as AOTWidget<
+            any,
+            any
+        >;
 
-        widget.Config.AOT = true;
+        widget.Config.AOT = !this.StandaloneAv;
         widget.Config.Anchor = true;
-        widget.Config.Position.W = 800;
-        widget.Config.Position.H = 550;
+        if(!this.StandaloneAv) {
+            widget.Config.Position.W = 800;
+            widget.Config.Position.H = 550;
+        } else widget.Config.Header = false;
         widget.Config.Actions = ['collapse', 'maximize', 'resize'];
         widget.Config.LocalAOT = true;
 
@@ -1773,6 +1784,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         //     CallType: param
         // };
 
+        const widgetId = TUtils.Generic.uuid();
+
         widget.InteractionDetails = this.data.InteractionDetails;
         // this.isMobileDevice = this.customerDevice;
         widget.Data = { ...this.data.Data, ChatMode: this.chatMode,
@@ -1781,10 +1794,20 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.Data.Source = 'TwChatControlsComponent';
         widget.Data.CallType = param;
         widget.Data.Direction = direction;
-        widget.destroy = () => this._aotWidgetService.destroyWidget(widget.ID, true);
-
         // open call widget
-        this._aotWidgetService.addWidget(widget);
+        if(!this.StandaloneAv) {
+            widget.destroy = () => this._aotWidgetService.destroyWidget(widget.ID, true);
+            this._aotWidgetService.addWidget(widget);
+        } else {
+            widget.destroy = () => this._dynamicComponentService.removeComponent(widgetId);
+            this._dynamicComponentService.appendComponentToElement(
+                TwTemplateComponent,
+                `standalone-av-holder-${this.interaction.InteractionID}`,
+                widgetId,
+                { widget }
+            )
+        }
+
         // assign to the local variable
         this.callWidget = widget;
         // disable AV buttons

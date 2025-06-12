@@ -376,19 +376,19 @@ export const AGENT_FEATURES_MAP = {
 export const AUX_STATUSES = {
     available: {
         type: 'available',
-        code: 112
+        code: "112"
     },
     acw: {
         type: 'acw',
-        code: 0
+        code: "0"
     },
     aux_10: {
         type: 'aux',
-        code: 10
+        code: "10"
     },
     aux_4: {
         type: 'aux',
-        code: 4
+        code: "4"
     }
 };
 
