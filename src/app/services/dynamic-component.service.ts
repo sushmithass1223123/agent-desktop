@@ -1,12 +1,24 @@
 // dynamic-component.service.ts
-import { ApplicationRef, ComponentRef, EmbeddedViewRef, Injectable, Injector, Type } from '@angular/core';
+import {
+    ApplicationRef,
+    ComponentFactoryResolver,
+    ComponentRef,
+    EmbeddedViewRef,
+    Injectable,
+    Injector,
+    Type
+} from '@angular/core';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 
 @Injectable({ providedIn: 'root' })
 export class DynamicComponentService extends SharedWrapper {
     private activeComponents: Map<string, ComponentRef<any>> = new Map();
 
-    constructor(private injector: Injector, private appRef: ApplicationRef) {
+    constructor(
+        private injector: Injector,
+        private appRef: ApplicationRef,
+        private componentFactoryResolver: ComponentFactoryResolver
+    ) {
         super('DynamicComponentService');
     }
 
@@ -14,16 +26,18 @@ export class DynamicComponentService extends SharedWrapper {
         component: Type<T>,
         containerId: string,
         uniqueKey: string,
-        inputs?: Partial<T> 
+        inputs?: Partial<T>
     ): ComponentRef<T> | null {
         this.removeComponent(uniqueKey);
 
-        const componentRef = this.appRef.bootstrap(component);
+        const factory = this.componentFactoryResolver.resolveComponentFactory(component);
+        const componentRef = factory.create(this.injector);
 
         if (inputs) {
             Object.assign(componentRef.instance, inputs);
         }
 
+        this.appRef.attachView(componentRef.hostView);
         componentRef.changeDetectorRef.detectChanges();
 
         const domElem = (componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;

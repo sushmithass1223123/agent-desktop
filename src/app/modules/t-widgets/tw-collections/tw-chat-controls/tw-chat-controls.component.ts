@@ -1743,13 +1743,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         >;
 
         widget.Config.AOT = !this.StandaloneAv;
-        widget.Config.Anchor = true;
         if(!this.StandaloneAv) {
+            widget.Config.Anchor = true;
             widget.Config.Position.W = 800;
             widget.Config.Position.H = 550;
+            widget.Config.LocalAOT = true;
         } else widget.Config.Header = false;
         widget.Config.Actions = ['collapse', 'maximize', 'resize'];
-        widget.Config.LocalAOT = true;
 
         try {
             // check if audio/video call widget config is overridden
