@@ -53,7 +53,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
     /**
     * config to enable or disable socialmedianotification
     */
-    private disableSocialMediaNotification: boolean = false;
+    private disableSocialMediaNotifications: boolean = false;
 
 
     constructor(
@@ -75,7 +75,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         this.widgetData = this.data.Data;
 
         // Read config flag
-        this.disableSocialMediaNotification = this.widgetData.disableSocialMediaNotification;
+        this.disableSocialMediaNotifications = this.widgetData.disableSocialMediaNotifications;
 
         // Observe all active post interactions
         this._interactionManagerService.interactions
@@ -127,7 +127,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         // get the type
         const type = evt.Type?.toLowerCase() ?? '';
         // Check if the notification is of socialmedia type and is disabled by config
-        if (type.startsWith('socialmedia') && this.disableSocialMediaNotification) {
+        if (type.startsWith('socialmedia') && !this.disableSocialMediaNotifications) {
         return; // suppress snackbar notification
         }
 
