@@ -216,6 +216,10 @@ export type TwChatControlsData = {
      */
     IsPhoneAudio?: boolean;
     /**
+     * Config to decide whether chat controls should act as standalone AV widget
+     */
+    StandaloneAv?: boolean;
+    /**
      * Transfer configurations
      */
     Transfer: AgentSkillConfig;
