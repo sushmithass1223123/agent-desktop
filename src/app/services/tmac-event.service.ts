@@ -854,7 +854,7 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
                     log: true
                   });
 
-                  if(result.response && result.response.toString() === '0') {
+                  if(result?.response?.toString() === '0') {
                     const msg = this.translocoService.translate('widgets.campaignNotification.success').replace('#type', response);
                     this._appUIService.showSnackbar(msg,'success');
                   } else {
