@@ -11,6 +11,7 @@ import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { differenceInHours, startOfDay } from 'date-fns';
 import { filter, map, takeUntil } from 'rxjs/operators';
+import { AppDataService } from '@services/app-data.service';
 
 /**
  * TwcHomeComponent
@@ -101,9 +102,10 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         public contentPageService: ContentPageService,
         private _dashboardService: DashboardService,
         private _fuseFacadeService: FuseFacadeService,
-        private _aotWidgetService: AOTWidgetService
+        private _aotWidgetService: AOTWidgetService,
+        public appDataService: AppDataService
     ) {
-        super('TwcHomeComponent', hostElement, contentPageService);
+        super('TwcHomeComponent', hostElement, contentPageService, appDataService);
     }
 
     /**

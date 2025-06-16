@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
+import { AppDataService } from '@services/app-data.service';
 
 /**
  * Workbench content component
@@ -35,8 +36,12 @@ export class TwcWorkbenchComponent extends TWContentWrapper implements OnInit, O
      * @param {ElementRef} hostElement
      * @param {contentPageService} ContentPageService
      */
-    constructor(hostElement: ElementRef, contentPageService: ContentPageService) {
-        super('TwcWorkbenchComponent', hostElement, contentPageService);
+    constructor(
+        hostElement: ElementRef,
+        contentPageService: ContentPageService,
+        appDataServide: AppDataService
+    ) {
+        super('TwcWorkbenchComponent', hostElement, contentPageService, appDataServide);
     }
 
     /**

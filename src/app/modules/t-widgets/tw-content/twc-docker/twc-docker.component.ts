@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from '@services/content-page.service';
+import { AppDataService } from '@services/app-data.service';
 
 /**
  * Docker Content Widget Component
@@ -29,8 +30,12 @@ export class TwcDockerComponent extends TWContentWrapper implements OnInit, OnDe
      */
     unload: boolean;
 
-    constructor(public hostElement: ElementRef, public contentPageService: ContentPageService) {
-        super('TwcDockerComponent', hostElement, contentPageService);
+    constructor(
+        public hostElement: ElementRef,
+        public contentPageService: ContentPageService,
+        public appDataService: AppDataService
+    ) {
+        super('TwcDockerComponent', hostElement, contentPageService, appDataService);
     }
 
     /**

@@ -109,6 +109,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
     }
 
     appLabelsError;
+    public forceHideSidebar: boolean = false;
 
     /**
      * Constructor
@@ -163,6 +164,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         // subscribe to app changes
         this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
             if (Object.keys(config).length) {
+                this.forceHideSidebar = config.Main.Navbar.Hidden;
                 this.appConfig = config;
                 this._appDataService.setTheme();
             }
