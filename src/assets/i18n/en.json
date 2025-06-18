@@ -148,9 +148,6 @@
         "twitter": "Twitter",
         "facebook": "Facebook",
         "telegram": "Telegram",
-        "youtube": "Youtube",
-        "appstore": "Appstore",
-        "playstore": "Playstore",
         "store": "Store",
         "field": "Field"
     },
@@ -760,8 +757,9 @@
             "screenshareAlreadyInProgress": "Screenshare already in progress !",
             "screenshareReqSent": "Screenshare request sent",
             "screenshareReqError": "Error sending screenshare request",
-            "requestScreenShareAccepted": "Customer has accepted request to screen share",
+            "requestScreenShareAccepted": "Customer has accepted request to screen share",     
             "requestScreenShareRejected": "Customer has rejected request to screen share",
+            "screenshareCancelledByCustomer": "Customer has cancelled screen share",
             "muteDisplayText":"off,on",
             "holdNotification": "#owner has kept the call on hold",
             "unholdNotification": "#owner unholded the call"
@@ -1081,6 +1079,7 @@
             "emailMaskErrorFailedToMaskInboxEmail": "Error masking email",
             "emailComposeFailed": "Failed to compose email : reason - ",
             "emailComposeErrorFailedToComposeNewEmail": "Error while composing email",
+            "emailComposeErrorChannelLimit": "Agent cannot compose email due to channel limit",
             "emailComposeErrorEmailMaxTabCountReached": "Maximum email tab count reached",
             "emailPullFailed": "Failed to pull email - reason : ",
             "emailPullErrorFailedToPullFromMakerDraft": "Failed to pull email from maker draft",
@@ -1096,7 +1095,7 @@
             "emailPullErrorFailedToPullEmailFromMakerQueueInOutlookPlugin": "Failed to pull email from maker queue in outlook plugin",
             "emailPullErrorFailedToPullAndCloseemailFromMakerQueueInOutlookPlugin": "Failed to send email",
             "emailPullErrorAgentNotLoggedInToTMAC": "Agent not logged in to TMAC",
-            "emailPullErrorFailedToPullChannelLimit": "Agent cannot accept email due to channel limit",
+            "emailPullErrorChannelLimit": "Agent cannot accept email due to channel limit",
             "emailSendErrorExceptionOnRetrievingAttachmentInformation": "Error on retrieving attachment information",
             "emailSendErrorServerNotReachable": "Server not reachable",
             "emailSendErrorExceptionOnFileDownloadFromS3": "Exception on downloading file from s3",
@@ -1192,9 +1191,7 @@
             "editedItem": "This item has been edited",
             "deletedItem": "This item has been deleted",
             "postFullscreen": "Focus on this item",
-            "nonPullItemWarning": "Posts can only pulled in queue, inbox and draft sections. Deleted comments / posts cannot be pulled.",   
-            "socialMediaAccounts": "List of social media accounts",
-            "socialMediaAccountsNotFound": "No social media accounts available"
+            "nonPullItemWarning": "Posts can only pulled in queue, inbox and draft sections. Deleted comments / posts cannot be pulled."
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",
