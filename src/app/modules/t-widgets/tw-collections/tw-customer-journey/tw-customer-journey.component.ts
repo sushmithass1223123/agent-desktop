@@ -316,7 +316,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             EmailID: {
                 title: this.translocoService.translate('channels.email'),
                 searchable: true,
-                truncate: true
+                truncate: true,
+                tooltip: true
             },
             GroupID: {
                 searchable: true
@@ -685,14 +686,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     onMaximized(max: boolean): void {
         this.maximized = max;
         this.maximizeEvent.emit(max);
-        // on minimize, always keep the latest record first
-        if (!max) {
-            setTimeout(() => {
-                this.table.source?.sort?.sort({ id: 'InteractionDate', start: 'desc', disableClear: true });
-            }, 0);
-        }
-    }
 
+    }
     /**
      * Fetches interaction data and assings to this.interactionNotesReq.data
      * @param {InteractionHistory} record
@@ -1098,8 +1093,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 this.table.collapseExpanded();
                 this.table.selected = null;
             }
-        }
-    }
+        }}
 }
 
 interface WidgetData {

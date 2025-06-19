@@ -14,6 +14,14 @@ export class SharedService {
     private appConfirmDialog = new Subject<void>();
     private whiteboardOpenSubject = new BehaviorSubject<boolean>(false);
     whiteboardOpen$ = this.whiteboardOpenSubject.asObservable();
+    private holdActiveVoiceCalls = new Subject<number>();
+
+    triggerHoldActiveVoiceCalls(interactionId: number) {
+        this.holdActiveVoiceCalls.next(interactionId)
+    }
+    getHoldActiveVoiceCalls(): Observable<number> {
+        return this.holdActiveVoiceCalls.asObservable()
+    }
 
     triggerEmailFailure(interactionId: number) {
         this.emailErrorNotifySubject.next(interactionId);

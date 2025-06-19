@@ -112,6 +112,9 @@
                                 >
                                     <mat-icon>refresh</mat-icon>
                                 </button>
+
+                                <!-- <button (click)="replyToSelectedEmails()"> R</button>
+                                <button (click)="transferEmail(getSelectedEmails())">T </button> -->
                                 <button
                                     mat-icon-button
                                     (click)="advancedSearch.show = !advancedSearch.show"
@@ -184,10 +187,10 @@
                                                     <mat-label>{{ locale('widgets.workbench.subject') }} </mat-label>
                                                     <input matInput formControlName="subject" type="text" />
                                                 </mat-form-field>
-                                                <mat-form-field class="twd-text-sm" appearance="outline">
+                                                <!-- <mat-form-field class="twd-text-sm" appearance="outline">
                                                     <mat-label>{{ locale('widgets.workbench.content') }} </mat-label>
                                                     <input matInput formControlName="content" type="text" />
-                                                </mat-form-field>
+                                                </mat-form-field> -->
 
                                                 <mat-form-field
                                                     class="twd-text-sm"

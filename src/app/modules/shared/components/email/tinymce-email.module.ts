@@ -172,7 +172,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                     // ],
                     toolbar: `
                         undo redo | formatselect | fontsizeselect  | fontselect | forecolor backcolor | table | 
-                        bold italic backcolor | alignleft aligncenter 
+                        bold italic | alignleft aligncenter 
                         alignright alignjustify | bullist numlist outdent indent |  
                         removeformat
                     `,

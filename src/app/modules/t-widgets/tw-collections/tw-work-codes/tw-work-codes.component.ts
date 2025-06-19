@@ -138,6 +138,8 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        this.matDialog.closeAll();
     }
 
     // -----------------------------------------------------------------------------------------------------

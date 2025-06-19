@@ -34,7 +34,7 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.annotateCanvas = document.getElementById('anotateCanvas-' + this.sessionID);
     setTimeout(() => { }, 200);
-    this.annotateCtx = this.annotateCanvas.getContext('2d');
+    this.annotateCtx = this.annotateCanvas.getContext('2d', { willReadFrequently: true });
     this.cdr.detectChanges();
   }
 
@@ -56,7 +56,7 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
     this.annotateCanvas.style.width = `${img?.width}px`;
     this.annotateCanvas.style.height = `${img?.height}px`;
 
-    this.annotateCtx = this.annotateCanvas.getContext('2d');
+    this.annotateCtx = this.annotateCanvas.getContext('2d', { willReadFrequently: true });
     this.annotateCtx.mozImageSmoothingEnabled = false;
     this.annotateCtx.webkitImageSmoothingEnabled = false;
     this.annotateCtx.msImageSmoothingEnabled = false;

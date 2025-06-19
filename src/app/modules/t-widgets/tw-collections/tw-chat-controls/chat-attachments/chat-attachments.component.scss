@@ -69,7 +69,6 @@ chat-attachments {
                 object-fit: contain;
                 position: relative;
 
-
                 &.selfie {
                     object-fit: cover;
                     -webkit-transform: scaleX(-1);
@@ -86,6 +85,12 @@ chat-attachments {
                 position: absolute;
                 bottom: 2%;
                 right: 2%;
+            }
+
+            .edit-image-icon {
+                margin-left: -1.5em;
+                margin-top: 10px;
+                cursor: pointer;
             }
         }
     }

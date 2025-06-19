@@ -27,7 +27,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
-import { AgentNotificaitonEvent, IAgentData, IncomingEmailEvent, InteractionDataEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
+import { AgentNotificaitonEvent, IAgentData, IncomingEmailEvent, InteractionDataEvent, IResponse, IUIEvent, SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionComment, InteractionRef, IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse } from 'app/interfaces';
 import { AgentSkillListDataModel } from 'app/models';
@@ -259,6 +259,20 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             });
 
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+
+        this._tmacEventService
+                    .getConstructDisposeEvents<IUIEvent>(['InteractionClosedEvent', 'AutoCloseTabEvent'])
+                    .pipe(takeUntil(this.unsubscribeAll))
+                    .subscribe((evts) =>
+                        evts.forEach((evt) => {
+                            setTimeout(() => {
+                                if (evt.EventName === 'InteractionClosedEvent' || evt.EventName === 'AutoCloseTabEvent') {
+                                    if (this.data?.Data?.RedirectPath && !this.interactionList?.length)
+                                        this._contentPageService.mode = this.data.Data.RedirectPath;
+                                }
+                            });
+                        })
+                    );
     }
 
     ngOnDestroy(): void {

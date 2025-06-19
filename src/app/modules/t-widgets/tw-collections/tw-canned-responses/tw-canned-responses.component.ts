@@ -220,7 +220,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
 
         this.loading = true;
         // get the groups for the department
-        SDKClient.getTextTemplateGroups(value, null)
+        SDKClient.getTextTemplateGroups(value?.toString(), null)
             .then((result: IResponse) => {
                 this.groups = sortBy(result.response, 'Name');
             })

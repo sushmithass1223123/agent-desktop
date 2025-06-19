@@ -102,6 +102,7 @@ export const EMAIL_SEND_STATUS = {
     '-336': 'CannotFindRemoteAgentState',
     '-337': 'EmailNotFoundInInbox',
     '-338': 'FailedToPullFromQueueWhenAgentIsInvalidState',
+    '-339': 'ChannelLimit',
     '404': 'ServerNotReachable'
 };
 
