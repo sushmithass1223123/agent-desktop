@@ -52,11 +52,23 @@ chat-attachments {
         flex-direction: column;
         gap: 8px;
 
+            width: 100%;
+            height: 100%;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            overflow: auto;
+            gap: 10px;
             img,
             video {
                 width: 100%;
-                max-height: 400px;
-                border-radius: 8px;
+                height: 100%;
+                max-height: 100%;
+                object-fit: contain;
+                position: relative;
+
 
                 &.selfie {
                     object-fit: cover;
