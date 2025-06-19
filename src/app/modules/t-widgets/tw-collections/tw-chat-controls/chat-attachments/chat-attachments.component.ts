@@ -451,7 +451,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         try {
             this.attachPreviewMode = '';
             this._fuseProgressBarService.show();
-
+            const uploadedAttachments = [];   
             // check if SMM
             // check if MediaStreamer is configured, then use MediaStreamer for upload
             if (this.isSMM || this.fileUploadUrl.MediaUploader) {
@@ -468,7 +468,8 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                 const uploadURLs = this.fileUploadUrl.SMM || this.fileUploadUrl.MediaUploader;
 
                 // get the files and upload
-                this.uploadingFiles.forEach(async (file) => {
+                
+             for (const file of this.uploadingFiles) {
                     try {
                         const formData = new FormData();
                         formData.append('file', file.file);
@@ -489,7 +490,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                         // check if success
                         if (response?.isSuccess) {
                             const type = this.getAttachTypeByFileType(file.type);
-                            this.sendAttachments.emit({
+                        uploadedAttachments.push({
                                 type,
                                 contentType: response.result.contentType,
                                 fileName: file.fileName,
@@ -501,21 +502,14 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                         } else {
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
                         }
-
-                        // remove the item from list
-                        this.uploadingFiles.pop();
-
-                        this._fuseProgressBarService.hide();
-                    } catch (error) {
+                    
+                 } catch (error) {
                         this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
-                        // hide the progress bar
-                        this._fuseProgressBarService.hide();
-                    }
-                });
+                 }
             }
             // check if to upload to media proxy
-            else if (this.fileUploadUrl.MediaProxy) {
-                this.uploadingFiles.forEach(async (file) => {
+           } else if (this.fileUploadUrl.MediaProxy) {
+            for (const file of this.uploadingFiles) {
                     try {
                         const formData = new FormData();
                         formData.append('file', file.file);
@@ -533,7 +527,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                         // check the response from file server
                         if (response?.statusCode === 'Created') {
                             const type = this.getAttachTypeByFileType(file.type);
-                            this.sendAttachments.emit({
+                        uploadedAttachments.push({
                                 type,
                                 fileName: file.fileName,
                                 src: response.url,
@@ -543,52 +537,49 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                         } else {
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
                         }
-
-                        // remove the item from list
-                        this.uploadingFiles.pop();
-
-                        this._fuseProgressBarService.hide();
                     } catch (error) {
                         this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
-                        // hide the progress bar
-                        this._fuseProgressBarService.hide();
-                    }
-                });
+                }
+            }
             } else {
                 // upload to TMAC proxy
-                const filesToUpload: FileSaveData[] = [];
-                this.uploadingFiles.forEach(async (file: any) => {
-                    // add to the list
-                    filesToUpload.push({
-                        FileName: file.fileName,
-                        Base64: file.base64,
-                        RelativePath: '',
-                        Status: 0,
-                        Type: this.getAttachTypeByFileType(file.type),
-                        Url: ''
-                    });
-                });
+                const filesToUpload: FileSaveData[] = 
+                this.uploadingFiles.map((file: any) => ({
+                    FileName: file.fileName,
+                    Base64: file.base64,
+                    RelativePath: '',
+                    Status: 0,
+                    Type: this.getAttachTypeByFileType(file.type),
+                    Url: ''
+                  }));
 
                 // upload to server
-                const { response } = await SDKClient.uploadFiles({
-                    files: filesToUpload
-                });
-
+            const { response } = await SDKClient.uploadFiles({
+                files: filesToUpload
+            });
                 // check the response
-                response.forEach((item) => {
-                    const file = this.uploadingFiles.pop();
-                    this.sendAttachments.emit({
-                        type: item.Type ? item.Type : 'file',
-                        fileName: item.FileName,
-                        src: item.Url,
-                        size: file.size,
-                        uploader: 'TmacProxy'
-                    });
+                response.forEach((item, index) => {
+                uploadedAttachments.push({
+                    type: item.Type ?? 'file',
+                    fileName: item.FileName,
+                    src: item.Url,
+                    size: this.uploadingFiles[index].size,
+                    uploader: 'TmacProxy'
                 });
+            });
+        }
 
-                this._fuseProgressBarService.hide();
-            }
-        } catch (error) {}
+        // Emiting each attachment separately or modifying to emit batch if supported
+        for (const attachment of uploadedAttachments) {
+            this.sendAttachments.emit(attachment);
+            
+        }
+
+        this.uploadingFiles = [];
+        this._fuseProgressBarService.hide();
+    } catch (error) {
+        this._fuseProgressBarService.hide();
+    }
     }
 
     edit(index?: number): void {
