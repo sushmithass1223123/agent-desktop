@@ -2290,6 +2290,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             tmacServer = extraParam.serverName;
             // show an alert on connect
             if (extraParam.conferenceType.includes('conf') || extraParam.conferenceType === 'whisper') {
+                
+            // updating conferencetype
+            if (evt.ConferenceType === 'conf') {
+            this.data.InteractionDetails.ConferenceType = extraParam.conferenceType;
+            }
                 const dynamicLabels = [
                     {
                         key: "#agentName",
