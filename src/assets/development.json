@@ -3631,11 +3631,7 @@
             "sendACK": false
         },
         "SDK": {
-            "proxy": {
-                "urls": ["https://15.206.182.15:8445/api/v1/TmacProxy"],
-                "type": "soap",
-                "timeout": 60
-            },
+            "proxy": { "urls": ["https://15.206.182.15:8445/api/v1/TmacProxy"], "type": "soap", "timeout": 60 },
             "signalRProxy": {
                 "enabled": false,
                 "logging": true,
