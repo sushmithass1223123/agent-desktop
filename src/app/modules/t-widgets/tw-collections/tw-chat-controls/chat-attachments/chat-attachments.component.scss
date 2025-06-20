@@ -44,12 +44,14 @@ chat-attachments {
             align-items: center;
             flex-wrap: wrap;
             overflow: auto;
+            gap: 10px;
             img,
             video {
                 width: 100%;
                 height: 100%;
                 max-height: 100%;
                 object-fit: contain;
+                position: relative;
 
                 &.selfie {
                     object-fit: cover;

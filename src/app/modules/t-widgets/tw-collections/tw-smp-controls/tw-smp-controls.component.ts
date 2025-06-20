@@ -34,6 +34,7 @@ import {
     InteractionDataEvent,
     IResponse,
     SDKClient,
+    IUIEvent,
     TUtils
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -285,6 +286,20 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             });
 
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+
+        this._tmacEventService
+                    .getConstructDisposeEvents<IUIEvent>(['InteractionClosedEvent', 'AutoCloseTabEvent'])
+                    .pipe(takeUntil(this.unsubscribeAll))
+                    .subscribe((evts) =>
+                        evts.forEach((evt) => {
+                            setTimeout(() => {
+                                if (evt.EventName === 'InteractionClosedEvent' || evt.EventName === 'AutoCloseTabEvent') {
+                                    if (this.data?.Data?.RedirectPath && !this.interactionList?.length)
+                                        this._contentPageService.mode = this.data.Data.RedirectPath;
+                                }
+                            });
+                        })
+                    );
     }
 
     ngOnDestroy(): void {
@@ -581,8 +596,11 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         this._appUiService.showSnackbar(
                             this.translocoService.translate('interactionComponent.closeInteractionSuccess')
                         );
+<<<<<<< HEAD
                         if (this.data?.Data?.RedirectPath && this.interactionList?.length === 1)
                             this._contentPageService.mode = this.data.Data.RedirectPath;
+=======
+>>>>>>> 94b971bc2c4098137e7a90d54c88da8a95fae760
                         this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                     } else {
                         this._appUiService.showSnackbar(

@@ -165,10 +165,10 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 destChannel: this.data.Data.DestChannel,
                 destSubChannel: this.data.Data.DestSubChannel,
                 disconnectTimeout: this.data.Data.DisconnectTimeout,
-                fallbackSkillId: this.data.Data.FallbackSkillId,
+                fallbackSkillId: this.data.Data.FallbackSkillId? this.data.Data.FallbackSkillId.toString() : '',
                 nextStatusName: this.data.Data.NextStatusName,
                 statusLockTimeout: this.data.Data.StatusLockTimeout,
-                reservedStatusCode: this.data.Data.ReservedStatusCode
+                reservedStatusCode: this.data.Data.ReservedStatusCode ? this.data.Data.ReservedStatusCode.toString() : ''
             });
             snackbarRef?.dismiss();
             if (res.response.ResultCode < 0) {
