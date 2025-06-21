@@ -1,5 +1,5 @@
 const productionJson = require('../src/assets/config/production.json');
-const developmentJson = require('../src/assets/config/development.json');
+const developmentJson = require('../src/assets/development.json');
 const loginJson = require('../src/assets/config/login.json');
 const defaultJson = require('../src/assets/config/default.json');
 const packageJson = require('../package.json');
@@ -24,12 +24,12 @@ const main = () => {
         });
     });
 
-    fs.truncate('./src/assets/config/development.json', (err) => {
+    fs.truncate('./src/assets/development.json', (err) => {
         if (err) {
             console.warn('Unable to open development.json', err);
             return;
         }
-        fs.writeFile('./src/assets/config/development.json', JSON.stringify(Object.assign(developmentJson)), (err) => {
+        fs.writeFile('./src/assets/development.json', JSON.stringify(Object.assign(developmentJson)), (err) => {
             if (err) {
                 console.warn('Version not added in development.json', err);
                 return;
