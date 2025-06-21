@@ -43,7 +43,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 
 export function initConfig() {
   try{
-    const jsonFile = `assets/config/language.json`; //path to config file
+    const jsonFile = `assets/runtime-config/language.json`; //path to config file
     var request = new XMLHttpRequest();
     request.open('GET', jsonFile, false);  // get app settings
     request.send(null);
