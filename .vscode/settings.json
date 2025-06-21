@@ -114,5 +114,6 @@
             "multiline": true
         }
     ],
-    "commit-message-editor.view.defaultView": "form"
+    "commit-message-editor.view.defaultView": "form",
+    "nxConsole.generateAiAgentRules": true
 }
