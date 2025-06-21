@@ -18,7 +18,7 @@ COPY . .
 RUN npm run build:prod
 
 # Stage 2: Serve the Angular app using Nginx
-FROM nginx:1.24-alpine
+FROM nginx:stable-alpine-slim
 
 # Copy built app from the builder stage to Nginx's HTML directory
 COPY --from=builder /app/dist/agent-desktop /tetherfi/tetherfihome/agent-desktop
