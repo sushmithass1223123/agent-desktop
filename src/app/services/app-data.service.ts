@@ -24,7 +24,7 @@ export class AppDataService extends SharedWrapper {
     /**
      * Production conofig path
      */
-    prodConfigPath = 'assets/production.json';
+    prodConfigPath = 'assets/config/production.json';
     /**
      * Dev config path
      */

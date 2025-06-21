@@ -29,7 +29,7 @@ export class WidgetPreviewComponent extends SharedWrapper implements OnInit {
     /**
      * App config path
      */
-    appConfigPath = 'assets/production.json';
+    appConfigPath = 'assets/config/production.json';
 
     /**
      * Local template path
