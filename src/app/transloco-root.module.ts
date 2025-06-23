@@ -25,7 +25,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
         this.errorHandler(labelError);
         return;
       }
-      return this.http.get<Translation>(`assets/i18n/${lang}.json`).pipe(catchError(this.errorHandler));
+      return this.http.get<Translation>(`assets/config/solution/i18n/${lang}.json`).pipe(catchError(this.errorHandler));
     }  catch(e) {
       console.log('Error occured while fetching file in getTranslation', e);
     }
@@ -43,7 +43,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 
 export function initConfig() {
   try{
-    const jsonFile = `assets/runtime-config/language.json`; //path to config file
+    const jsonFile = `assets/config/solution/language.json`; //path to config file
     var request = new XMLHttpRequest();
     request.open('GET', jsonFile, false);  // get app settings
     request.send(null);
