@@ -18,13 +18,13 @@ COPY . .
 RUN npm run build:prod
 
 # Stage 2: Serve the Angular app using Nginx
-FROM nginx:1.24-alpine
+FROM nginx:stable-alpine-slim
 
 # Copy built app from the builder stage to Nginx's HTML directory
-COPY --from=builder /app/dist/agent-desktop /usr/share/nginx/html/agent-desktop
+COPY --from=builder /app/dist/agent-desktop /tetherfi/tetherfihome/agent-desktop
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose the port Nginx will use
-EXPOSE 13032
+EXPOSE 5000
 
 # Run Nginx in the foreground
 CMD ["nginx", "-g", "daemon off;"]
