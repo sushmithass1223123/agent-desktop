@@ -827,42 +827,55 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
         replace('#customerName',contact.Name).
         replace('#customerPhoneNumber', contact.PhoneNumber);
 
+        const ref = this._remiderTaskDialog.reminder?.filter((r) => r.id === contact.PhoneNumber)?.length > 0;
 
-        this._appUIService.showRemiderTaskModal('meeting',message, this.translocoService.translate('widgets.campaignNotification.title'))
-        .afterClosed().subscribe(async res => {
-            if(res) {
-                const response = res.split(':')[0];
-                const inputData = {
-                    "fromAddr": obj.FromAddr,
-                    "response": response,
-                    "agentID": SDKClient.getAgentData().agentId,
-                    "extension": SDKClient.getAgentData().deviceId,
-                    "scheduletime": res.split(':')[1] ? this.getUpdatedTCMScheduledTime(res.split(':')[1], contact.ScheduleTime): ''
-                  }
-            
-                  let url = this.appConfig.Main.Urls.TCMClient;
-                  url = url.endsWith('/') ? url : url + '/';
-                  
-                  const result = await TUtils.HttpClient.sendRequest<IResponse>({
-                    urls: [url + 'OnAgentResponseToDacRequest'],
-                    requestArgs: inputData,
-                    header: {
-                            'Content-Type': 'application/json'
-                    },
-                    responseType: 'json',
-                    method: 'POST',
-                    log: true
-                  });
+        // check if the dialog is already opened for this contact
+        if(!ref) {
+            const dialogRef = this._appUIService.showRemiderTaskModal('meeting',message, this.translocoService.translate('widgets.campaignNotification.title'))
+        
+            this._remiderTaskDialog.reminder.push({
+                id: contact.PhoneNumber,
+                ref: dialogRef
+            });
 
-                  if(result?.response?.toString() === '0') {
-                    const msg = this.translocoService.translate('widgets.campaignNotification.success').replace('#type', response);
-                    this._appUIService.showSnackbar(msg,'success');
-                  } else {
-                    const msg = this.translocoService.translate('widgets.campaignNotification.fail').replace('#type', response);
-                    this._appUIService.showSnackbar(msg,'failure');
-                  }
-            }
-        });
+            dialogRef.afterClosed().subscribe(async res => {
+                if(res) {
+                    const response = res.split(':')[0];
+                    const inputData = {
+                        "fromAddr": obj.FromAddr,
+                        "response": response,
+                        "agentID": SDKClient.getAgentData().agentId,
+                        "extension": SDKClient.getAgentData().deviceId,
+                        "scheduletime": res.split(':')[1] ? this.getUpdatedTCMScheduledTime(res.split(':')[1], contact.ScheduleTime): ''
+                    }
+                
+                    let url = this.appConfig.Main.Urls.TCMClient;
+                    url = url.endsWith('/') ? url : url + '/';
+                    
+                    const result = await TUtils.HttpClient.sendRequest<IResponse>({
+                        urls: [url + 'OnAgentResponseToDacRequest'],
+                        requestArgs: inputData,
+                        header: {
+                                'Content-Type': 'application/json'
+                        },
+                        responseType: 'json',
+                        method: 'POST',
+                        log: true
+                    });
+
+                    if(result?.response?.toString() === '0') {
+                        const msg = this.translocoService.translate('widgets.campaignNotification.success').replace('#type', response);
+                        this._appUIService.showSnackbar(msg,'success');
+                    } else {
+                        const msg = this.translocoService.translate('widgets.campaignNotification.fail').replace('#type', response);
+                        this._appUIService.showSnackbar(msg,'failure');
+                    }
+                }
+                this._remiderTaskDialog.reminder = this._remiderTaskDialog.reminder.filter((r) => r.id !== contact.PhoneNumber);
+            });
+        }
+
+        
     } catch(e) {
         this.logger.error('Error in TCMDirectAgentNotifyEvent --', e, true);
     }
