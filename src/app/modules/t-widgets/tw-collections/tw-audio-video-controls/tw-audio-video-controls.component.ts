@@ -1122,6 +1122,13 @@ if (error === 'Screenshare Was Cancelled') {
                     this.displayToasters = false;
                     break;
                 case 'endscreenshare':
+                      // check if errorcode is SCREENSHARE_CANCELLED
+                      if (JSON.parse(evt.Message)?.errorCode === 'SCREENSHARE_CANCELLED') {
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.screenshareCancelledByCustomer'),
+                            'warning'
+                        );
+                    } 
                     this.displayToasters = false;
                     break;
                 case 'eventav':
@@ -1503,7 +1510,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                                         this.translocoService.translate('widgets.audioVideoControls.toggleViewFailed'),
                                         dynamicLabels
                                     ),
-                                    'failure'
+                                    'warning'
                                 );
                                 break;
                         }
