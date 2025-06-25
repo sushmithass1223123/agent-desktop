@@ -2,7 +2,8 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
+import { AppDataService } from 'app/services/app-data.service';
 
 /**
  * Need more Description
@@ -59,6 +60,7 @@ export class VerticalLayoutComponent implements OnInit, OnDestroy {
      * Unsubscribe subject
      */
     private _unsubscribeAll: Subject<any>;
+    public forceHideSidebar: boolean = false;
 
     /**
      * Constructor
@@ -67,10 +69,25 @@ export class VerticalLayoutComponent implements OnInit, OnDestroy {
      */
     constructor(
         // private _fuseConfigService: FuseConfigService
-        private _fuseFacadeService: FuseFacadeService
+        private _fuseFacadeService: FuseFacadeService,
+        private _appDataService: AppDataService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
+
+        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+            // check if the config is not null
+            if (config !== null) {
+                this.forceHideSidebar = config.Main.Navbar.Hidden;
+                this._fuseFacadeService.setConfig = {
+                    layout: {
+                        toolbar: {
+                            hidden: config.Main.Toolbar.Hidden
+                        }
+                    }
+                };
+            }
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------

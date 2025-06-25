@@ -17,6 +17,7 @@
     },
     "Main": {
         "Toolbar": {
+            "Hidden": false,
             "Widgets": [
                 {
                     "Name": "Interaction indicators",
@@ -202,6 +203,7 @@
             ]
         },
         "Navbar": {
+            "Hidden": false,
             "HoldInteractionOnTabChange": false,
             "Widgets": {
                 "Top": [

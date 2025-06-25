@@ -11,6 +11,7 @@ import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { differenceInHours, startOfDay } from 'date-fns';
 import { takeUntil } from 'rxjs/operators';
+import { AppDataService } from '@services/app-data.service';
 
 /**
  * Supervisor content widget
@@ -101,9 +102,10 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         public _contentPageService: ContentPageService,
         private _dashboardService: DashboardService,
         private _fuseFacadeService: FuseFacadeService,
-        private _aotWidgetService: AOTWidgetService
+        private _aotWidgetService: AOTWidgetService,
+        public appDataService: AppDataService
     ) {
-        super('TwcSupervisorComponent', hostElement, _contentPageService);
+        super('TwcSupervisorComponent', hostElement, _contentPageService, appDataService);
     }
 
     /**
