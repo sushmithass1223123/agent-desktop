@@ -114,6 +114,10 @@ export type TwSmpWorkbenchConfig = {
      */
     Tabs: TwSmpWorkbenchTabs[];
     /**
+     * Supported social channel platforms
+     */
+    SupportedSocialChannels: string[];
+    /**
      * Polling interval of the tab.
      * This property allows the workbench tab to poll
      * relevant items with specific intervals.

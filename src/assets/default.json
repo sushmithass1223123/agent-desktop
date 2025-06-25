@@ -2650,6 +2650,7 @@
                                                 "Enabled": true,
                                                 "Icon": "video_label",
                                                 "Config": {
+                                                    "SupportedSocialChannels": ["FB", "INSTAGRAM", "TWITTER", "YOUTUBE", "APPSTORE", "PLAYSTORE"],
                                                     "Transfer": {
                                                         "Allowed": true,
                                                         "Agent": {

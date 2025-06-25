@@ -555,11 +555,10 @@
                                     <mat-label>{{ locale('widgets.workbench.sessionId') }} </mat-label>
                                     <input matInput formControlName="sessionid" type="text" />
                                 </mat-form-field>
-
+                                <!-- Social media accounts selection -->
                                 <mat-form-field
                                     appearance="outline"
                                     class="twd-text-sm twd-col-span-2"
-                                    [ngClass]="{ 'twd-hidden': currentTab !== 'queue' }"
                                 >
                                     <ng-container
                                         *ngIf="
@@ -590,6 +589,44 @@
                                                 *ngFor="let eachAccount of socialMediaAccounts"
                                                 [value]="eachAccount"
                                                 >{{ eachAccount }}</mat-option
+                                            >
+                                        </mat-select>
+                                    </ng-container>
+                                </mat-form-field>
+                                <!-- Sub channels selection -->
+                                <mat-form-field
+                                    appearance="outline"
+                                    class="twd-text-sm twd-col-span-2"
+                                >
+                                    <ng-container
+                                        *ngIf="
+                                            advancedSearch.form.controls.subChannels
+                                                ?.value as selectedSubChannels
+                                        "
+                                    >
+                                        <mat-label>
+                                            {{
+                                                selectedSubChannels && selectedSubChannels.length
+                                                    ? locale('sharedComponents.socialMediaPosts.subChannels')
+                                                    : locale(
+                                                          'sharedComponents.socialMediaPosts.subChannelsNotFound'
+                                                      )
+                                            }}
+                                        </mat-label>
+                                        <mat-select formControlName="subChannels" multiple>
+                                            <mat-select-trigger>
+                                                {{ selectedSubChannels ? selectedSubChannels[0] : '' }}
+                                                <span *ngIf="selectedSubChannels?.length > 1">
+                                                    (+{{ selectedSubChannels.length - 1 }}
+                                                    {{
+                                                        selectedSubChannels?.length === 2 ? 'other' : 'others'
+                                                    }})
+                                                </span>
+                                            </mat-select-trigger>
+                                            <mat-option
+                                                *ngFor="let eachChannel of subChannelList"
+                                                [value]="eachChannel"
+                                                >{{ eachChannel }}</mat-option
                                             >
                                         </mat-select>
                                     </ng-container>
