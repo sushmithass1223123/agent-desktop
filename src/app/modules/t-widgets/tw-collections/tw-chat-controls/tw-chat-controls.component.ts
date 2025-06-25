@@ -1576,7 +1576,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         const messageId = `a_${TUtils.Generic.uuid()}`;
         let messageData = inputMessage;
-        let templateId = template?.ID ?? '';
+        let templateId = template?.ID ? template?.ID.toString() : '';
         const attachment = template?.Attachment ?? null;
         const type = template?.Type ? 'attachment' : 'text';
 
@@ -1617,7 +1617,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 type: type,
                 message: inputMessage,
                 replyId: this.replyingToMessage?.messageId ?? '',
-                templateId: template?.ID ?? '',
+                templateId: template?.ID ? template?.ID.toString() : '',
                 attachment
             };
             // template Id is added to the json so clear it
