@@ -327,6 +327,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         Success: 'green',
         Failed: 'red'
     };
+    subChannelList: string[] = [];
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -361,6 +362,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     async ngOnInit() {
         try {
             // get and set the list of available social media accounts
+            this.subChannelList = (this.channelConf.Config as TwSmpWorkbenchConfig).SupportedSocialChannels;
             await this.setsocialMediaAccounts();
 
             this.validateAvailabletabsFromConfiguration();
@@ -609,6 +611,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     global: 'GLOBAL',
                     socialMediaAccounts:
                         this._smpService.globalSmpWorkbenchState$.searchParams.value.socialMediaAccounts.join(','),
+                    subChannels:
+                        this._smpService.globalSmpWorkbenchState$.searchParams.value.subChannels.join(','),
                     accountName: searchFields.accountName,
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
@@ -624,6 +628,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     commentText: searchFields.commentText,
                     accountName: searchFields.accountName,
                     socialMediaAccounts: searchFields.socialMediaAccounts.join(','),
+                    subChannels: searchFields.subChannels.join(','),
                     pageSize: this.pageSize,
                     pageNumber: this.pageIndex + 1 // +1 because we are using 0 based index for pagination
                 };
@@ -950,7 +955,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 data: searchParams,
                 changed: !isEqual(searchParams, {
                     ...initSmpostsSearchState,
-                    listOfMailboxes: this.advancedSearch.data[this.currentTab]?.data.listOfMailboxes ?? []
+                    socialMediaAccounts: this.advancedSearch.data[this.currentTab]?.data.socialMediaAccounts ?? []
                 })
             };
             this.doAdvancedSearch();
@@ -1295,7 +1300,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     private async setsocialMediaAccounts(): Promise<void> {
         try {
             if (!this._smpService.globalSmpWorkbenchState$.socialMediaAccounts.value?.length) {
-                await this._smpService.init();
+                await this._smpService.init(this.subChannelList);
             }
 
             this.socialMediaAccounts = this._smpService.globalSmpWorkbenchState$.socialMediaAccounts.value;

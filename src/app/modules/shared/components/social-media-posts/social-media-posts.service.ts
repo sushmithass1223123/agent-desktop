@@ -27,6 +27,7 @@ export const initSmpostsSearchState = {
     // common
     agent: '',
     commentText: '',
+    subChannels: [],
     sessionid: '',
     global: '',
     socialMediaAccounts: [],
@@ -60,6 +61,7 @@ const searchParams = new FormGroup({
     // Common
     agent: new FormControl(initSmpostsSearchState.agent),
     commentText: new FormControl(initSmpostsSearchState.commentText),
+    subChannels: new FormControl(initSmpostsSearchState.subChannels),
     sessionid: new FormControl(initSmpostsSearchState.sessionid),
     global: new FormControl(initSmpostsSearchState.global),
     socialMediaAccounts: new FormControl(initSmpostsSearchState.socialMediaAccounts),
@@ -84,7 +86,8 @@ export class SocialMediaPostsService {
             searchParams,
             globalSearchKey: new FormControl(''),
             defaultEmail: new FormControl(''),
-            socialMediaAccounts: new FormControl([])
+            socialMediaAccounts: new FormControl([]),
+            subChannels: new FormControl([])
         }
     };
     /**
@@ -101,7 +104,9 @@ export class SocialMediaPostsService {
     /**
      * Service init method
      */
-    async init(): Promise<void> {
+    async init(subChannelsList: string[]): Promise<void> {
+        this.globalSmpWorkbenchState$.subChannels.setValue(subChannelsList);
+        this.globalSmpWorkbenchState$.searchParams.patchValue({ subChannels: subChannelsList });
         await this.setMailboxes();
     }
 
@@ -158,7 +163,8 @@ export class SocialMediaPostsService {
         this.globalSmpWorkbenchState$.searchParams.setValue({
             ...initSmpostsSearchState,
             ...update,
-            socialMediaAccounts: this.globalSmpWorkbenchState$.socialMediaAccounts.value
+            socialMediaAccounts: this.globalSmpWorkbenchState$.socialMediaAccounts.value,
+            subChannels: this.globalSmpWorkbenchState$.subChannels.value
         });
     }
 }
