@@ -1191,7 +1191,11 @@
             "editedItem": "This item has been edited",
             "deletedItem": "This item has been deleted",
             "postFullscreen": "Focus on this item",
-            "nonPullItemWarning": "Posts can only pulled in queue, inbox and draft sections. Deleted comments / posts cannot be pulled."
+            "nonPullItemWarning": "Posts can only pulled in queue, inbox and draft sections. Deleted comments / posts cannot be pulled.",
+            "socialMediaAccounts": "List of social media accounts",
+            "socialMediaAccountsNotFound": "No social media accounts available",
+            "subChannels": "List of social media channels",
+            "subChannelsNotFound": "No social media channels available"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",
