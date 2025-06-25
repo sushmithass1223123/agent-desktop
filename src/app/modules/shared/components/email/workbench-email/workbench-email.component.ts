@@ -778,14 +778,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         if (res.find((x: any) => x.status !== 'SUCCESS')) {
                             const resultStr = JSON.parse(JSON.stringify(res.find((x) => x.status !== 'SUCCESS'))?.toLowerCase());
 
-                            if (resultStr?.errorcode && resultStr.errorcode == '-101') {
+                            if (resultStr?.errorCode && resultStr.errorCode == '-101') {
                                 this.appUiService.showSnackbar(
                                     this.translocoService.translate('sharedComponents.email.maxRecordLimitExceeded'),
                                     'warning'
                                 );
                                 return;
                               }
-                            if (resultStr?.errorCode && resultStr.errorCode == '-102') {
+                            if (resultStr?.errorcode && resultStr.errorcode == '-102') {
                                 this.appUiService.showSnackbar(
                                     this.translocoService.translate('sharedComponents.email.dateRangeExceeded'),
                                     'warning'
@@ -1539,6 +1539,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                 this.doAdvancedSearch(true);
                             }, 1000);
                             this.setComponentState('email/reply/success');
+                            widget.Config.Class = '';
                             this._aotWidgetService.destroyWidget(widget.ID);
                         } else {
                             this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.emptyEmailWarning'), 'failure');
@@ -1552,6 +1553,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 templateRef: this.ReplyEditorDialog
             };
             widget.Data = this.replyEditorModal;
+            widget.Config.Class = 'disable-background';
+            widget.Config.Actions = ["destroy"];
+
             this._aotWidgetService.addWidget(widget as AOTWidget);
         } catch (e) {
             console.error(e);
@@ -1802,7 +1806,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 InSessionId: x.inSessionID,
                 uiId: `${x.inSessionID}|${x.sessionID}`,
                 RouteId: x.routeId,
-                HasAttachment: x.HasAttachment,
+                HasAttachment: x.hasAttachments,
                 ConversationID: x.conversationID,
                 // not available in drafts search
                 IsEmailProbableSpam: x.IsEmailProbableSpam
@@ -1838,7 +1842,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 InSessionId: x.inSessionID,
                 uiId: `${x.inSessionID}|${x.sessionID}`,
                 RouteId: x.routeId,
-                HasAttachment: x.HasAttachment,
+                HasAttachment: x.hasAttachments,
                 ConversationID: x.conversationID,
                 // not available in inbox search
                 IsEmailProbableSpam: x.IsEmailProbableSpam

@@ -11,12 +11,24 @@ export class SharedService {
     private holdMethodSubject = new Subject<void>();
     private changeStatusSubject = new Subject<any>();
     private emailErrorNotifySubject = new Subject<number>();
+    private smErrorNotifySubject = new Subject<number>();
     private appConfirmDialog = new Subject<void>();
     private whiteboardOpenSubject = new BehaviorSubject<boolean>(false);
     whiteboardOpen$ = this.whiteboardOpenSubject.asObservable();
+    private holdActiveVoiceCalls = new Subject<number>();
+
+    triggerHoldActiveVoiceCalls(interactionId: number) {
+        this.holdActiveVoiceCalls.next(interactionId)
+    }
+    getHoldActiveVoiceCalls(): Observable<number> {
+        return this.holdActiveVoiceCalls.asObservable()
+    }
 
     triggerEmailFailure(interactionId: number) {
         this.emailErrorNotifySubject.next(interactionId);
+    }
+    triggerSmFailure(interactionId: number) {
+        this.smErrorNotifySubject.next(interactionId);
     }
     
     triggerChangeStatus(auxData: any): void {
@@ -29,6 +41,9 @@ export class SharedService {
 
     getEmailFailure() {
         return this.emailErrorNotifySubject.asObservable();
+    }
+    getSMFailure() {
+        return this.smErrorNotifySubject.asObservable();
     }
 
     triggerHoldMethod() {

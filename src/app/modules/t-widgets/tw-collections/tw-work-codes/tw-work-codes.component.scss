@@ -44,7 +44,13 @@ tw-work-codes {
         color: rgba(0, 0, 0, 0.47) !important;
     }
 }
-
+.workcode-dialog-body {
+    overflow-y: auto;
+    padding: 12px;
+    flex: 1 1 auto;
+    max-height: 60vh;
+    flex-direction: column;
+}
 .workcode-dialog {
     mat-chip mat-icon {
         color: rgba(0, 0, 0, 0.47) !important;

@@ -11,6 +11,8 @@ import { SocialMediaPostsService } from '@modules/shared/components/social-media
 import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { MatMenuTrigger } from '@angular/material/menu';
+import {TwSmpControlsData } from '@ad/types';
+import { SMP_OUTBOUND_STATUS } from '../../../../constants/smp.constants';
 
 /**
  * Notfications Component
@@ -45,6 +47,15 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
      * Menu trigger ref
      */
     @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
+    /**
+    * Widget data
+    */
+    widgetData:TwSmpControlsData;
+    /**
+    * config to enable or disable socialmedianotification
+    */
+    private disableSocialMediaNotification: boolean = false;
+
 
     constructor(
         private _appUIService: AppUiService,
@@ -62,6 +73,10 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+        this.widgetData = this.data.Data;
+
+        // Read config flag
+        this.disableSocialMediaNotification = this.widgetData.disableSocialMediaNotification;
 
         // Observe all active post interactions
         this._interactionManagerService.interactions
@@ -112,6 +127,10 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
 
         // get the type
         const type = evt.Type?.toLowerCase() ?? '';
+        // Check if the notification is of socialmedia type and is disabled by config
+        if (type.startsWith('socialmedia') && this.disableSocialMediaNotification) {
+        return; // suppress snackbar notification
+        }
 
         if (type === 'socialmediareactionscomment_add') {
             this._appUIService.addNotification({
@@ -195,6 +214,20 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
             return;
         }
 
+        if (type === 'smoutboundstatus') {
+            const statusDetail = JSON.parse(evt.Message);
+            const errorMessage = SMP_OUTBOUND_STATUS[(statusDetail?.ErrorCode ? statusDetail.ErrorCode : 200).toString()];
+            if (errorMessage) {
+                this._appUIService.addNotification({
+                    icon: 'info',
+                    message: errorMessage,
+                    status: 'new',
+                    showAlert: true
+                });
+            }
+            return;
+        }
+
         if (
             type !== 'im' &&
             type !== 'interactionim' &&
@@ -216,8 +249,8 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
     onChoosePost(postData: any, action: string): void {
         const isActiveInteractionAvailable = this.postInteractionList.findIndex(
             (intData: InteractionRef) =>
-                intData.otherData?.SessionId === postData.message?.SocialMediaData?.Comments?.SessionId ||
-                intData.otherData?.OutSessionID === postData.message?.SocialMediaData?.Comments?.SessionId
+                intData.otherData?.SessionId === postData.message?.Comments?.SessionId ||
+                intData.otherData?.OutSessionID === postData.message?.Comments?.SessionId
         );
         this.closeMenu();
         if (isActiveInteractionAvailable >= 0) {

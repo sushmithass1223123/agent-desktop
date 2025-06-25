@@ -195,7 +195,10 @@
             "assignedTo": "Assigned To (by agentID)",
             "sessionId": "Session Id",
             "Email": "Email",
-            "Chat": "Chat"
+            "Chat": "Chat",
+            "commentText": "Comment Text",
+            "postText": "Post Text",
+            "outboundStatus": "Outbound Status"
         },
         "workcodes": {
             "searchWorkcodes": "Search Workcodes...",
@@ -301,7 +304,11 @@
             "sendDTMFError": "Error in sending DTMF",
             "ivrTransferSuccess": "Transferred to IVR successfully",
             "ivrTransferError": "Error in transfer to IVR",
-            "customerDisconnected": "Customer has disconnected!"
+            "customerDisconnected": "Customer has disconnected!",
+            "holdActiveCallConfirmationMessage": "On answering the new call, the active call will be put on hold. Do you want to continue?",
+            "activeCallPresentWarningOnAnswer": "You have an active call, please end / hold the call before answering the new call.",
+            "holdActiveCallConfirmationMessageOnUnhold": "On unholding the active call, the current call will be put on hold. Do you want to continue?",
+            "activeCallPresentWarningOnUnHold": "You have an active call, please end / hold the call before unholding the current call."
         },
         "userLocation": {
             "locationNotFound": "Location not found",
@@ -448,7 +455,9 @@
             "emailDownloadFailed": "Unable to download email",
             "emailSendConnectionError": "Error connecting to email server",
             "comment": "Comment",
-            "reasonTags": "Reason Tags"
+            "reasonTags": "Reason Tags",
+            "draftSuccess": "Saved drafted email successfully",
+            "draftFailed": "Something went wrong, unable to save drafted email!!"
         },
         "deflectToDigital": {
             "commentPlaceholder": "Please enter comment...",
@@ -733,8 +742,10 @@
             "snapshotSaveSuccess": "Snapshot saved successfully!",
             "snapshotSaveFailed": "Snapshot save failed!",
             "snapshotRequestLoading": "Requesting customer for snapshot",
+            "snapshotRequestFailed": "Snapshot request failed",
             "snapshotRequestTimeout": "Snapshot request timed out",
             "upgradeToVideoFailed": "Upgrade to Video failed!",
+            "snapshotRequestSent": "Snapshot request sent to customer",
             "toggleCamRequestSuccess": "Toggle camera request sent successfully",
             "toggleCamRequestFailed": "Toggle camera request failed!",
             "toggleCamRequestError": "Toggle camera request error!",
@@ -746,8 +757,9 @@
             "screenshareAlreadyInProgress": "Screenshare already in progress !",
             "screenshareReqSent": "Screenshare request sent",
             "screenshareReqError": "Error sending screenshare request",
-            "requestScreenShareAccepted": "Customer has accepted request to screen share",
+            "requestScreenShareAccepted": "Customer has accepted request to screen share",     
             "requestScreenShareRejected": "Customer has rejected request to screen share",
+            "screenshareCancelledByCustomer": "Customer has cancelled screen share",
             "muteDisplayText":"off,on",
             "holdNotification": "#owner has kept the call on hold",
             "unholdNotification": "#owner unholded the call"
@@ -1067,6 +1079,8 @@
             "emailMaskErrorFailedToMaskInboxEmail": "Error masking email",
             "emailComposeFailed": "Failed to compose email : reason - ",
             "emailComposeErrorFailedToComposeNewEmail": "Error while composing email",
+            "emailComposeErrorChannelLimit": "Agent cannot compose email due to channel limit",
+            "emailComposeErrorEmailMaxTabCountReached": "Maximum email tab count reached",
             "emailPullFailed": "Failed to pull email - reason : ",
             "emailPullErrorFailedToPullFromMakerDraft": "Failed to pull email from maker draft",
             "emailPullErrorDraftEmailHasBeenPulledByAgent": "Draft email has been pulled by agent",
@@ -1081,6 +1095,7 @@
             "emailPullErrorFailedToPullEmailFromMakerQueueInOutlookPlugin": "Failed to pull email from maker queue in outlook plugin",
             "emailPullErrorFailedToPullAndCloseemailFromMakerQueueInOutlookPlugin": "Failed to send email",
             "emailPullErrorAgentNotLoggedInToTMAC": "Agent not logged in to TMAC",
+            "emailPullErrorChannelLimit": "Agent cannot accept email due to channel limit",
             "emailSendErrorExceptionOnRetrievingAttachmentInformation": "Error on retrieving attachment information",
             "emailSendErrorServerNotReachable": "Server not reachable",
             "emailSendErrorExceptionOnFileDownloadFromS3": "Exception on downloading file from s3",
@@ -1137,7 +1152,7 @@
             "reset": "Reset",
             "getPostsFailed": "Error occured while fetching posts",
             "getPostsLoading": "Loading posts",
-            "postIsBeingSent": "Post is being sent. Please wait!",
+            "postIsBeingSent": "Reply has been sent to social media server to process, Please wait!",
             "postsNotFound": "There are no posts",
             "openPostFailed": "Unable to open post",
             "fileMetaError": "Error occurred while connecting to file server - if it fails again please raise as an incident",
@@ -1176,7 +1191,11 @@
             "editedItem": "This item has been edited",
             "deletedItem": "This item has been deleted",
             "postFullscreen": "Focus on this item",
-            "nonPullItemWarning": "Posts can only pulled in queue, inbox and draft sections. Deleted comments / posts cannot be pulled."
+            "nonPullItemWarning": "Posts can only pulled in queue, inbox and draft sections. Deleted comments / posts cannot be pulled.",
+            "socialMediaAccounts": "List of social media accounts",
+            "socialMediaAccountsNotFound": "No social media accounts available",
+            "subChannels": "List of social media channels",
+            "subChannelsNotFound": "No social media channels available"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",

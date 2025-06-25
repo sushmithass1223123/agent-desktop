@@ -285,6 +285,22 @@ workbench-smp {
     width: calc(100% - 20px);
     margin-left: 10px;
 
+    form {
+        padding: 10px;
+    }
+
+    .form-field {
+        margin-bottom: 8px;
+    }
+
+    .mat-form-field-infix {
+        align-items: center;
+    }
+
+    .twd-hidden {
+        display: none !important;
+    }
+
     .twd-spinner {
         position: absolute;
         top: 50%;
@@ -384,6 +400,12 @@ workbench-smp {
             p {
                 font-size: 12px;
                 font-weight: 500;
+            }
+
+            .status_dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50px;
             }
         }
 

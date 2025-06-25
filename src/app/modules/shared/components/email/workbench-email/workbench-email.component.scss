@@ -167,3 +167,23 @@ workbench-email {
     left: 22vw;
     z-index: 100%;
 }
+
+tw-panel.disable-background {
+        // position: absolute;
+        display: block;
+        width: 100vw !important;
+        height: 100vh !important;
+        background-color: rgba(0, 0, 0, 0.32);
+        z-index: 1000;
+}
+
+tw-card.disable-background {
+
+    top: 50% !important;;
+    left: 50% !important;;
+    transform: translate(-50%, -50%) !important;
+    position: fixed !important;
+    // top: 50%;
+    // left: 50%;
+    // transform: translate(-50%, -50%);
+}

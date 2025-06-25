@@ -55,7 +55,10 @@ type IHRecord = {
 const channelMapper: any = {
     fb: 'facebook',
     instagram: 'instagram',
-    twitter: 'x'
+    twitter: 'x',
+    youtube: 'youtube',
+    appstore: 'appstore',
+    playstore: 'playstore'
 };
 
 /**
@@ -240,9 +243,15 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             twitter: 'custom-twitter',
             fb: 'custom-fb',
             telegram: 'custom-telegram',
+            youtube: 'custom-youtube',
+            appstore: 'custom-appstore',
+            playstore: 'custom-playstore',
             smfb: 'custom-smfb',
             smtwitter: 'custom-smtwitter',
             sminstagram: 'custom-sminstagram',
+            smyoutube: 'custom-smyoutube',
+            smappstore: 'custom-smappstore',
+            smplaystore: 'custom-smplaystore',
             store: 'store',
             in: 'south',
             out: 'north'
@@ -316,7 +325,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             EmailID: {
                 title: this.translocoService.translate('channels.email'),
                 searchable: true,
-                truncate: true
+                truncate: true,
+                tooltip: true
             },
             GroupID: {
                 searchable: true
@@ -685,14 +695,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     onMaximized(max: boolean): void {
         this.maximized = max;
         this.maximizeEvent.emit(max);
-        // on minimize, always keep the latest record first
-        if (!max) {
-            setTimeout(() => {
-                this.table.source?.sort?.sort({ id: 'InteractionDate', start: 'desc', disableClear: true });
-            }, 0);
-        }
-    }
 
+    }
     /**
      * Fetches interaction data and assings to this.interactionNotesReq.data
      * @param {InteractionHistory} record
@@ -847,8 +851,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
             const setPostBody = async (resData: any, sid: any) => {
                 let modifiedAttachmentData: any[] = [];
-                if (resData?.SocialMediaData?.Comments?.CommentAttachments?.length) {
-                    modifiedAttachmentData = resData.SocialMediaData.Comments.CommentAttachments.map((attdat) => {
+                if (resData?.Comments?.CommentAttachments?.length) {
+                    modifiedAttachmentData = resData.Comments.CommentAttachments.map((attdat) => {
                         return {
                             IsCloud: true,
                             Url: attdat?.MediaUrl,
@@ -858,17 +862,16 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     });
                 }
                 let tempAttachments = await this.requestAttachmentData(
-                    modifiedAttachmentData.length ? modifiedAttachmentData : resData.Attachments
+                    modifiedAttachmentData.length ? modifiedAttachmentData : []
                 );
-                let smData = resData?.SocialMediaData;
+                let smData = resData;
                 res = {
                     Files: getAttachments(tempAttachments, sid),
-                    ConversationID: resData.ConversationID,
                     SessionId: sid,
                     SubChannel: (
-                        channelMapper[smData?.Posts?.Channel?.toLowerCase()] ?? resData.EmailType
+                        channelMapper[smData?.Posts?.Channel?.toLowerCase()]
                     ).toLowerCase(),
-                    Subject: resData.Subject,
+                    Subject: resData.Comments.CommentText.Text,
                     PostAccountName: smData.Posts.AccountName ? smData.Posts.AccountName : smData.Posts.AccountId,
                     PostCreatedTime: smData.Posts?.CreatedDateTime,
                     PostUpdatedTime: smData.Posts?.UpdatedDateTime,
@@ -1098,8 +1101,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 this.table.collapseExpanded();
                 this.table.selected = null;
             }
-        }
-    }
+        }}
 }
 
 interface WidgetData {

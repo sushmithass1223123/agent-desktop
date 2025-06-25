@@ -475,9 +475,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                                     Url: ''
                                 }
                             ]
-                        },
-                        undefined,
-                        true
+                        }
                     );
 
                     this.restrictPostAction.emit({ interactionId: this.interactionId, restrict: false });

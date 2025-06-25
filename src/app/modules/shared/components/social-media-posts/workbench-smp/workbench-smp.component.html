@@ -1,8 +1,11 @@
-<ng-container *ngIf="{
+<ng-container
+    *ngIf="{
         anchor: (customFuse.anchor$ | async),
         widget: (customFuse.widget$ | async)
-    } as customFuse">
-    <ng-container *ngIf="{
+    } as customFuse"
+>
+    <ng-container
+        *ngIf="{
             search: {
                 global: {
                     empty: !globalSearch.form.value,
@@ -11,19 +14,32 @@
                 form: advancedSearch.data[currentTab]?.changed
             },
             openPostResData: openPostRes.data | async
-        } as state">
-        <div *transloco="let locale" #smpWorkbench
-            class="smp-workbench twd-w-full twd-h-full twd-py-2 twd-pr-2 twd-flex twd-relative custom-{{currentTheme}}"
-            [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
+        } as state"
+    >
+        <div
+            *transloco="let locale"
+            #smpWorkbench
+            class="smp-workbench twd-w-full twd-h-full twd-py-2 twd-pr-2 twd-flex twd-relative custom-{{
+                currentTheme
+            }}"
+            [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+        >
             <!-- Tab side bar container -->
             <div *ngIf="!noTabsAvailable" class="twd-ml-2 lg:twd-mx-2 border-radius-20 h-100-p">
                 <div class="h-100-p py-20 twd-flex twd-flex-col twd-justify-between">
                     <div class="tab-menu twd-flex twd-flex-col twd-gap-4">
                         <ng-container *ngFor="let tab of availableTabs">
-                            <button class="twd-mb-3 pb-20" mat-button *ngIf="tab.enabled" [matTooltip]="tab.label"
-                                (click)="switchTab(tab.key)" matTooltipPosition="right"
+                            <button
+                                class="twd-mb-3 pb-20"
+                                mat-button
+                                *ngIf="tab.enabled"
+                                [matTooltip]="tab.label"
+                                (click)="switchTab(tab.key)"
+                                matTooltipPosition="right"
                                 [ngClass]="{ 'mat-raised-button': currentTab === tab.key }"
-                                [color]="currentTab === tab.key && 'accent'" [disabled]="postSearchRes.loading">
+                                [color]="currentTab === tab.key && 'accent'"
+                                [disabled]="postSearchRes.loading"
+                            >
                                 <mat-icon>{{ tab.icon }}</mat-icon>
                                 <div>{{ tab.label }}</div>
                             </button>
@@ -34,81 +50,129 @@
 
             <div class="twd-w-full theme-bg wbsmp twd-grid border-radius-20 twd-grid-cols-3 twd-gap-2">
                 <!-- Side body -->
-                <div class="theme-bg wbsmp-left twd-h-full twd-overflow-hidden twd-col-span-3 lg:twd-col-span-1 twd-flex twd-flex-col"
+                <div
+                    class="theme-bg wbsmp-left twd-h-full twd-overflow-hidden twd-col-span-3 lg:twd-col-span-1 twd-flex twd-flex-col"
                     [ngClass]="{
                         'twd-justify-center': noTabsAvailable
-                    }">
+                    }"
+                >
                     <ng-container *ngIf="!noTabsAvailable">
                         <!-- Posts modifiers container -->
                         <div class="theme-bg twd-top-0 twd-left-0 twd-z-10 twd-py-2 twd-px-1.5 twd-shadow-md">
                             <div
-                                class="mt-8 border-radius-20 twd-relative twd-flex twd-items-center twd-justify-between lg:twd-justify-center">
+                                class="mt-8 border-radius-20 twd-relative twd-flex twd-items-center twd-justify-between lg:twd-justify-center"
+                            >
                                 <!-- Global search form -->
-                                <form class="twd-max-w-6/12 lg:twd-max-w-full twd-flex-1"
-                                    (ngSubmit)="submitGlobalSearchForm()">
+                                <form
+                                    class="twd-max-w-6/12 lg:twd-max-w-full twd-flex-1"
+                                    (ngSubmit)="submitGlobalSearchForm()"
+                                >
                                     <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
                                         <!-- Search bar -->
-                                        <input class="login-input" matInput [placeholder]="
+                                        <input
+                                            class="login-input"
+                                            matInput
+                                            [placeholder]="
                                                 locale('sharedComponents.socialMediaPosts.searchPlaceholder')
-                                            " [formControl]="globalSearch.form" />
-                                        <button *ngIf="state.search.global.empty" mat-icon-button matSuffix disabled
-                                            type="button">
+                                            "
+                                            [formControl]="globalSearch.form"
+                                        />
+                                        <button
+                                            *ngIf="state.search.global.empty"
+                                            mat-icon-button
+                                            matSuffix
+                                            disabled
+                                            type="button"
+                                        >
                                             <mat-icon matSuffix>search</mat-icon>
                                         </button>
-                                        <button *ngIf="state.search.global.edited" mat-button color="primary" matSuffix
-                                            mat-icon-button aria-label="Go"
-                                            [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }">
+                                        <button
+                                            *ngIf="state.search.global.edited"
+                                            mat-button
+                                            color="primary"
+                                            matSuffix
+                                            mat-icon-button
+                                            aria-label="Go"
+                                            [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                                        >
                                             <mat-icon>east</mat-icon>
                                         </button>
-                                        <button *ngIf="!state.search.global.empty && !state.search.global.edited"
-                                            type="button" mat-button color="accent" matSuffix mat-icon-button
+                                        <button
+                                            *ngIf="!state.search.global.empty && !state.search.global.edited"
+                                            type="button"
+                                            mat-button
+                                            color="accent"
+                                            matSuffix
+                                            mat-icon-button
                                             aria-label="Clear"
                                             [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
-                                            (click)="resetGlobalSearchForm(); doAdvancedSearch()">
+                                            (click)="resetGlobalSearchForm(); doAdvancedSearch()"
+                                        >
                                             <mat-icon>close</mat-icon>
                                         </button>
                                     </mat-form-field>
                                 </form>
 
                                 <!-- Refresh workbench -->
-                                <button mat-icon-button (click)="this.chosenPostData = undefined; doAdvancedSearch()"
-                                    [ngClass]="{ 'twd-animate-spin': polling.active }" [disabled]="polling.active"
-                                    [matTooltip]="locale('widgets.workbench.refresh')">
+                                <button
+                                    mat-icon-button
+                                    (click)="this.chosenPostData = undefined; doAdvancedSearch()"
+                                    [ngClass]="{ 'twd-animate-spin': polling.active }"
+                                    [disabled]="polling.active"
+                                    [matTooltip]="locale('widgets.workbench.refresh')"
+                                >
                                     <mat-icon>refresh</mat-icon>
                                 </button>
 
                                 <!-- Advanced search trigger -->
-                                <button mat-icon-button (click)="advancedSearch.show = !advancedSearch.show"
-                                    class="twd-relative" [matTooltip]="locale('widgets.workbench.advanceSearch')">
+                                <button
+                                    mat-icon-button
+                                    (click)="advancedSearch.show = !advancedSearch.show"
+                                    class="twd-relative"
+                                    [matTooltip]="locale('widgets.workbench.advanceSearch')"
+                                >
                                     <mat-icon> more_vert </mat-icon>
                                 </button>
                             </div>
                             <div id="sortControls" class="twd-flex twd-items-center twd-justify-end twd-px-2 twd-pt-2">
                                 <div class="twd-flex twd-items-center">
                                     <div class="twd-font-bold twd-text-sm">
-                                        <button id="sortKeyBtn" mat-button class="twd-px-1.5"
-                                            [disabled]="!segregatedPosts?.length">
-                                            <span>{{ locale('sharedComponents.socialMediaPosts.sortBy') }}
+                                        <button
+                                            id="sortKeyBtn"
+                                            mat-button
+                                            class="twd-px-1.5"
+                                            [disabled]="!segregatedPosts?.length"
+                                        >
+                                            <span
+                                                >{{ locale('sharedComponents.socialMediaPosts.sortBy') }}
                                                 {{ sortControls.sortBy }}
                                             </span>
                                             <mat-menu class="custom" #sortMenu="matMenu">
-                                                <button mat-menu-item
-                                                    (click)="sortControls.sortBy = 'Subject'; sortPosts()">
+                                                <button
+                                                    mat-menu-item
+                                                    (click)="sortControls.sortBy = 'Subject'; sortPosts()"
+                                                >
                                                     <span>{{
                                                         locale('sharedComponents.socialMediaPosts.postSubject')
-                                                        }}</span>
+                                                    }}</span>
                                                 </button>
-                                                <button mat-menu-item
-                                                    (click)="sortControls.sortBy = 'Date'; sortPosts()">
+                                                <button
+                                                    mat-menu-item
+                                                    (click)="sortControls.sortBy = 'Date'; sortPosts()"
+                                                >
                                                     <span>{{
                                                         locale('sharedComponents.socialMediaPosts.postDate')
-                                                        }}</span>
+                                                    }}</span>
                                                 </button>
                                             </mat-menu>
                                         </button>
-                                        <button id="sortOrderBtn" mat-button
+                                        <button
+                                            id="sortOrderBtn"
+                                            mat-button
                                             (click)="sortControls.ascending = !sortControls.ascending; sortPosts()"
-                                            class="twd-max-w-min twd-px-0" [disabled]="!segregatedPosts?.length">
+                                            class="twd-max-w-min twd-px-0"
+                                            [disabled]="!segregatedPosts?.length"
+                                        >
                                             <mat-icon>
                                                 {{ sortControls.ascending ? 'arrow_upward' : 'arrow_downward' }}
                                             </mat-icon>
@@ -119,41 +183,60 @@
                         </div>
 
                         <!-- Side body mini tabs container -->
-                        <div *ngIf="
+                        <div
+                            *ngIf="
                                 !advancedSearch.show &&
                                 !postSearchRes.error &&
                                 (segregatedPosts.length || postSearchRes.loading)
-                            " class="twd-relative twd-h-full">
+                            "
+                            class="twd-relative twd-h-full"
+                        >
                             <div class="twd-absolute twd-h-full twd-w-full twd-p-3 twd-overflow-y-auto">
                                 <!-- Post list -->
                                 <div class="posts-list twd-w-full" *ngIf="segregatedPosts.length">
-                                    <div class="twd-w-full twd-relative twd-rounded-3xl ng-tns-c543-38 dropdowns twd-pb-2 {{
+                                    <div
+                                        class="twd-w-full twd-relative twd-rounded-3xl ng-tns-c543-38 dropdowns twd-pb-2 {{
                                             'getObjectKeyString' | ObjectPipe: channel:[]
-                                        }}" *ngFor="let channel of segregatedPosts; trackBy: trackByChannel">
-                                        <ng-container *ngIf="{
+                                        }}"
+                                        *ngFor="let channel of segregatedPosts; trackBy: trackByChannel"
+                                    >
+                                        <ng-container
+                                            *ngIf="{
                                                 channel: ('getObjectKeyString' | ObjectPipe: channel:[])
-                                            } as derivedData1">
+                                            } as derivedData1"
+                                        >
                                             <div class="dropdown-header twd-w-full twd-pl-2 twd-pr-2">
                                                 <div class="sc-flex">
-                                                    <mat-icon [id]="derivedData1.channel"
+                                                    <mat-icon
+                                                        [id]="derivedData1.channel"
                                                         (click)="toggleDropdown(derivedData1.channel)"
-                                                        role="button">keyboard_arrow_down</mat-icon>
-                                                    <img class="sc-icon"
+                                                        role="button"
+                                                        >keyboard_arrow_down</mat-icon
+                                                    >
+                                                    <img
+                                                        class="sc-icon"
                                                         src="assets/images/vectors/{{ derivedData1.channel }}.svg"
-                                                        alt="Facebook Icon" />
+                                                        alt="Facebook Icon"
+                                                    />
                                                     <p style="text-transform: capitalize">{{ derivedData1.channel }}</p>
                                                 </div>
                                                 <p>({{ channel.skillCount }})</p>
                                             </div>
                                             <!-- Level 1 dropdown -->
-                                            <div class="dropdown-l1 twd-w-full twd-pl-2 {{ derivedData1.channel }}-{{
+                                            <div
+                                                class="dropdown-l1 twd-w-full twd-pl-2 {{ derivedData1.channel }}-{{
                                                     ('split'
                                                         | MiscellaneousPipe
                                                             : ('getObjectKeyString' | ObjectPipe: skill:[])
                                                             : ['@'])[0]
                                                 }}"
-                                                *ngFor="let skill of 'getObjectValue' | ObjectPipe: channel:[]; trackBy: trackBySkill">
-                                                <ng-container *ngIf="{
+                                                *ngFor="
+                                                    let skill of 'getObjectValue' | ObjectPipe: channel:[];
+                                                    trackBy: trackBySkill
+                                                "
+                                            >
+                                                <ng-container
+                                                    *ngIf="{
                                                         skill: ('getObjectKeyString' | ObjectPipe: skill:[]),
                                                         splittedSkill: ('split'
                                                             | MiscellaneousPipe
@@ -164,18 +247,24 @@
                                                             | MiscellaneousPipe
                                                                 : ('getObjectKeyString' | ObjectPipe: skill:[])
                                                                 : ['@social-media.com', ''])
-                                                    } as derivedData2">
+                                                    } as derivedData2"
+                                                >
                                                     <div class="dropdown-header twd-w-full twd-pl-2 twd-pr-2">
                                                         <div class="sc-flex">
-                                                            <mat-icon role="button" id="{{ derivedData1.channel }}-{{
+                                                            <mat-icon
+                                                                role="button"
+                                                                id="{{ derivedData1.channel }}-{{
                                                                     derivedData2.splittedSkill
-                                                                }}" (click)="
+                                                                }}"
+                                                                (click)="
                                                                     toggleDropdown(
                                                                         derivedData1.channel +
                                                                             '-' +
                                                                             derivedData2.splittedSkill
                                                                     )
-                                                                ">keyboard_arrow_down</mat-icon>
+                                                                "
+                                                                >keyboard_arrow_down</mat-icon
+                                                            >
                                                             <p>
                                                                 {{ derivedData2.replacedSkill }}
                                                             </p>
@@ -184,7 +273,9 @@
                                                     </div>
                                                     <!-- Level 2 dropdown -->
                                                     <div class="post-list-flex twd-w-full twd-pl-2">
-                                                        <div mat-ripple (click)="openPost(post)"
+                                                        <div
+                                                            mat-ripple
+                                                            (click)="openPost(post)"
                                                             class="post-list twd-w-full twd-relative twd-rounded-3xl twd-p-3"
                                                             [ngClass]="
                                                                 ('activeCommentValidator'
@@ -200,55 +291,75 @@
                                                                       | SMPPipe: notificationAction:[hidePostActions])
                                                                     : ' theme-bg'
                                                             "
-                                                            *ngFor="let post of 'getObjectValue' | ObjectPipe: skill:[]; trackBy: trackByItem">
+                                                            *ngFor="
+                                                                let post of 'getObjectValue' | ObjectPipe: skill:[];
+                                                                trackBy: trackByItem
+                                                            "
+                                                        >
                                                             <div class="author-info">
                                                                 <div class="name-bubble">
                                                                     <p>
                                                                         {{
-                                                                        'twoLetterString'
-                                                                        | MiscellaneousPipe
-                                                                        : ('replace'
-                                                                        | MiscellaneousPipe
-                                                                        : post.PostData.From
-                                                                        : [
-                                                                        '@social-media.com',
-                                                                        ''
-                                                                        ])
+                                                                            'twoLetterString'
+                                                                                | MiscellaneousPipe
+                                                                                    : ('replace'
+                                                                                          | MiscellaneousPipe
+                                                                                              : post.PostData.From
+                                                                                              : [
+                                                                                                    '@social-media.com',
+                                                                                                    ''
+                                                                                                ])
                                                                         }}
                                                                     </p>
                                                                 </div>
                                                             </div>
-                                                            <div class="main-content" *ngIf="{
+                                                            <div
+                                                                class="main-content"
+                                                                *ngIf="{
                                                                     formatted:
                                                                         ('formatReadableDateWithDotnetDate'
                                                                         | CustomDatePipe: post.AddedTime:[])
-                                                                } as parsedDate">
+                                                                } as parsedDate"
+                                                            >
                                                                 <div class="mc-top">
                                                                     <div class="name-date-flex">
                                                                         <h4>
                                                                             {{
-                                                                            'replace'
-                                                                            | MiscellaneousPipe
-                                                                            : post.PostData.To
-                                                                            : ['@social-media.com', '']
+                                                                                'replace'
+                                                                                    | MiscellaneousPipe
+                                                                                        : post.PostData.To
+                                                                                        : ['@social-media.com', '']
                                                                             }}
                                                                         </h4>
                                                                         <div class="date-holder">
                                                                             <p>{{ parsedDate.formatted.date }}</p>
                                                                         </div>
+                                                                        <div
+                                                                            class="status_dot"
+                                                                            [matTooltip]="post.PostData.OutboundStatus"
+                                                                            *ngIf="post.PostData.OutboundStatus"
+                                                                            [ngStyle]="{
+                                                                                backgroundColor:
+                                                                                    outboundStatusBg[
+                                                                                        post.PostData.OutboundStatus
+                                                                                    ]
+                                                                            }"
+                                                                        ></div>
                                                                     </div>
                                                                     <p class="time">{{ parsedDate.formatted.time }}</p>
                                                                 </div>
                                                                 <div class="mc-bottom">
                                                                     <div class="content-flex">
-                                                                        <img src="assets/images/avatars/profile.jpg"
-                                                                            alt="profile pic" />
+                                                                        <img
+                                                                            src="assets/images/avatars/profile.jpg"
+                                                                            alt="profile pic"
+                                                                        />
                                                                         <p class="text-truncate">
                                                                             {{
-                                                                            'replace'
-                                                                            | MiscellaneousPipe
-                                                                            : post.PostData.From
-                                                                            : ['@social-media.com', '']
+                                                                                'replace'
+                                                                                    | MiscellaneousPipe
+                                                                                        : post.PostData.From
+                                                                                        : ['@social-media.com', '']
                                                                             }}
                                                                         </p>
                                                                         <mat-icon>fiber_manual_record</mat-icon>
@@ -256,20 +367,26 @@
                                                                             {{ post.PostData.Subject }}
                                                                         </p>
                                                                     </div>
-                                                                    <ng-container *ngIf="{
+                                                                    <ng-container
+                                                                        *ngIf="{
                                                                             isEdited:
                                                                                 post.IsPostEdited ||
-                                                                                (post.IsCommentEdited && currentTab !== 'posts') ||
+                                                                                (post.IsCommentEdited &&
+                                                                                    currentTab !== 'posts') ||
                                                                                 post.PostData?.IsItemEdited,
                                                                             isDeleted:
                                                                                 post.IsPostDeleted ||
-                                                                                (post.IsCommentDeleted && currentTab !== 'posts') ||
+                                                                                (post.IsCommentDeleted &&
+                                                                                    currentTab !== 'posts') ||
                                                                                 post.PostData?.IsItemDeleted
-                                                                        } as itemStatus">
-                                                                        <mat-icon *ngIf="
+                                                                        } as itemStatus"
+                                                                    >
+                                                                        <mat-icon
+                                                                            *ngIf="
                                                                                 !itemStatus.isEdited &&
                                                                                 !itemStatus.isDeleted
-                                                                            " class="comment-icon {{
+                                                                            "
+                                                                            class="comment-icon {{
                                                                                 ('activeCommentValidator'
                                                                                 | SMPPipe
                                                                                     : post
@@ -281,24 +398,54 @@
                                                                                       ])
                                                                                     ? 'theme-icon'
                                                                                     : ''
-                                                                            }}">comment</mat-icon>
-                                                                        <img *ngIf="chosenPostData && notificationAction === 'smrc_a' && ('activeCommentValidator'
-                                                                        | SMPPipe
-                                                                            : post
-                                                                            : [
-                                                                                  currentTab,
-                                                                                  selectedPostId,
-                                                                                  selectedPostSessionId,
-                                                                                  selectedPostOutSessionId
-                                                                              ])" class="not-rimg"
-                                                                            src="assets/images/vectors/{{chosenPostData?.SocialMediaData?.Engagement?.reactionType?.replaceAll(' ', '')}}.svg">
+                                                                            }}"
+                                                                            >comment</mat-icon
+                                                                        >
+                                                                        <img
+                                                                            *ngIf="
+                                                                                chosenPostData &&
+                                                                                notificationAction === 'smrc_a' &&
+                                                                                ('activeCommentValidator'
+                                                                                    | SMPPipe
+                                                                                        : post
+                                                                                        : [
+                                                                                              currentTab,
+                                                                                              selectedPostId,
+                                                                                              selectedPostSessionId,
+                                                                                              selectedPostOutSessionId
+                                                                                          ])
+                                                                            "
+                                                                            class="not-rimg"
+                                                                            src="assets/images/vectors/{{
+                                                                                chosenPostData?.Engagement?.reactionType?.replaceAll(
+                                                                                    ' ',
+                                                                                    ''
+                                                                                )
+                                                                            }}.svg"
+                                                                        />
                                                                         <mat-icon
-                                                                            [matTooltip]="locale('sharedComponents.socialMediaPosts.editedItem')"
-                                                                            *ngIf="itemStatus.isEdited && !itemStatus.isDeleted"
-                                                                            class="comment-icon theme-icon">edit</mat-icon>
-                                                                        <mat-icon *ngIf="itemStatus.isDeleted"
-                                                                            [matTooltip]="locale('sharedComponents.socialMediaPosts.deletedItem')"
-                                                                            class="comment-icon red-icon">delete</mat-icon>
+                                                                            [matTooltip]="
+                                                                                locale(
+                                                                                    'sharedComponents.socialMediaPosts.editedItem'
+                                                                                )
+                                                                            "
+                                                                            *ngIf="
+                                                                                itemStatus.isEdited &&
+                                                                                !itemStatus.isDeleted
+                                                                            "
+                                                                            class="comment-icon theme-icon"
+                                                                            >edit</mat-icon
+                                                                        >
+                                                                        <mat-icon
+                                                                            *ngIf="itemStatus.isDeleted"
+                                                                            [matTooltip]="
+                                                                                locale(
+                                                                                    'sharedComponents.socialMediaPosts.deletedItem'
+                                                                                )
+                                                                            "
+                                                                            class="comment-icon red-icon"
+                                                                            >delete</mat-icon
+                                                                        >
                                                                     </ng-container>
                                                                 </div>
                                                             </div>
@@ -312,17 +459,20 @@
 
                                 <!-- Loading UI -->
                                 <div class="twd-p-3" *ngIf="postSearchRes.loading">
-                                    <div [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                                    <div
+                                        [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
                                         class="twd-flex twd-items-center twd-truncate twd-rounded-3xl twd-w-full twd-pl-2"
-                                        style="height: 45px">
+                                        style="height: 45px"
+                                    >
                                         <span
-                                            class="twd-transform twd-transition-transform twd--rotate-90 twd-grid twd-place-items-center">
+                                            class="twd-transform twd-transition-transform twd--rotate-90 twd-grid twd-place-items-center"
+                                        >
                                             <mat-icon> arrow_drop_down_circle </mat-icon>
                                         </span>
                                         <div class="twd-opacity-30 twd-w-5/12 twd-m-2">
                                             <div
-                                                class="twd-inline-flex twd-bg-gray-400 twd-animate-pulse twd-h-7 twd-w-full twd-rounded-md">
-                                            </div>
+                                                class="twd-inline-flex twd-bg-gray-400 twd-animate-pulse twd-h-7 twd-w-full twd-rounded-md"
+                                            ></div>
                                         </div>
                                     </div>
                                 </div>
@@ -335,13 +485,18 @@
                                 {{ locale('widgets.workbench.advanceSearch') }}
                             </p>
 
-                            <form [formGroup]="advancedSearch.form"
+                            <form
+                                [formGroup]="advancedSearch.form"
                                 [style.pointer-events]="this.disableAdvSearchActions ? 'none' : 'auto'"
                                 class="px-12 twd-grid twd-grid-cols-2 twd-gap-1 lg:twd-gap-2 twd-h-[calc(100%-52px)] twd-overflow-y-auto twd-relative"
-                                (ngSubmit)="submitAdvanceSearchForm()" novalidate>
+                                (ngSubmit)="submitAdvanceSearchForm()"
+                                novalidate
+                            >
                                 <!-- Search in progress -->
-                                <div *ngIf="disableAdvSearchActions"
-                                    class="twd-col-span-2 twd-flex twd-justify-center twd-items-center twd-spinner">
+                                <div
+                                    *ngIf="disableAdvSearchActions"
+                                    class="twd-col-span-2 twd-flex twd-justify-center twd-items-center twd-spinner"
+                                >
                                     <mat-spinner></mat-spinner>
                                 </div>
 
@@ -367,38 +522,154 @@
                                     <input matInput formControlName="toTime" type="time" />
                                 </mat-form-field>
 
-                                <mat-form-field class="twd-text-sm" appearance="outline">
-                                    <mat-label>{{ locale('widgets.workbench.subject') }} </mat-label>
-                                    <input matInput formControlName="subject" type="text" />
+                                <mat-form-field
+                                    class="twd-text-sm"
+                                    appearance="outline"
+                                    [ngClass]="{ 'twd-hidden': currentTab == 'posts' }"
+                                >
+                                    <mat-label>{{ locale('widgets.workbench.commentText') }} </mat-label>
+                                    <input matInput formControlName="commentText" type="text" />
                                 </mat-form-field>
 
                                 <mat-form-field class="twd-text-sm" appearance="outline">
-                                    <mat-label>{{ locale('widgets.workbench.content') }} </mat-label>
-                                    <input matInput formControlName="content" type="text" />
+                                    <mat-label>{{ locale('widgets.workbench.postText') }} </mat-label>
+                                    <input matInput formControlName="postText" type="text" />
                                 </mat-form-field>
 
-                                <mat-form-field class="twd-text-sm" [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }"
-                                    appearance="outline">
+                                <mat-form-field
+                                    class="twd-text-sm"
+                                    [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }"
+                                    appearance="outline"
+                                >
                                     <mat-label>
                                         {{ locale('widgets.workbench.assignedTo') }}
                                     </mat-label>
                                     <input matInput formControlName="assignedTo" type="text" />
                                 </mat-form-field>
 
-                                <mat-form-field class="twd-text-sm" appearance="outline"
-                                    [ngClass]="{ 'twd-hidden': currentTab === 'queue' }">
+                                <mat-form-field
+                                    class="twd-text-sm"
+                                    appearance="outline"
+                                    [ngClass]="{ 'twd-hidden': (currentTab === 'queue' || currentTab === 'posts') }"
+                                >
                                     <mat-label>{{ locale('widgets.workbench.sessionId') }} </mat-label>
-                                    <input matInput formControlName="inSessionId" type="text" />
+                                    <input matInput formControlName="sessionid" type="text" />
+                                </mat-form-field>
+                                <!-- Social media accounts selection -->
+                                <mat-form-field
+                                    appearance="outline"
+                                    class="twd-text-sm twd-col-span-2"
+                                >
+                                    <ng-container
+                                        *ngIf="
+                                            advancedSearch.form.controls.socialMediaAccounts
+                                                ?.value as selectedSocialMediaAccounts
+                                        "
+                                    >
+                                        <mat-label>
+                                            {{
+                                                selectedSocialMediaAccounts && selectedSocialMediaAccounts.length
+                                                    ? locale('sharedComponents.socialMediaPosts.socialMediaAccounts')
+                                                    : locale(
+                                                          'sharedComponents.socialMediaPosts.socialMediaAccountsNotFound'
+                                                      )
+                                            }}
+                                        </mat-label>
+                                        <mat-select formControlName="socialMediaAccounts" multiple>
+                                            <mat-select-trigger>
+                                                {{ selectedSocialMediaAccounts ? selectedSocialMediaAccounts[0] : '' }}
+                                                <span *ngIf="selectedSocialMediaAccounts?.length > 1">
+                                                    (+{{ selectedSocialMediaAccounts.length - 1 }}
+                                                    {{
+                                                        selectedSocialMediaAccounts?.length === 2 ? 'other' : 'others'
+                                                    }})
+                                                </span>
+                                            </mat-select-trigger>
+                                            <mat-option
+                                                *ngFor="let eachAccount of socialMediaAccounts"
+                                                [value]="eachAccount"
+                                                >{{ eachAccount }}</mat-option
+                                            >
+                                        </mat-select>
+                                    </ng-container>
+                                </mat-form-field>
+                                <!-- Sub channels selection -->
+                                <mat-form-field
+                                    appearance="outline"
+                                    class="twd-text-sm twd-col-span-2"
+                                >
+                                    <ng-container
+                                        *ngIf="
+                                            advancedSearch.form.controls.subChannels
+                                                ?.value as selectedSubChannels
+                                        "
+                                    >
+                                        <mat-label>
+                                            {{
+                                                selectedSubChannels && selectedSubChannels.length
+                                                    ? locale('sharedComponents.socialMediaPosts.subChannels')
+                                                    : locale(
+                                                          'sharedComponents.socialMediaPosts.subChannelsNotFound'
+                                                      )
+                                            }}
+                                        </mat-label>
+                                        <mat-select formControlName="subChannels" multiple>
+                                            <mat-select-trigger>
+                                                {{ selectedSubChannels ? selectedSubChannels[0] : '' }}
+                                                <span *ngIf="selectedSubChannels?.length > 1">
+                                                    (+{{ selectedSubChannels.length - 1 }}
+                                                    {{
+                                                        selectedSubChannels?.length === 2 ? 'other' : 'others'
+                                                    }})
+                                                </span>
+                                            </mat-select-trigger>
+                                            <mat-option
+                                                *ngFor="let eachChannel of subChannelList"
+                                                [value]="eachChannel"
+                                                >{{ eachChannel }}</mat-option
+                                            >
+                                        </mat-select>
+                                    </ng-container>
+                                </mat-form-field>
+                                <!-- Outbound Status Drop down-->
+                                <mat-form-field
+                                    appearance="outline"
+                                    class="twd-text-sm"
+                                    [ngClass]="{ 'twd-hidden': currentTab !== 'sentitem' }"
+                                >
+                                    <mat-label>{{ locale('widgets.workbench.outboundStatus') }} </mat-label>
+                                    <mat-select formControlName="outboundStatus">
+                                        <!-- <mat-select-trigger>
+                                            {{outboundStatus.value?.[0] || ''}}
+                                            <span
+                                                *ngIf="(outboundStatus.value?.length || 0) > 1">
+                                                (+{{ (outboundStatus.value?.length || 0) - 1 }}
+                                                {{ outboundStatus.value?.length === 2 ? 'other' : 'others' }})
+                                            </span>
+                                        </mat-select-trigger> -->
+                                        <mat-option
+                                            *ngFor="let outboundStatus of outboundStatusList"
+                                            [value]="outboundStatus"
+                                            >{{ outboundStatus }}</mat-option
+                                        >
+                                    </mat-select>
                                 </mat-form-field>
 
                                 <div class="twd-col-span-2 twd-grid twd-grid-cols-2 twd-gap-3">
-                                    <button mat-raised-button class="adv-search-btn h-40 mb-8 border-radius-20"
-                                        [disabled]="this.disableAdvSearchActions">
+                                    <button
+                                        mat-raised-button
+                                        class="adv-search-btn h-40 mb-8 border-radius-20"
+                                        [disabled]="this.disableAdvSearchActions"
+                                    >
                                         {{ locale('global.search') }}
                                     </button>
-                                    <button mat-raised-button class="adv-search-btn h-40 mb-8 border-radius-20"
-                                        type="button" (click)="resetForm(); doAdvancedSearch()"
-                                        [disabled]="this.disableAdvSearchActions">
+                                    <button
+                                        mat-raised-button
+                                        class="adv-search-btn h-40 mb-8 border-radius-20"
+                                        type="button"
+                                        (click)="resetForm(); doAdvancedSearch()"
+                                        [disabled]="this.disableAdvSearchActions"
+                                    >
                                         {{ locale('sharedComponents.socialMediaPosts.reset') }}
                                     </button>
                                 </div>
@@ -407,25 +678,51 @@
                     </ng-container>
 
                     <!-- No posts found UI -->
-                    <div *ngIf="!segregatedPosts.length && !postSearchRes.loading && !postSearchRes.error"
-                        class="w-100-p h-50-p twd-flex twd-items-center twd-justify-center">
-                        <span class="twd-text-2xl">{{ locale('sharedComponents.socialMediaPosts.postsNotFound') }}
+                    <div
+                        *ngIf="!segregatedPosts.length && !postSearchRes.loading && !postSearchRes.error"
+                        class="w-100-p h-50-p twd-flex twd-items-center twd-justify-center"
+                    >
+                        <span class="twd-text-2xl"
+                            >{{ locale('sharedComponents.socialMediaPosts.postsNotFound') }}
                         </span>
                     </div>
+                    
+ <!-- Paginator for post -->
+ <ng-container *ngIf="segregatedPosts.length && !postSearchRes.loading && !postSearchRes.error">
+ <mat-paginator 
+ [length]="totalPostCount"
+ [pageSize]="pageSize"
+ [pageSizeOptions]="pageSizeOptions"
+ showFirstLastButtons
+ (page)="onPageChange($event)">
+</mat-paginator>
+
+</ng-container>
+                   
 
                     <!-- Getting post error UI -->
-                    <div *ngIf="!postSearchRes.loading && postSearchRes.error"
-                        class="h-80-p twd-flex twd-justify-center twd-items-center">
+                    <div
+                        *ngIf="!postSearchRes.loading && postSearchRes.error"
+                        class="h-80-p twd-flex twd-justify-center twd-items-center"
+                    >
                         <div class="twd-w-5/12">
-                            <div class="w-100-p h-100-p text-center twd-flex twd-flex-col" fxLayout="column"
-                                fxLayoutAlign="center center" style="gap: 10px">
+                            <div
+                                class="w-100-p h-100-p text-center twd-flex twd-flex-col"
+                                fxLayout="column"
+                                fxLayoutAlign="center center"
+                                style="gap: 10px"
+                            >
                                 <img src="assets/images/vectors/no-data-1.svg" class="w-100-p h-85-p box-shadow-3d" />
                                 <h4 style="font-size: 16px" class="text-center m-0 font-weight-600">
                                     {{ postSearchRes.msg }}
                                 </h4>
                             </div>
-                            <button class="mx-auto w-80-p mt-20 d-block" mat-raised-button color="primary"
-                                (click)="doAdvancedSearch()">
+                            <button
+                                class="mx-auto w-80-p mt-20 d-block"
+                                mat-raised-button
+                                color="primary"
+                                (click)="doAdvancedSearch()"
+                            >
                                 {{ locale('global.retry') }}
                             </button>
                         </div>
@@ -433,35 +730,46 @@
                 </div>
 
                 <!-- Actual body -->
-                <div id="mainContentWbsmp"
+                <div
+                    id="mainContentWbsmp"
                     class="wsmp-open actual-content theme-bg border-radius-20 twd-flex twd-flex-col twd-absolute twd-overflow-auto twd-h-full twd-w-full twd-left-0 twd-top-0 twd-z-10 lg:twd-relative lg:twd-col-span-2 lg:twd-overflow-hidden lg:twd-h-auto twd-p-3"
-                    *ngIf="openPostRes.loading || state.openPostResData as selectedPost">
+                    *ngIf="openPostRes.loading || state.openPostResData as selectedPost"
+                >
                     <!-- Post actions -->
-                    <div class="top-actions twd-relative"
-                        *ngIf="!openPostRes.loading && !openPostRes.error && selectedPostSessionId">
+                    <div
+                        class="top-actions twd-relative"
+                        *ngIf="!openPostRes.loading && !openPostRes.error && selectedPostSessionId"
+                    >
                         <div class="ui-actions actions-flex">
-                            <mat-icon role="button"
+                            <mat-icon
+                                role="button"
                                 [matTooltip]="locale('sharedComponents.socialMediaPosts.closePostUI')"
-                                (click)="this.openPostRes.data.next(null)">close</mat-icon>
-                            <mat-icon role="button"
+                                (click)="this.openPostRes.data.next(null)"
+                                >close</mat-icon
+                            >
+                            <mat-icon
+                                role="button"
                                 [matTooltip]="locale('sharedComponents.socialMediaPosts.postFullscreen')"
-                                (click)="onToggleFullscreen()">{{
-                                isFullscreen ? 'fullscreen_exit' : 'fullscreen'
-                                }}</mat-icon>
+                                (click)="onToggleFullscreen()"
+                                >{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon
+                            >
                             <!-- <mat-icon role="button">expand_less</mat-icon>
                             <mat-icon role="button">expand_more</mat-icon> -->
                         </div>
 
-                        <div class="high-context" *ngIf="{
+                        <div
+                            class="high-context"
+                            *ngIf="{
                                 formatted:
                                     ('formatReadableDateWithDotnetDate' | CustomDatePipe: selectedPost.AddedTime:[])
-                            } as parsedDate">
+                            } as parsedDate"
+                        >
                             <p>{{ parsedDate.formatted.date }}, {{ parsedDate.formatted.time }}</p>
                             <mat-icon
                                 *ngIf="
                                     (selectedPost.IsPostEdited ||
-                                        ((selectedPost.IsCommentEdited ||
-                                            selectedPost.IsParentCommentEdited) && currentTab !== 'posts')) &&
+                                        ((selectedPost.IsCommentEdited || selectedPost.IsParentCommentEdited) &&
+                                            currentTab !== 'posts')) &&
                                     !(
                                         selectedPost.IsPostDeleted ||
                                         selectedPost.IsCommentDeleted ||
@@ -475,8 +783,8 @@
                             <mat-icon
                                 *ngIf="
                                     selectedPost.IsPostDeleted ||
-                                    ((selectedPost.IsCommentDeleted ||
-                                        selectedPost.IsParentCommentDeleted) && currentTab !== 'posts')
+                                    ((selectedPost.IsCommentDeleted || selectedPost.IsParentCommentDeleted) &&
+                                        currentTab !== 'posts')
                                 "
                                 [matTooltip]="locale('sharedComponents.socialMediaPosts.deletedItem')"
                                 class="red-icon"
@@ -484,7 +792,9 @@
                             >
                         </div>
 
-                        <div class="core-actions actions-flex" *ngIf="
+                        <div
+                            class="core-actions actions-flex"
+                            *ngIf="
                                 currentTab !== 'posts' &&
                                 !isFullscreen &&
                                 !(
@@ -493,30 +803,52 @@
                                     state?.openPostResData?.IsParentCommentDeleted ||
                                     state?.openPostResData?.IsPostDeleted
                                 )
-                            ">
-                            <div class="button-info-flex" *ngIf="currentTab !== 'sentitem'"
-                                [disabled]="isPullOnProgress" (click)="pullPosts([selectedPost])">
+                            "
+                        >
+                            <div
+                                class="button-info-flex"
+                                *ngIf="currentTab !== 'sentitem'"
+                                [disabled]="isPullOnProgress"
+                                (click)="pullPosts([selectedPost])"
+                            >
                                 <mat-icon role="button">reply</mat-icon>
                                 <p>{{ locale('sharedComponents.socialMediaPosts.pull') }}</p>
                             </div>
-                            <div *ngIf="ShowPostDetails" class="button-info-flex" role="button"
-                                (click)="showPostDetails()">
+                            <div
+                                *ngIf="ShowPostDetails"
+                                class="button-info-flex"
+                                role="button"
+                                (click)="showPostDetails()"
+                            >
                                 <mat-icon>info</mat-icon>
                                 <p>{{ locale('sharedComponents.socialMediaPosts.postDetails') }}</p>
                             </div>
-                            <div class="button-info-flex" *ngIf="currentTab !== 'sentitem'"
-                                [disabled]="isPullOnProgress" role="button" (click)="closePosts([selectedPost])">
+                            <div
+                                class="button-info-flex"
+                                *ngIf="currentTab !== 'sentitem'"
+                                [disabled]="isPullOnProgress"
+                                role="button"
+                                (click)="closePosts([selectedPost])"
+                            >
                                 <mat-icon>cancel</mat-icon>
                                 <p>{{ locale('sharedComponents.socialMediaPosts.close') }}</p>
                             </div>
-                            <div style="margin-left: -4px" class="button-info-flex" *ngIf="currentTab == 'queue'"
-                                [disabled]="isPullOnProgress" role="button" (click)="transferPost([selectedPost])">
+                            <div
+                                style="margin-left: -4px"
+                                class="button-info-flex"
+                                *ngIf="currentTab == 'queue'"
+                                [disabled]="isPullOnProgress"
+                                role="button"
+                                (click)="transferPost([selectedPost])"
+                            >
                                 <mat-icon>send</mat-icon>
                                 <p>{{ locale('sharedComponents.socialMediaPosts.transfer') }}</p>
                             </div>
                         </div>
 
-                        <div class="twd-flex warn-info" *ngIf="
+                        <div
+                            class="twd-flex warn-info"
+                            *ngIf="
                                 !(
                                     currentTab !== 'posts' &&
                                     !(
@@ -525,45 +857,66 @@
                                         state?.openPostResData?.IsParentCommentDeleted ||
                                         state?.openPostResData?.IsPostDeleted
                                     )
-                                ) || (currentTab === 'sentitem' && !ShowPostDetails)
-                            ">
-                            <mat-icon class="red-icon"
-                                [matTooltip]="locale('sharedComponents.socialMediaPosts.nonPullItemWarning')">info</mat-icon>
+                                ) ||
+                                (currentTab === 'sentitem' && !ShowPostDetails)
+                            "
+                        >
+                            <mat-icon
+                                class="red-icon"
+                                [matTooltip]="locale('sharedComponents.socialMediaPosts.nonPullItemWarning')"
+                                >info</mat-icon
+                            >
                         </div>
                     </div>
 
                     <!-- Actual post content -->
-                    <div class="wsmp-open__body twd-w-full twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full"
+                    <div
+                        class="wsmp-open__body twd-w-full twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full"
                         [ngClass]="{
                             'edit-border':
                                 notificationAction === 'smc_e' ||
                                 notificationAction === 'smco_e' ||
                                 notificationAction === 'smp_e',
                             'delete-border': hidePostActions || state?.openPostResData?.IsPostDeleted
-                        }">
+                        }"
+                    >
                         <smp-template
                             *ngIf="!(openPostRes.loading || openPostRes.error) && state.openPostResData !== null"
                             [engagementFromNotification]="
-                                notificationAction === 'smrc_a' ? chosenPostData?.SocialMediaData?.Engagement : ''
-                            " [previousCommentFromNotification]="
+                                notificationAction === 'smrc_a' ? chosenPostData?.Engagement : ''
+                            "
+                            [previousCommentFromNotification]="
                                 notificationAction === 'smc_e' || notificationAction === 'smco_e'
-                                    ? [chosenPostData?.SocialMediaData?.Comments]
+                                    ? [chosenPostData?.Comments]
                                     : []
-                            " [isActiveCommentEdited]="state.openPostResData.IsCommentEdited"
+                            "
+                            [isActiveCommentEdited]="state.openPostResData.IsCommentEdited"
                             [isActiveCommentDeleted]="state.openPostResData.IsCommentDeleted"
                             [isPostDeleted]="state.openPostResData.IsPostDeleted"
-                            [isPostEdited]="state.openPostResData.IsPostEdited" [mode]="'workbench'"
+                            [isPostEdited]="state.openPostResData.IsPostEdited"
+                            [mode]="'workbench'"
                             [postData]="state.openPostResData"
-                            [enhanceCommentContainer]="currentTab === 'posts'"></smp-template>
+                            [enhanceCommentContainer]="currentTab === 'posts'"
+                        ></smp-template>
 
                         <!-- Open post loading page -->
-                        <div class="twd-flex twd-justify-center twd-items-center twd-flex twd-h-full" fxLayout="column"
-                            fxLayoutAlign="center center" *ngIf="openPostRes.loading && !openPostRes.error">
+                        <div
+                            class="twd-flex twd-justify-center twd-items-center twd-flex twd-h-full"
+                            fxLayout="column"
+                            fxLayoutAlign="center center"
+                            *ngIf="openPostRes.loading && !openPostRes.error"
+                        >
                             <div class="twd-w-5/12">
-                                <div class="w-100-p h-100-p text-center twd-flex twd-flex-col" fxLayout="column"
-                                    fxLayoutAlign="center center" style="gap: 10px">
-                                    <img src="assets/images/vectors/no-data-1.svg"
-                                        class="w-100-p h-85-p box-shadow-3d" />
+                                <div
+                                    class="w-100-p h-100-p text-center twd-flex twd-flex-col"
+                                    fxLayout="column"
+                                    fxLayoutAlign="center center"
+                                    style="gap: 10px"
+                                >
+                                    <img
+                                        src="assets/images/vectors/no-data-1.svg"
+                                        class="w-100-p h-85-p box-shadow-3d"
+                                    />
                                     <h4 style="font-size: 16px" class="text-center m-0 font-weight-600">
                                         {{ locale('sharedComponents.socialMediaPosts.loadingPostLabel') }}
                                     </h4>
@@ -572,13 +925,23 @@
                         </div>
 
                         <!-- Open post error page -->
-                        <div class="twd-flex twd-justify-center twd-items-center twd-flex twd-h-full" fxLayout="column"
-                            fxLayoutAlign="center center" *ngIf="openPostRes.error">
+                        <div
+                            class="twd-flex twd-justify-center twd-items-center twd-flex twd-h-full"
+                            fxLayout="column"
+                            fxLayoutAlign="center center"
+                            *ngIf="openPostRes.error"
+                        >
                             <div class="twd-w-5/12">
-                                <div class="w-100-p h-100-p text-center twd-flex twd-flex-col" fxLayout="column"
-                                    fxLayoutAlign="center center" style="gap: 10px">
-                                    <img src="assets/images/vectors/no-data-1.svg"
-                                        class="w-100-p h-85-p box-shadow-3d" />
+                                <div
+                                    class="w-100-p h-100-p text-center twd-flex twd-flex-col"
+                                    fxLayout="column"
+                                    fxLayoutAlign="center center"
+                                    style="gap: 10px"
+                                >
+                                    <img
+                                        src="assets/images/vectors/no-data-1.svg"
+                                        class="w-100-p h-85-p box-shadow-3d"
+                                    />
                                     <h4 style="font-size: 16px" class="text-center m-0 font-weight-600">
                                         {{ locale('sharedComponents.socialMediaPosts.invalidPostResponse') }}
                                     </h4>
@@ -589,11 +952,14 @@
                 </div>
 
                 <!-- Select post placeholder -->
-                <div *ngIf="!state.openPostResData && !openPostRes.loading"
-                    class="wsmp-open twd-w-full theme-bg twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center">
+                <div
+                    *ngIf="!state.openPostResData && !openPostRes.loading"
+                    class="wsmp-open twd-w-full theme-bg twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center"
+                >
                     <div class="twd-flex twd-flex-col twd-justify-center">
                         <mat-icon class="s-128 mb-16 select-message-icon hint-text twd-mx-auto"> video_label </mat-icon>
-                        <span class="twd-text-2xl">{{ locale('sharedComponents.socialMediaPosts.selectPostLabel') }}
+                        <span class="twd-text-2xl"
+                            >{{ locale('sharedComponents.socialMediaPosts.selectPostLabel') }}
                         </span>
                     </div>
                 </div>

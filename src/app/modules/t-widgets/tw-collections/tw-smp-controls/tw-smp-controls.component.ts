@@ -27,25 +27,43 @@ import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
-import { AgentNotificaitonEvent, IAgentData, IncomingEmailEvent, InteractionDataEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
+import {
+    AgentNotificaitonEvent,
+    IAgentData,
+    IncomingSMEvent,
+    InteractionDataEvent,
+    IResponse,
+    SDKClient,
+    TUtils
+} from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { InteractionComment, InteractionRef, IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse } from 'app/interfaces';
+import {
+    InteractionComment,
+    InteractionRef,
+    IWidget,
+    MediaStreamerMetaResponse,
+    MediaStreamerMultiResponse
+} from 'app/interfaces';
 import { AgentSkillListDataModel } from 'app/models';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { merge, sortBy } from 'lodash';
 import { filter, take, takeUntil } from 'rxjs/operators';
 import { TMACEventService } from '@services/tmac-event.service';
 import { format } from 'date-fns';
+import { SharedService } from '../../../../services/shared.service';
 
 declare var document: any;
 
 const channelMapper: any = {
     fb: 'facebook',
     instagram: 'instagram',
-    twitter: 'x'
+    twitter: 'x',
+    youtube: 'youtube',
+    appstore: 'appstore',
+    playstore: 'playstore'
 };
 
-type SmpEventGeneric = IncomingEmailEvent;
+type SmpEventGeneric = IncomingSMEvent;
 
 @Component({
     selector: 'tw-smp-controls',
@@ -148,7 +166,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         private cdr: ChangeDetectorRef,
         private _appDataService: AppDataService,
         private _matDialog: MatDialog,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private _sharedService: SharedService
     ) {
         super('TwSmpControlsComponent');
     }
@@ -169,6 +188,12 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
         });
 
+        this._sharedService.getSMFailure().subscribe((interactionId: number) => {
+            if (this.data.InteractionDetails.InteractionID === interactionId) {
+                clearTimeout(this.sendTimerId);
+            }
+        });
+
         this._tmacEventService
             .getInteractionEvents(['InteractionDataEvent'], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
@@ -179,46 +204,47 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.smpService.getEmittedNotificationData
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(({ message, action }) => {
-                switch(action) {
+                switch (action) {
                     case 'smc_e': {
-                        if (!this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId]) {
-                            this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
-                                message: message?.SocialMediaData?.Comments,
+                        if (!this.editedCommentData[message?.Comments?.CommentId]) {
+                            this.editedCommentData[message?.Comments?.CommentId] = {
+                                message: message?.Comments,
                                 isConsented: false
                             };
-                        } 
+                        }
                         break;
                     }
                     case 'smpc_e': {
-                        if (!this.editedParentCommentData[message?.SocialMediaData?.ParentComments?.CommentId]) {
-                            this.editedParentCommentData[message?.SocialMediaData?.ParentComments?.CommentId] = {
-                                message: message?.SocialMediaData?.ParentComments,
+                        if (!this.editedParentCommentData[message?.ParentComments?.CommentId]) {
+                            this.editedParentCommentData[message?.ParentComments?.CommentId] = {
+                                message: message?.ParentComments,
                                 isConsented: false
                             };
-                        } 
+                        }
                         break;
                     }
                     case 'smp_e': {
-                        if(!this.editedPostData[message?.SocialMediaData?.Posts?.PostId]) {
-                            this.editedPostData[message?.SocialMediaData?.Posts?.PostId] = {};
+                        if (!this.editedPostData[message?.Posts?.PostId]) {
+                            this.editedPostData[message?.Posts?.PostId] = {};
                         }
                         break;
                     }
                     case 'smc_d': {
-                        if(!this.deletedCommentData[message?.SocialMediaData?.Comments?.CommentId]) {
-                            this.deletedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
+                        if (!this.deletedCommentData[message?.Comments?.CommentId]) {
+                            this.deletedCommentData[message?.Comments?.CommentId] = {
                                 isConsented: false
                             };
                         }
                         break;
                     }
                     case 'smp_d': {
-                        if(!this.deletedPostData[message?.SocialMediaData?.Posts?.PostId]) {
-                            this.deletedPostData[message?.SocialMediaData?.Posts?.PostId] = {};
+                        if (!this.deletedPostData[message?.Posts?.PostId]) {
+                            this.deletedPostData[message?.Posts?.PostId] = {};
                         }
                         break;
                     }
-                    default: break;
+                    default:
+                        break;
                 }
             });
 
@@ -262,6 +288,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     }
 
     ngOnDestroy(): void {
+        this.sendTimerId && clearTimeout(this.sendTimerId);
         SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
@@ -422,27 +449,27 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         const message = JSON.parse(evt.Message);
 
         if (type === 'socialmediacomment_edit') {
-            this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
-                message: message?.SocialMediaData?.Comments,
+            this.editedCommentData[message?.Comments?.CommentId] = {
+                message: message?.Comments,
                 isConsented: false
             };
         } else if (type === 'socialmediaparentcomment_edit') {
-            this.editedParentCommentData[message?.SocialMediaData?.ParentComments?.CommentId] = {
-                message: message?.SocialMediaData?.ParentComments,
+            this.editedParentCommentData[message?.ParentComments?.CommentId] = {
+                message: message?.ParentComments,
                 isConsented: false
             };
         } else if (type === 'socialmediapost_edit') {
-            if(this.editedPostData[message?.SocialMediaData?.Posts?.PostId])
-                delete this.editedPostData[message?.SocialMediaData?.Posts?.PostId];
-            this.editedPostData[message?.SocialMediaData?.Posts?.PostId] = {};
+            if (this.editedPostData[message?.Posts?.PostId])
+                delete this.editedPostData[message?.Posts?.PostId];
+            this.editedPostData[message?.Posts?.PostId] = {};
         } else if (type === 'socialmediacomment_delete') {
-            this.deletedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
+            this.deletedCommentData[message?.Comments?.CommentId] = {
                 isConsented: false
             };
         } else if (type === 'socialmediapost_delete') {
-            if(this.deletedPostData[message?.SocialMediaData?.Posts?.PostId])
-                delete this.deletedPostData[message?.SocialMediaData?.Posts?.PostId];
-            this.deletedPostData[message?.SocialMediaData?.Posts?.PostId] = {};
+            if (this.deletedPostData[message?.Posts?.PostId])
+                delete this.deletedPostData[message?.Posts?.PostId];
+            this.deletedPostData[message?.Posts?.PostId] = {};
         }
     };
 
@@ -544,7 +571,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             this.actionStatus.disableUIButtons = true;
             this._fuseProgressBarService.show();
 
-            SDKClient.closeInteraction(this.interactionId.toString(), null, true)
+            SDKClient.closeInteraction(this.interactionId.toString())
                 .then((dt: IResponse) => {
                     delete this.smpService.postBodies[this.sessionId];
                     delete this.smpService.postBodies[this.outSessionId];
@@ -554,6 +581,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         this._appUiService.showSnackbar(
                             this.translocoService.translate('interactionComponent.closeInteractionSuccess')
                         );
+                        if (this.data?.Data?.RedirectPath && this.interactionList?.length === 1)
+                            this._contentPageService.mode = this.data.Data.RedirectPath;
                         this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                     } else {
                         this._appUiService.showSnackbar(
@@ -585,24 +614,6 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         }
     }
 
-    /**
-     * Deletes the draft copy of the post
-     */
-    async deleteDraftPost(): Promise<void> {
-        try {
-            if (this.draftOutsessionId[this.activeSessionId]) {
-                await SDKClient.deleteBulkEmailsInDraft(
-                    `${this.sessionId}|${this.draftOutsessionId[this.activeSessionId] ?? this.outSessionId}`,
-                    undefined,
-                    true
-                ).catch((err) => throwADError('Unable to delete post drafts', ''));
-            }
-        } catch (e) {
-            console.error('Unable to delete the draft copy of the post');
-            console.error(e);
-        }
-    }
-
     async onSendReply() {
         try {
             let attachments = this.postDraftData[this.interactionId].attachments;
@@ -627,15 +638,16 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 if (attachments) delete attachments[0]?.Url;
                 const res = await SDKClient.sendItem({
                     attachmentFileList: attachments && attachments.length ? JSON.stringify(attachments) : '',
-                    body: body,
+                    engagementFileList: '',
+                    text: body,
                     inboxSessionId: this.sessionId,
-                    outboxSessionId: !this.outSessionId && this.draftOutsessionId[this.activeSessionId] ? this.draftOutsessionId[this.activeSessionId] : (this.outSessionId || ''),
+                    outboxSessionId:
+                        !this.outSessionId && this.draftOutsessionId[this.activeSessionId]
+                            ? this.draftOutsessionId[this.activeSessionId]
+                            : this.outSessionId || '',
                     routeId: '',
-                    toList: '',
-                    bccList: '',
-                    typeOfResponse: 'reply',
-                    ccList: '',
-                    subject: this.smpService.postBodies[this.activeSessionId]?.Subject ?? ''
+                    to: '',
+                    typeOfResponse: 'reply'
                 }).catch((e) => errCallback(e));
                 ref.dismiss();
                 if (!res || !res.response) {
@@ -650,7 +662,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
                 let reasonCodeMsg = SMP_REASONCODE_VALUES[res.response.SendStatus];
 
-                if (res.response.CurrentStatus === 'EmailSending') {
+                if (res.response.CurrentStatus === 'ItemSending') {
                     this._interactionManagerService.updateInteraction(this.interactionId, {
                         isReplySent: false
                     });
@@ -724,11 +736,11 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     savePostAsDraft(closePost = false, isLoud: boolean): void {
         const postBody = (this.postDraftData[this.interactionId].body || '').toString();
         let draftSnackbarRef: any;
-        if(!postBody) {
+        if (!postBody) {
             this._appUiService.showSnackbar(
                 this.translocoService.translate('widgets.smpControls.invalidDraftTrigger'),
                 'failure'
-        );
+            );
             return;
         }
         if (isLoud)
@@ -742,25 +754,20 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             this.prevAttachments,
             this.postDraftData[this.interactionId].attachments
         );
-        SDKClient.saveEmailDraft(
-            {
-                bccList: '',
-                body: postBody,
-                ccList: '',
-                inboxSessionId: this.sessionId,
-                outboxSessionId: this.draftOutsessionId[this.activeSessionId]
-                    ? this.draftOutsessionId[this.activeSessionId]
-                    : this.outSessionId || '',
-                routeId: '',
-                subject: this.smpService.postBodies[this.activeSessionId]?.Subject ?? '',
-                toList: '',
-                typeOfResponse: '',
-                attachmentList: changes,
-                isAttachmentModified: isModified
-            },
-            undefined,
-            true
-        )
+        SDKClient.saveSMDraft({
+            text: postBody,
+            inboxSessionId: this.sessionId,
+            outboxSessionId: this.draftOutsessionId[this.activeSessionId]
+                ? this.draftOutsessionId[this.activeSessionId]
+                : this.outSessionId || '',
+            routeId: '',
+            to: '',
+            typeOfResponse: '',
+            attachmentFileList: changes.join(','),
+            isAttachmentModified: isModified,
+            engagementFileList: [].join(','),
+            isEngagementModified: false
+        })
             .then((x) => {
                 if (x.response.replace(/^"(.*)"$/, '$1')) {
                     if (isLoud)
@@ -791,8 +798,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         this.translocoService.translate('widgets.smpControls.savingDraftFailedLabel'),
                         'failure'
                     );
-            }).finally(() => {
-                draftSnackbarRef?.dismiss()
+            })
+            .finally(() => {
+                draftSnackbarRef?.dismiss();
             });
     }
 
@@ -948,8 +956,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
                 const setPostBody = async (resData: any, sid: any) => {
                     let modifiedAttachmentData: any[] = [];
-                    if (resData?.SocialMediaData?.Comments?.CommentAttachments?.length) {
-                        modifiedAttachmentData = resData.SocialMediaData.Comments.CommentAttachments.map((attdat) => {
+                    if (resData?.Comments?.CommentAttachments?.length) {
+                        modifiedAttachmentData = resData.Comments.CommentAttachments.map((attdat) => {
                             return {
                                 IsCloud: true,
                                 Url: attdat?.MediaUrl,
@@ -959,18 +967,15 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         });
                     }
                     let tempAttachments = await this.requestAttachmentData(
-                        (modifiedAttachmentData.length && this.isDraftMode) ? modifiedAttachmentData : resData.Attachments
+                        modifiedAttachmentData.length && this.isDraftMode ? modifiedAttachmentData : []
                     );
-                    let smData = resData?.SocialMediaData;
+                    let smData = resData;
                     this.smpService.postBodies = Object.assign(this.smpService.postBodies, {
                         [sid]: {
                             Files: getAttachments(tempAttachments, sid),
-                            ConversationID: resData.ConversationID,
                             SessionId: sid,
-                            SubChannel: (
-                                channelMapper[smData?.Posts?.Channel?.toLowerCase()] ?? resData.EmailType
-                            ).toLowerCase(),
-                            Subject: resData.Subject,
+                            SubChannel: channelMapper[smData?.Posts?.Channel?.toLowerCase()].toLowerCase(),
+                            Subject: resData.Comments.CommentText.Text,
                             PostAccountName: smData.Posts.AccountName
                                 ? smData.Posts.AccountName
                                 : smData.Posts.AccountId,
@@ -1019,17 +1024,13 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
      */
     closePost(): void {
         this._fuseProgressBarService.show();
-        SDKClient.changeEmailStatus(
-            {
-                routeId: this.smpService.postBodies[this.activeSessionId].RouteId,
-                sessionId: this.smpService.postBodies[this.activeSessionId].SessionId,
-                status: SMP_SENT_REASONS.concat(SMP_DRAFT_REASONS).includes(this.routeReason)
-                    ? `Outbox,Closed,sent,${this.smpService.postBodies[this.activeSessionId].OutSessionId}`
-                    : 'CloseTab'
-            },
-            undefined,
-            true
-        )
+        SDKClient.changeSMStatus({
+            routeId: this.smpService.postBodies[this.activeSessionId].RouteId,
+            inboxSessionId: this.smpService.postBodies[this.activeSessionId].SessionId,
+            status: SMP_SENT_REASONS.concat(SMP_DRAFT_REASONS).includes(this.routeReason)
+                ? `Outbox,Closed,sent,${this.smpService.postBodies[this.activeSessionId].OutSessionId}`
+                : 'CloseTab'
+        })
             .then(() => {
                 this.closeInteraction(true);
             })
@@ -1038,16 +1039,17 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     this.translocoService.translate('interactionComponent.closeInteractionFailed'),
                     'failure'
                 );
-            }).finally(() => {
-                this._fuseProgressBarService.hide();
             })
+            .finally(() => {
+                this._fuseProgressBarService.hide();
+            });
     }
 
-    restrictPostActionEvt(data: {interactionId: any, restrict: boolean}) {
+    restrictPostActionEvt(data: { interactionId: any; restrict: boolean }) {
         this.restrictPostActions[data.interactionId] = data.restrict;
     }
 
-        /**
+    /**
      * Transfers post
      */
     transferPost(): void {

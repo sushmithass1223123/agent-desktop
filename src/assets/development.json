@@ -9,7 +9,7 @@
         "Password": { "Agent": false, "Station": false },
         "StationEnabled": false,
         "DisableLanId": false,
-        "PromptAgentIdOnInvalidLanId": false,
+        "PromptAgentIdOnInvalidLanId": true,
         "MultiWindowMode": { "Enabled": false, "Width": 100, "Height": 100, "PixelDimension": false },
         "SSOLinkExpiry": 10,
         "LogoutUrl": "",
@@ -97,7 +97,7 @@
                                 "Description": "",
                                 "Type": "tw-notifications",
                                 "Config": { "Enabled": true },
-                                "Data": {}
+                                "Data": { "disableSocialMediaNotifications": true }
                             },
                             {
                                 "Name": "Available Media Devices",
@@ -1129,7 +1129,11 @@
                                                     "DisableConfirmation": {
                                                         "OnEndCall": false,
                                                         "OnCloseInteraction": true
-                                                    }
+                                                    },
+                                                    "AutoHoldActiveCallOnNewCallAnswer": true,
+                                                    "ShowPromptForAutoHold": true,
+                                                    "AutoHoldActiveCallOnUnhold": true,
+                                                    "RedirectPath": "/home"
                                                 }
                                             },
                                             {
@@ -1632,7 +1636,7 @@
                                                             "Blind": true,
                                                             "Comments": true,
                                                             "Source": {
-                                                                "Use": "vdn",
+                                                                "Use": "skill",
                                                                 "Display": "skill",
                                                                 "FreeTextAllowed": false
                                                             },
@@ -1773,7 +1777,8 @@
                                                         "attachments": {
                                                             "allowedChannels": "line,whatsapp,we,fb,viber,telegram,twitter"
                                                         }
-                                                    }
+                                                    },
+                                                    "RedirectPath": "/home"
                                                 }
                                             },
                                             {
@@ -2290,7 +2295,8 @@
                                                     "TemplatesByHierarchy": false,
                                                     "AsyncEmailSendTimeout": 60000,
                                                     "DefaultMaxPayloadSize": 29359488,
-                                                    "ShowPayloadSizeStats": true
+                                                    "ShowPayloadSizeStats": true,
+                                                    "RedirectPath": "/home"
                                                 }
                                             },
                                             {
@@ -2604,7 +2610,8 @@
                                                         }
                                                     },
                                                     "MaxFileUploadSize": 20971520,
-                                                    "AsyncReplySendTimeout": 60000
+                                                    "AsyncReplySendTimeout": 60000,
+                                                    "RedirectPath": "/home"
                                                 }
                                             },
                                             {
@@ -3270,6 +3277,7 @@
                                                 "Enabled": true,
                                                 "Icon": "video_label",
                                                 "Config": {
+                                                    "SupportedSocialChannels": ["FB", "INSTAGRAM", "TWITTER", "YOUTUBE", "APPSTORE", "PLAYSTORE"],
                                                     "Transfer": {
                                                         "Allowed": true,
                                                         "Agent": {
@@ -3626,8 +3634,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx"],
-                "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
+                "urls": ["https://15.206.182.15:8445/api/v1/TmacProxy"],
                 "type": "soap",
                 "timeout": 60
             },
@@ -3659,5 +3666,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.12.0"
+    "Version": "5.14.0-beta.1"
 }

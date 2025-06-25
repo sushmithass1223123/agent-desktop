@@ -8,44 +8,71 @@ const yesterday = new Date();
 yesterday.setDate(today.getDate() - 1);
 
 export const initSmpostsSearchState = {
-    fromDate: yesterday,
-    fromTime: `00:00`,
-    toDate: today,
-    toTime: `${'23'}:${'59'}`,
-    email: '',
-    subject: '',
-    content: '',
-    skills: '',
-    agent: '',
-    inSessionId: '',
-    deviceid: '',
-    hasAttachments: 2,
+    // Inbox
+    postText: '',
+    hasCommentAttachments: 2,
+    hasPostAttachments: 2,
     assignedTo: '',
     replied: 2,
     closed: 2,
     assigned: 2,
-    listOfMailboxes: []
+    queue: '',
+    // Queue
+    skills: [],
+    Channel: 'SM',
+    fromDate: yesterday,
+    fromTime: `00:00`,
+    toDate: today,
+    toTime: `${'23'}:${'59'}`,
+    // common
+    agent: '',
+    commentText: '',
+    subChannels: [],
+    sessionid: '',
+    global: '',
+    socialMediaAccounts: [],
+    pageSize: 10,
+    pageNumber: 1,
+    deviceid: '',
+    accountName: '',
+    // Sent
+    outboundStatus: ''
 };
 
-const searchParams = new FormGroup({
-    fromDate: new FormControl(initSmpostsSearchState.fromDate),
-    fromTime: new FormControl(initSmpostsSearchState.fromTime),
-    toDate: new FormControl(initSmpostsSearchState.toDate),
-    toTime: new FormControl(initSmpostsSearchState.toTime),
-    email: new FormControl(initSmpostsSearchState.email),
-    subject: new FormControl(initSmpostsSearchState.subject),
-    content: new FormControl(initSmpostsSearchState.content),
-    skills: new FormControl(initSmpostsSearchState.skills),
-    agent: new FormControl(initSmpostsSearchState.agent),
-    inSessionId: new FormControl(initSmpostsSearchState.inSessionId),
-    deviceid: new FormControl(initSmpostsSearchState.deviceid),
-    hasAttachments: new FormControl(initSmpostsSearchState.hasAttachments),
+const searchParams = new FormGroup({  
+    // Inbox
+    postText: new FormControl(initSmpostsSearchState.postText),
+    hasCommentAttachments: new FormControl(initSmpostsSearchState.hasCommentAttachments),
+    hasPostAttachments: new FormControl(initSmpostsSearchState.hasPostAttachments),
     assignedTo: new FormControl(initSmpostsSearchState.assignedTo),
     replied: new FormControl(initSmpostsSearchState.replied),
     closed: new FormControl(initSmpostsSearchState.closed),
     assigned: new FormControl(initSmpostsSearchState.assigned),
-    listOfMailboxes: new FormControl([])
-});
+    queue: new FormControl(initSmpostsSearchState.queue),
+  
+    // Queue
+    skills: new FormControl(initSmpostsSearchState.skills),
+    Channel: new FormControl(initSmpostsSearchState.Channel),
+    fromDate: new FormControl(initSmpostsSearchState.fromDate),
+    fromTime: new FormControl(initSmpostsSearchState.fromTime),
+    toDate: new FormControl(initSmpostsSearchState.toDate),
+    toTime: new FormControl(initSmpostsSearchState.toTime),
+  
+    // Common
+    agent: new FormControl(initSmpostsSearchState.agent),
+    commentText: new FormControl(initSmpostsSearchState.commentText),
+    subChannels: new FormControl(initSmpostsSearchState.subChannels),
+    sessionid: new FormControl(initSmpostsSearchState.sessionid),
+    global: new FormControl(initSmpostsSearchState.global),
+    socialMediaAccounts: new FormControl(initSmpostsSearchState.socialMediaAccounts),
+    pageSize: new FormControl(initSmpostsSearchState.pageSize),
+    pageNumber: new FormControl(initSmpostsSearchState.pageNumber),
+    deviceid: new FormControl(initSmpostsSearchState.deviceid),
+    accountName: new FormControl(initSmpostsSearchState.accountName),
+
+    // Sent
+    outboundStatus: new FormControl(initSmpostsSearchState.outboundStatus)
+  });  
 
 @Injectable({
     providedIn: 'root'
@@ -59,7 +86,8 @@ export class SocialMediaPostsService {
             searchParams,
             globalSearchKey: new FormControl(''),
             defaultEmail: new FormControl(''),
-            availableMailboxes: new FormControl([])
+            socialMediaAccounts: new FormControl([]),
+            subChannels: new FormControl([])
         }
     };
     /**
@@ -76,7 +104,9 @@ export class SocialMediaPostsService {
     /**
      * Service init method
      */
-    async init(): Promise<void> {
+    async init(subChannelsList: string[]): Promise<void> {
+        this.globalSmpWorkbenchState$.subChannels.setValue(subChannelsList);
+        this.globalSmpWorkbenchState$.searchParams.patchValue({ subChannels: subChannelsList });
         await this.setMailboxes();
     }
 
@@ -106,19 +136,19 @@ export class SocialMediaPostsService {
 
     async setMailboxes(): Promise<void> {
         try {
-            const res = await SDKClient.getMailboxes('agent', undefined, true);
+            const res = await SDKClient.getSMAccounts();
             if (!res.response) {
                 throw new Error(`Invalid Server response ${JSON.stringify(res.response, null, 2)}`);
             }
             if (res.response.length) {
-                const listOfMailboxes =
+                const socialMediaAccounts =
                     res.response.map((email) => {
                         const [mail] = email.split(',');
                         return mail;
                     }) || [];
-                this.globalSmpWorkbenchState$.searchParams.patchValue({ listOfMailboxes });
+                this.globalSmpWorkbenchState$.searchParams.patchValue({ socialMediaAccounts });
                 this.globalSmpWorkbenchState$.defaultEmail.setValue(res.response[0]);
-                this.globalSmpWorkbenchState$.availableMailboxes.setValue(res.response);
+                this.globalSmpWorkbenchState$.socialMediaAccounts.setValue(res.response);
             }
         } catch (e) {
             console.error(e);
@@ -133,7 +163,8 @@ export class SocialMediaPostsService {
         this.globalSmpWorkbenchState$.searchParams.setValue({
             ...initSmpostsSearchState,
             ...update,
-            listOfMailboxes: this.globalSmpWorkbenchState$.availableMailboxes.value
+            socialMediaAccounts: this.globalSmpWorkbenchState$.socialMediaAccounts.value,
+            subChannels: this.globalSmpWorkbenchState$.subChannels.value
         });
     }
 }

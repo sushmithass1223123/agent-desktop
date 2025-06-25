@@ -115,19 +115,10 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
      * index to drag
      */
      zIndex: number;
-
-    /**
-     * index to drag and stay there
-     */
-    private static zIndexCounter = 1000; // Static counter for z-index
     /**
      * Unsubscribe all subject
      */
     _unsubscribeAll: Subject<any>;
-    /**
-     * Initially while dragging floated thing
-     */
-    isDragging = false;
     /**
      * Fuse custom config
      */
@@ -280,16 +271,10 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
 
     @HostListener('mousedown', ['$event'])
     onDragStart(event: MouseEvent): void {
-        this.isDragging = true;
         this.bringToFront();
     }
 
-    @HostListener('mouseup', ['$event'])
-    onDragEnd(event: MouseEvent): void {
-        this.isDragging = false;
-    }
-
     private bringToFront(): void {
-        this.zIndex = ++TwWrapperComponent.zIndexCounter;
+        this.zIndex = this._appUiService.findMaxZIndexElement() + 1;
     }
 }

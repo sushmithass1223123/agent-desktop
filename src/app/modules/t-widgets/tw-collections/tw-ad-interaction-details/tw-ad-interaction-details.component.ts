@@ -158,6 +158,9 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             twitter: 'custom-twitter',
             fb: 'custom-fb',
             telegram: 'custom-telegram',
+            youtube: 'custom-youtube',
+            appstore: 'custom-appstore',
+            playstore: 'custom-playstore',
             store: 'store',
             in: 'south',
             out: 'north'

@@ -99,7 +99,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     rejectReason = {
         allReasons: [],
-        reasonTags: '',
+        reasonTags: [],
         comment: ''
     };
 
@@ -368,7 +368,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
                 if (this.currentInteraction.RejectReason && typeof this.currentInteraction.RejectReason === 'string') {
                     this.currentInteraction.RejectReason = JSON.parse(this.currentInteraction.RejectReason);
-                    this.currentInteraction.RejectReason.reasonTags = this.currentInteraction.RejectReason.reasonTags?.join(',') || '';
+                    this.currentInteraction.RejectReason.reasonTags = this.currentInteraction.RejectReason.reasonTags?.join(',') || [];
                 }
                 this.getInboxMessageReq = { error: false, loading: false };
             } catch (err) {
@@ -850,6 +850,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     // check the response
                     if (dt.response && dt.response.ResultCode === 0) {
                         this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
+                        if(this.data?.Data?.RedirectPath && this.interactionList?.length === 1) this._contentPageService.mode = this.data.Data.RedirectPath;
                         // remove the interaction reference
                         this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                     } else {
@@ -1219,7 +1220,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             for (const obj of arr2) {
                 if (obj.IsUploaded) {
                     isModified = true;
-                    result.push(`${obj.URL}|1`);
+                    result.push(`${obj?.Name}|${obj.URL}|1`);
                 }
             }
             return { isModified: isModified, changes: result };
@@ -1229,12 +1230,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         for (const obj of arr2) {
             const match = arr1.find((item) => item.URL === obj.URL);
             if (match) {
-                result.push(`${obj.URL}|0`);
+                result.push(`${obj?.Name}|${obj.URL}|0`);
             } else {
                 if (obj.IsUploaded) {
                     isModified = true;
                 }
-                result.push(`${obj.URL}|${obj.IsUploaded ? '1' : '0'}`);
+                result.push(`${obj?.Name}|${obj.URL}|${obj.IsUploaded ? '1' : '0'}`);
             }
         }
 
@@ -1243,7 +1244,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             const match = arr2.find((item) => item.URL === obj.URL);
             if (!match) {
                 isModified = true;
-                result.push(`${obj.URL}|2`);
+                result.push(`${obj?.Name}|${obj.URL}|2`);
             }
         }
 
@@ -1287,12 +1288,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     if (x.response) {
                         this.currentInteraction.CurrOutSessionId = x.response;
                     } else {
+                        if(closeEmail)this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.draftFailed'), 'failure');
                         throwADError('Unable to save as draft', new Error('Invalid server response'));
                     }
                     if (btn) {
                         btn.disabled = false;
                     }
                     if (closeEmail) {
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.draftSuccess'), 'success');
                         this.closeInteraction(btn, true);
                         this.sendDataToSupervisor({
                             DraftStatus: 'closed'
@@ -1341,7 +1344,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             if (dialogResult) {
                 this.saveEmailAsDraft(true, btn);
                 // this.replyInfo = null;
-                this.emailComponentMode = 'preview';
+                
+                if(this.emailRef?.mode !== 'compose') this.emailComponentMode = 'preview';
             } else {
                 // this checks if the user clicked on cancel, or on the overlay
                 // if the user clicks on cancel, this will be boolean false. Else it will be undefined
@@ -1358,7 +1362,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         DraftStatus: 'preview'
                     });
                     // this.replyInfo = null;
-                    this.emailComponentMode = 'preview';
+                    if(this.emailRef?.mode !== 'compose') this.emailComponentMode = 'preview';
                 }
                 if (btn) {
                     btn.disabled = false;
@@ -1385,7 +1389,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 this._fuseProgressBarService.hide();
                 return;
             }
-            const { comment, reasonTags } = this.rejectReason;
+            const { comment, reasonTags } = this.rejectReason; 
             if (comment) {
                 SDKClient.rejectEmail({
                     reason: JSON.stringify({ comment, reasonTags }),

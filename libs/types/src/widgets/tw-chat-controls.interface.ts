@@ -498,6 +498,11 @@ export type TwChatControlsData = {
             allowedChannels: string;
         }
     }
+
+     /**
+     * Path to redirect on interaction close
+     */
+     RedirectPath: string;
 };
 
 export interface ExternalAVWidget {

@@ -173,6 +173,28 @@
                                     svgIcon="custom-telegram"
                                     [matTooltip]="locale('channels.telegram')"
                                 ></mat-icon>
+                                
+                                <mat-icon
+                                    color="primary"
+                                    *ngSwitchCase="'youtube'"
+                                    svgIcon="custom-youtube"
+                                    [matTooltip]="locale('channels.youtube')"
+                                ></mat-icon>
+
+                                <mat-icon
+                                    color="primary"
+                                    *ngSwitchCase="'appstore'"
+                                    svgIcon="custom-appstore"
+                                    [matTooltip]="locale('channels.appstore')"
+                                ></mat-icon>
+
+                                <mat-icon
+                                    color="primary"
+                                    *ngSwitchCase="'playstore'"
+                                    svgIcon="custom-playstore"
+                                    [matTooltip]="locale('channels.playstore')"
+                                ></mat-icon>
+
                                 <mat-icon
                                     color="primary"
                                     *ngSwitchCase="'store'"
