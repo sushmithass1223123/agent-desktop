@@ -468,266 +468,280 @@
                         </button>
                     </div>
 
-                    <!-- CHAT CONTENT -->
-                    <div class="chat-transcripts custom-scroll-adjust" #messages>
-                        <!-- CHAT MESSAGES -->
-                        <div class="chat-messages" [ngClass]="{ 'no-reply': !agentFeatures.reply || conferenceType === 'silent' }">
-                            <!-- MESSAGE -->
-                            <div
-                                *ngFor="let message of chatTranscripts; let i = index"
-                                class="message-row"
-                                [ngClass]="{
-                                    me: message.isAgent,
-                                    contact: !message.isAgent,
-                                    'first-of-group': isFirstMessageOfGroup(message, i),
-                                    'last-of-group': isLastMessageOfGroup(message, i)
-                                }"
-                            >
-                                 <div
-                                    *ngIf="message.dividerMessage"
-                                    class="twd-bg-primary-100 twd-text-primary-contrast-100 dark:twd-bg-primary-900 dark:twd-bg-contrast-900 my-8 border-radius-4 text-center py-4 px-8 mx-auto font-size-12 font-weight-600 mat-elevation-z1 divider-message"
+                    <ng-container *ngIf="!StandaloneAv">
+                        <!-- CHAT CONTENT -->
+                        <div class="chat-transcripts custom-scroll-adjust" #messages>
+                            <!-- CHAT MESSAGES -->
+                            <div class="chat-messages" [ngClass]="{ 'no-reply': !agentFeatures.reply || conferenceType === 'silent' }">
+                                <!-- MESSAGE -->
+                                <div
+                                    *ngFor="let message of chatTranscripts; let i = index"
+                                    class="message-row"
+                                    [ngClass]="{
+                                        me: message.isAgent,
+                                        contact: !message.isAgent,
+                                        'first-of-group': isFirstMessageOfGroup(message, i),
+                                        'last-of-group': isLastMessageOfGroup(message, i)
+                                    }"
                                 >
-                                    <ng-container *ngIf="!message.attachment?.src">
-                                        <span [innerHTML]="message.message"></span>
-                                    </ng-container>
-                                    <!-- For local snapshots -->
-                                    <ng-container *ngIf="message.attachment?.src">
-                                        <div class="attachments">
-                                            <div
-                                                *ngIf="message.attachment.type === 'image'"
-                                                class="image"
-                                                (click)="previewMedia(message)"
-                                            >
-                                                <img
-                                                    title="Attachment"
-                                                    [ngClass]="{
-                                                        'rotate-0': message.attachment?.angle === 0,
-                                                        'rotate-90-inverse': message.attachment?.angle === 1,
-                                                        'rotate-180': message.attachment?.angle === 2,
-                                                        'rotate-90': message.attachment?.angle === 3,
-                                                        '!twd-max-w-[64px] !twd-max-h-[64px] !twd-rounded-[5px]':
-                                                            mode === 'reply' || replied,
-                                                        '!twd-min-h-[64px]': replied
-                                                    }"
-                                                    [src]="message.attachment.src"
-                                                />
+                                     <div
+                                        *ngIf="message.dividerMessage"
+                                        class="twd-bg-primary-100 twd-text-primary-contrast-100 dark:twd-bg-primary-900 dark:twd-bg-contrast-900 my-8 border-radius-4 text-center py-4 px-8 mx-auto font-size-12 font-weight-600 mat-elevation-z1 divider-message"
+                                    >
+                                        <ng-container *ngIf="!message.attachment?.src">
+                                            <span [innerHTML]="message.message"></span>
+                                        </ng-container>
+                                        <!-- For local snapshots -->
+                                        <ng-container *ngIf="message.attachment?.src">
+                                            <div class="attachments">
+                                                <div
+                                                    *ngIf="message.attachment.type === 'image'"
+                                                    class="image"
+                                                    (click)="previewMedia(message)"
+                                                >
+                                                    <img
+                                                        title="Attachment"
+                                                        [ngClass]="{
+                                                            'rotate-0': message.attachment?.angle === 0,
+                                                            'rotate-90-inverse': message.attachment?.angle === 1,
+                                                            'rotate-180': message.attachment?.angle === 2,
+                                                            'rotate-90': message.attachment?.angle === 3,
+                                                            '!twd-max-w-[64px] !twd-max-h-[64px] !twd-rounded-[5px]':
+                                                                mode === 'reply' || replied,
+                                                            '!twd-min-h-[64px]': replied
+                                                        }"
+                                                        [src]="message.attachment.src"
+                                                    />
+                                                </div>
+                                                <!-- To show attachment captions -->
+                                                <span
+                                                    *ngIf="message.message"
+                                                    class="mt-4"
+                                                    [innerHTML]="message.message"
+                                                ></span>
                                             </div>
-                                            <!-- To show attachment captions -->
-                                            <span
-                                                *ngIf="message.message"
-                                                class="mt-4"
-                                                [innerHTML]="message.message"
-                                            ></span>
+                                        </ng-container>
+                                        <br />
+                                        {{ (message.time | customDate: 'shortTime') ?? message.time }} &nbsp;
+                                    </div>
+    
+                                    <ng-container *ngIf="!message.dividerMessage">
+                                        <!-- animate__animated animate__slideInUp animate__faster -->
+                                        <div
+                                            *ngIf="!message.divider"
+                                            [class]="message.position + ' bubble mat-elevation-z1'"
+                                            [ngClass]="{ maximized: maximized }"
+                                        >
+                                            <ng-container
+                                                *ngTemplateOutlet="
+                                                    messageRef;
+                                                    context: {
+                                                        message: message,
+                                                        showName: isFirstMessageOfGroup(message, i),
+                                                        replyAble: agentFeatures.chatReply,
+                                                        messageAction: true,
+                                                        replied: false,
+                                                        mode: 'normal'
+                                                    }
+                                                "
+                                            ></ng-container>
                                         </div>
                                     </ng-container>
-                                    <br />
-                                    {{ (message.time | customDate: 'shortTime') ?? message.time }} &nbsp;
-                                </div>
-
-                                <ng-container *ngIf="!message.dividerMessage">
                                     <!-- animate__animated animate__slideInUp animate__faster -->
-                                    <div
-                                        *ngIf="!message.divider"
-                                        [class]="message.position + ' bubble mat-elevation-z1'"
-                                        [ngClass]="{ maximized: maximized }"
-                                    >
-                                        <ng-container
-                                            *ngTemplateOutlet="
-                                                messageRef;
-                                                context: {
-                                                    message: message,
-                                                    showName: isFirstMessageOfGroup(message, i),
-                                                    replyAble: agentFeatures.chatReply,
-                                                    messageAction: true,
-                                                    replied: false,
-                                                    mode: 'normal'
-                                                }
-                                            "
-                                        ></ng-container>
-                                    </div>
-                                </ng-container>
-                                <!-- animate__animated animate__slideInUp animate__faster -->
-                                <div *ngIf="message.divider" class="divider twd-bg-primary-100"></div>
-                            </div>
-                            <!-- / MESSAGE -->
-                        </div>
-                        <!-- CHAT MESSAGES -->
-                    </div>
-                    <!-- / CHAT CONTENT -->
-
-                    <!-- CHAT FOOTER -->
-                    <div class="chat-footer" *ngIf="conferenceType !== 'silent' && agentFeatures.reply">
-                        <!-- REPLY FORM -->
-                        <div class="reply-form">
-                            <!-- CHAT TYPING -->
-                            <div
-                                *ngIf="remoteTyping && remoteTyping.typing"
-                                class="twd-absolute twd--top-3 twd-text-center twd-w-full twd-text-primary-700 twd-font-semibold twd-italic"
-                            >
-                                {{ remoteTyping.name }} {{ locale('widgets.chatControls.typing') }}
-                            </div>
-                            <!-- CHAT TYPING -->
-                            <div (click)="replyingToMessage = null" class="w-100-p p-4">
-                                <div *ngIf="replyingToMessage" class="w-100-p p-4 border-radius-8 position-relative twd-flex">
-                                    <div class="p-8 border-radius-16 border-left twd-flex-1" [ngClass]="customFuse.anchor?.body">
-                                        <ng-container
-                                            *ngTemplateOutlet="
-                                                messageRef;
-                                                context: {
-                                                    message: replyingToMessage,
-                                                    showName: true,
-                                                    replyAble: false,
-                                                    messageAction: false,
-                                                    replied: false,
-                                                    mode: 'reply'
-                                                }
-                                            "
-                                        >
-                                        </ng-container>
-                                    </div>
-                                    <button mat-icon-button (click)="replyingToMessage = null">
-                                        <mat-icon> close</mat-icon>
-                                    </button>
+                                    <div *ngIf="message.divider" class="divider twd-bg-primary-100"></div>
                                 </div>
+                                <!-- / MESSAGE -->
                             </div>
-
-                            <mat-chip-list *ngIf="textTemplates.filtered.length" class="w-100-p mx-16 mb-8">
-                                <mat-chip class="twd-cursor-pointer" *ngFor="let item of textTemplates.filtered" (click)="selectTemplate(item)">
-                                    {{ item.Name }}
-                                </mat-chip>
-                            </mat-chip-list>
-
-                            <form
-                                #replyForm="ngForm"
-                                (ngSubmit)="reply($event)"
-                                (keydown.enter)="reply($event)"
-                                class="w-100-p twd-flex twd-flex-1 twd-justify-start twd-items-center"
-                            >
-                                <button
-                                    *ngIf="agentFeatures.emoji"
-                                    cdkOverlayOrigin
-                                    #emojiOverlay="cdkOverlayOrigin"
-                                    (click)="showEmojiOverlay = !showEmojiOverlay"
-                                    [disabled]="status !== 'connected'"
-                                    class="emoji-button"
-                                    type="button"
-                                    mat-icon-button
-                                    aria-label="Select Emoji"
-                                    [matTooltip]="locale('widgets.chatControls.emoji')"
+                            <!-- CHAT MESSAGES -->
+                        </div>
+                        <!-- / CHAT CONTENT -->
+    
+                        <!-- CHAT FOOTER -->
+                        <div class="chat-footer" *ngIf="conferenceType !== 'silent' && agentFeatures.reply">
+                            <!-- REPLY FORM -->
+                            <div class="reply-form">
+                                <!-- CHAT TYPING -->
+                                <div
+                                    *ngIf="remoteTyping && remoteTyping.typing"
+                                    class="twd-absolute twd--top-3 twd-text-center twd-w-full twd-text-primary-700 twd-font-semibold twd-italic"
                                 >
-                                    <mat-icon>sentiment_satisfied_alt</mat-icon>
-                                    <ng-template
-                                        cdkConnectedOverlay
-                                        [cdkConnectedOverlayOrigin]="emojiOverlay"
-                                        [cdkConnectedOverlayOpen]="showEmojiOverlay"
-                                        cdkConnectedOverlayHasBackdrop
-                                        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                                        (overlayOutsideClick)="showEmojiOverlay = false"
+                                    {{ remoteTyping.name }} {{ locale('widgets.chatControls.typing') }}
+                                </div>
+                                <!-- CHAT TYPING -->
+                                <div (click)="replyingToMessage = null" class="w-100-p p-4">
+                                    <div *ngIf="replyingToMessage" class="w-100-p p-4 border-radius-8 position-relative twd-flex">
+                                        <div class="p-8 border-radius-16 border-left twd-flex-1" [ngClass]="customFuse.anchor?.body">
+                                            <ng-container
+                                                *ngTemplateOutlet="
+                                                    messageRef;
+                                                    context: {
+                                                        message: replyingToMessage,
+                                                        showName: true,
+                                                        replyAble: false,
+                                                        messageAction: false,
+                                                        replied: false,
+                                                        mode: 'reply'
+                                                    }
+                                                "
+                                            >
+                                            </ng-container>
+                                        </div>
+                                        <button mat-icon-button (click)="replyingToMessage = null">
+                                            <mat-icon> close</mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+    
+                                <mat-chip-list *ngIf="textTemplates.filtered.length" class="w-100-p mx-16 mb-8">
+                                    <mat-chip class="twd-cursor-pointer" *ngFor="let item of textTemplates.filtered" (click)="selectTemplate(item)">
+                                        {{ item.Name }}
+                                    </mat-chip>
+                                </mat-chip-list>
+    
+                                <form
+                                    #replyForm="ngForm"
+                                    (ngSubmit)="reply($event)"
+                                    (keydown.enter)="reply($event)"
+                                    class="w-100-p twd-flex twd-flex-1 twd-justify-start twd-items-center"
+                                >
+                                    <button
+                                        *ngIf="agentFeatures.emoji"
+                                        cdkOverlayOrigin
+                                        #emojiOverlay="cdkOverlayOrigin"
+                                        (click)="showEmojiOverlay = !showEmojiOverlay"
+                                        [disabled]="status !== 'connected'"
+                                        class="emoji-button"
+                                        type="button"
+                                        mat-icon-button
+                                        aria-label="Select Emoji"
+                                        [matTooltip]="locale('widgets.chatControls.emoji')"
                                     >
-                                        <emoji-mart
-                                            (emojiClick)="addEmoji($event)"
-                                            [darkMode]="customFuse.config.colorTheme.includes('dark')"
-                                            [showPreview]="false"
-                                           
-                                        ></emoji-mart>
-                                    </ng-template>
-                                </button>
-
-                                <button
-                                    *ngIf="!asyncChatRef.isAsync && agentFeatures.attachments"
-                                    cdkOverlayOrigin
-                                    #attachOverlay="cdkOverlayOrigin"
+                                        <mat-icon>sentiment_satisfied_alt</mat-icon>
+                                        <ng-template
+                                            cdkConnectedOverlay
+                                            [cdkConnectedOverlayOrigin]="emojiOverlay"
+                                            [cdkConnectedOverlayOpen]="showEmojiOverlay"
+                                            cdkConnectedOverlayHasBackdrop
+                                            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                            (overlayOutsideClick)="showEmojiOverlay = false"
+                                        >
+                                            <emoji-mart
+                                                (emojiClick)="addEmoji($event)"
+                                                [darkMode]="customFuse.config.colorTheme.includes('dark')"
+                                                [showPreview]="false"
+                                               
+                                            ></emoji-mart>
+                                        </ng-template>
+                                    </button>
+    
+                                    <button
+                                        *ngIf="!asyncChatRef.isAsync && agentFeatures.attachments"
+                                        cdkOverlayOrigin
+                                        #attachOverlay="cdkOverlayOrigin"
+                                        [disabled]="status !== 'connected'"
+                                        (click)="showAttachOverlay = !showAttachOverlay"
+                                        type="button"
+                                        mat-icon-button
+                                        class="rotate-45"
+                                        aria-label="Select Attachment"
+                                        [matTooltip]="locale('widgets.chatControls.attach')"
+                                    >
+                                        <!-- <button
+                                    *ngIf="agentFeatures.attachments"
                                     [disabled]="status !== 'connected'"
-                                    (click)="showAttachOverlay = !showAttachOverlay"
+                                    (click)="attachFileRef.click()"
                                     type="button"
                                     mat-icon-button
                                     class="rotate-45"
                                     aria-label="Select Attachment"
-                                    [matTooltip]="locale('widgets.chatControls.attach')"
-                                >
-                                    <!-- <button
-                                *ngIf="agentFeatures.attachments"
-                                [disabled]="status !== 'connected'"
-                                (click)="attachFileRef.click()"
-                                type="button"
-                                mat-icon-button
-                                class="rotate-45"
-                                aria-label="Select Attachment"
-                                matTooltip="Attach"
-                            > -->
-
-                                    <mat-icon>attach_file</mat-icon>
-                                    <ng-template
-                                        cdkConnectedOverlay
-                                        [cdkConnectedOverlayOrigin]="attachOverlay"
-                                        [cdkConnectedOverlayOpen]="showAttachOverlay"
-                                        cdkConnectedOverlayHasBackdrop
-                                        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                                        (overlayOutsideClick)="showAttachOverlay = false"
-                                        [cdkConnectedOverlayPositions]="[
-                                            { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' }
-                                        ]"
-                                    >
-                                        <div class="twd-flex twd-flex-col twd-gap-2" [@widgetStagger]="attachActions.length">
-                                            <button
-                                                *ngFor="let item of attachActions"
-                                                type="button"
-                                                mat-mini-fab
-                                                color="default"
-                                                [matTooltip]="item.label"
-                                                (click)="addAttachment(item.action, item.enable)"
-                                            >
-                                                <mat-icon>{{ item.icon }}</mat-icon>
-                                            </button>
-                                        </div>
-                                    </ng-template>
-                                </button>
-
-                                <mat-form-field class="custom message-text twd-flex-1" floatLabel="never" appearance="standard">
-                                    <textarea
+                                    matTooltip="Attach"
+                                > -->
+    
+                                        <mat-icon>attach_file</mat-icon>
+                                        <ng-template
+                                            cdkConnectedOverlay
+                                            [cdkConnectedOverlayOrigin]="attachOverlay"
+                                            [cdkConnectedOverlayOpen]="showAttachOverlay"
+                                            cdkConnectedOverlayHasBackdrop
+                                            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                            (overlayOutsideClick)="showAttachOverlay = false"
+                                            [cdkConnectedOverlayPositions]="[
+                                                { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' }
+                                            ]"
+                                        >
+                                            <div class="twd-flex twd-flex-col twd-gap-2" [@widgetStagger]="attachActions.length">
+                                                <button
+                                                    *ngFor="let item of attachActions"
+                                                    type="button"
+                                                    mat-mini-fab
+                                                    color="default"
+                                                    [matTooltip]="item.label"
+                                                    (click)="addAttachment(item.action, item.enable)"
+                                                >
+                                                    <mat-icon>{{ item.icon }}</mat-icon>
+                                                </button>
+                                            </div>
+                                        </ng-template>
+                                    </button>
+    
+                                    <mat-form-field class="custom message-text twd-flex-1" floatLabel="never" appearance="standard">
+                                        <textarea
+                                            [disabled]="status !== 'connected'"
+                                            matInput
+                                            #replyInput
+                                            [placeholder]="locale('widgets.chatControls.messagePlaceholder')"
+                                            ngModel
+                                            name="message"
+                                            cdkTextareaAutosize
+                                            #autosize="cdkTextareaAutosize"
+                                            cdkAutosizeMinRows="1"
+                                            cdkAutosizeMaxRows="5"
+                                            (keyup)="onKeyUp($event)"
+                                        ></textarea>
+                                    </mat-form-field>
+    
+                                    <button
                                         [disabled]="status !== 'connected'"
-                                        matInput
-                                        #replyInput
-                                        [placeholder]="locale('widgets.chatControls.messagePlaceholder')"
-                                        ngModel
-                                        name="message"
-                                        cdkTextareaAutosize
-                                        #autosize="cdkTextareaAutosize"
-                                        cdkAutosizeMinRows="1"
-                                        cdkAutosizeMaxRows="5"
-                                        (keyup)="onKeyUp($event)"
-                                    ></textarea>
-                                </mat-form-field>
-
-                                <button
-                                    [disabled]="status !== 'connected'"
-                                    class="send-message-button"
-                                    mat-icon-button
-                                    type="submit"
-                                    aria-label="Send message"
-                                    [matTooltip]="locale('widgets.chatControls.send')"
-                                >
-                                    <mat-icon>send</mat-icon>
-                                </button>
-                            </form>
+                                        class="send-message-button"
+                                        mat-icon-button
+                                        type="submit"
+                                        aria-label="Send message"
+                                        [matTooltip]="locale('widgets.chatControls.send')"
+                                    >
+                                        <mat-icon>send</mat-icon>
+                                    </button>
+                                </form>
+                            </div>
+                            <!-- / REPLY FORM -->
                         </div>
-                        <!-- / REPLY FORM -->
-                    </div>
-                    <!-- / CHAT FOOTER-->
+                        <!-- / CHAT FOOTER-->
+    
+                        <!-- CHAT ATTACHMENTS -->
+                        <chat-attachments
+                            *ngIf="dragDropView || attachPreviewMode"                        
+                            [isSMM]="isSMM"
+                            [attachmentConstraints]="attachmentConstraints"
+                            [fileUploadUrl]="fileUploadUrl"
+                            [sessionID]="sessionID"
+                            [attachPreviewMode]="attachPreviewMode"
+                            (closeAttachments)="closeAttachments()"
+                            (sendAttachments)="sendAttachments($event)"
+                        >
+                        </chat-attachments>
+                        <!-- CHAT ATTACHMENTS -->
+                    </ng-container>
 
-                    <!-- CHAT ATTACHMENTS -->
-                    <chat-attachments
-                        *ngIf="dragDropView || attachPreviewMode"                        
-                        [isSMM]="isSMM"
-                        [attachmentConstraints]="attachmentConstraints"
-                        [fileUploadUrl]="fileUploadUrl"
-                        [sessionID]="sessionID"
-                        [attachPreviewMode]="attachPreviewMode"
-                        (closeAttachments)="closeAttachments()"
-                        (sendAttachments)="sendAttachments($event)"
-                    >
-                    </chat-attachments>
-                    <!-- CHAT ATTACHMENTS -->
+                    <ng-container *ngIf="StandaloneAv">
+                        <div
+                            class="standalone-av-holder twd-rounded-20"
+                            id="standalone-av-holder-{{ interaction.InteractionID }}"
+                        >
+                            <div class="no-av" *ngIf="!callWidget">
+                                <img src="assets/images/vectors/not-found.svg" alt="No AV interaction found widget" />
+                                <span class="mat-headline mt-24">No Audio-Video interaction found yet!</span>
+                            </div>
+                        </div>
+                    </ng-container>
                 </div>
             </div>
         </div>
