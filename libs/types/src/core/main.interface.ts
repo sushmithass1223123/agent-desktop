@@ -41,6 +41,10 @@ export type AOTConf = {
  */
 export type Toolbar = {
     /**
+     * Configuration to enable / disable Tool bar
+     */
+    Hidden: boolean;
+    /**
      * List of toolbar widgets
      */
     Widgets: Widget[];
@@ -50,6 +54,10 @@ export type Toolbar = {
  * Navbar config
  */
 export type Navbar = {
+    /**
+     * Configuration to enable / disable Navigation bar
+     */
+    Hidden: boolean;
     /**
      * Flag to hold active interactions on switching between tabs
      */

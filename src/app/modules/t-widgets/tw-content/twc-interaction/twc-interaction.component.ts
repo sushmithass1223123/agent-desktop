@@ -32,6 +32,7 @@ import { TranslocoService } from '@ngneat/transloco';
 import { SharedService } from '@services/shared.service';
 import { EMAIL_SEND_STATUS, SMP_SEND_STATUS, EMAIL_CURRENTSTATUS_CODES } from 'app/constants';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
+import { AppDataService } from '@services/app-data.service';
 
 /**
  * TwcInteractionComponent
@@ -72,9 +73,10 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         private _appUIService: AppUiService,
         private translocoService: TranslocoService,
         private _sharedService: SharedService,
-        private _fuseProgressBarService: FuseProgressBarService
+        private _fuseProgressBarService: FuseProgressBarService,
+        public appDataService: AppDataService
     ) {
-        super('TwcInteractionComponent', hostElement, contentPageService);
+        super('TwcInteractionComponent', hostElement, contentPageService, appDataService);
     }
 
     /**
