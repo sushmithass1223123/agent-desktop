@@ -170,6 +170,14 @@ export type TwAudioVideoControlsData = {
      */
     AvCallConstraints: any;
     /**
+     * Standalone AV mode configuration
+     */
+    StandaloneAv: boolean;
+    /**
+     * Standalone AV mode ID
+     */
+    StandaloneAvId: string;
+    /**
      * To hold conference agents list
      * 
      * [INTERNAL]

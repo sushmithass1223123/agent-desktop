@@ -1316,6 +1316,7 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
+                                                    "StandaloneAv": false,
                                                     "ExternalAVWidget": {
                                                         "Enabled": true,
                                                         "Url": "https://dicedev.tetherfi.cloud/adavui?agentId=$agentId&stationId=$stationId"

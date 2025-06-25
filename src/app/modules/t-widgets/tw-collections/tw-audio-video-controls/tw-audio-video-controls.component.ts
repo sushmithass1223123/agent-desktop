@@ -43,7 +43,7 @@ import { from, merge, Subject, timer } from 'rxjs';
 import { delay, filter, take, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { SharedService } from '@services/shared.service';
-import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
+import { DynamicComponentService } from '@services/dynamic-component.service';
 
 /**
  * Audio Video Controls
@@ -339,7 +339,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         private _fuseProgressBarService: FuseProgressBarService,
         private _interactionManagerService: InteractionManagerService,
         private translocoService: TranslocoService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private _dynamicComponentService: DynamicComponentService
     ) {
         super('TwAudioVideoControlsComponent');
 
@@ -1749,10 +1750,12 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      * @method destroyWidget
      */
     private destroyWidget(): void {
-        if (!this.data.Config.AOT) return;
+        if (!this.data.Config.AOT && !this.data.Data.StandaloneAv) return;
 
         // close the audio call widget
-        this._aotWidgetService.destroyWidget(this.data.ID);
+        if(!this.data.Data.StandaloneAv) {
+            this._aotWidgetService.destroyWidget(this.data.ID);
+        } else this._dynamicComponentService.removeComponent(this.data.Data.StandaloneAvId);
     }
 
     /**
