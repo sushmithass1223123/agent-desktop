@@ -577,6 +577,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          */
     socialMedia: boolean;
     StandaloneAv: boolean;
+    HideChatMetaData: boolean;
     /**
      * Method to disable AV escalations when customer connects through mobile device
      */
@@ -756,6 +757,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.DisableAvConstraints = this.widgetData?.DisableAvConstraints;
 
         this.StandaloneAv = this.widgetData?.StandaloneAv;
+        this.HideChatMetaData = this.widgetData?.HideChatMetaData;
 
         this.xssSymbolEntityMap = this.data.Data.XssSymbolEntityMap ?? {
             '&': '&amp;',

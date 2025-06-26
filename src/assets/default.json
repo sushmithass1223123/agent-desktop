@@ -13,6 +13,7 @@
     },
     "Main": {
         "Toolbar": {
+            "Hidden": true,
             "Widgets": [
                 {
                     "Name": "Interaction indicators",
@@ -197,6 +198,7 @@
             ]
         },
         "Navbar": {
+            "Hidden": true,
             "HoldInteractionOnTabChange": false,
             "Widgets": {
                 "Top": [
@@ -1316,6 +1318,8 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
+                                                    "HideChatMetaData": false,
+                                                    "StandaloneAv": true,
                                                     "ExternalAVWidget": {
                                                         "Enabled": true,
                                                         "Url": "https://dicedev.tetherfi.cloud/adavui?agentId=$agentId&stationId=$stationId"
