@@ -580,6 +580,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Configuration to make AV widget occupy full chat section
      */
     StandaloneAv: boolean;
+    HideChatMetaData: boolean;
+    DisableEndInteraction: boolean;
+    HideInteractionSelector: boolean;
     /**
      * Method to disable AV escalations when customer connects through mobile device
      */
@@ -758,6 +761,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         this.DisableAvConstraints = this.widgetData?.DisableAvConstraints;
         this.StandaloneAv = this.widgetData?.StandaloneAv;
+        this.HideChatMetaData = this.widgetData?.HideChatMetaData;
+        this.DisableEndInteraction = this.widgetData?.DisableEndInteraction;
+        this.HideInteractionSelector = this.widgetData?.HideInteractionSelector;
 
         this.xssSymbolEntityMap = this.data.Data.XssSymbolEntityMap ?? {
             '&': '&amp;',
