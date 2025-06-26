@@ -1318,7 +1318,9 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                    "StandaloneAv": false,
+                                                    "DisableEndInteraction": true,
+                                                    "HideChatMetaData": false,
+                                                    "StandaloneAv": true,
                                                     "ExternalAVWidget": {
                                                         "Enabled": true,
                                                         "Url": "https://dicedev.tetherfi.cloud/adavui?agentId=$agentId&stationId=$stationId"
