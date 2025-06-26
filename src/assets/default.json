@@ -1318,6 +1318,7 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
+                                                    "DisableEndInteraction": true,
                                                     "HideChatMetaData": false,
                                                     "StandaloneAv": true,
                                                     "ExternalAVWidget": {

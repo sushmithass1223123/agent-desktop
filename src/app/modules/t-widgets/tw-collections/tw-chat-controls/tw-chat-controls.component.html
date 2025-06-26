@@ -429,7 +429,7 @@
                         </div>
 
                         <button
-                            *ngIf="!asyncChatRef.isAsync"
+                            *ngIf="!asyncChatRef.isAsync && !DisableEndInteraction"
                             [disabled]="status !== 'connected'"
                             [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
                             mat-mini-fab
