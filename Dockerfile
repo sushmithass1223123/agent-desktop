@@ -1,5 +1,6 @@
+
 # Stage 1: Build the Angular app
-FROM node:18 AS builder
+FROM node:18.16.0 AS builder
 
 # Set the working directory
 WORKDIR /app
@@ -11,14 +12,14 @@ COPY package*.json ./
 COPY decorate-angular-cli.js ./
 
 # Install node modules
-RUN npm install --force
+RUN --mount=type=cache,target=/root/.npm npm install --force
 
 # Copy the rest of the application code and build it
 COPY . .
 RUN npm run build:prod
 
 # Stage 2: Serve the Angular app using Nginx
-FROM nginx:stable-alpine-slim
+FROM nginx:1.28.0-alpine-slim
 
 # Copy built app from the builder stage to Nginx's HTML directory
 COPY --from=builder /app/dist/agent-desktop /tetherfi/tetherfihome/agent-desktop
