@@ -1602,12 +1602,13 @@
                                                     "Position": { "X": 2, "Y": 1 },
                                                     "Actions": ["maximize", "collapse", "float"],
                                                     "ViewState": "restore",
-                                                    "Header": true,
+                                                    "Header": false,
                                                     "Pinned": false
                                                 },
                                                 "Data": {
+                                                    "HideInteractionSelector": true,
                                                     "DisableEndInteraction": true,
-                                                    "HideChatMetaData": false,
+                                                    "HideChatMetaData": true,
                                                     "StandaloneAv": true,
                                                     "ExternalAVWidget": {
                                                         "Enabled": true,

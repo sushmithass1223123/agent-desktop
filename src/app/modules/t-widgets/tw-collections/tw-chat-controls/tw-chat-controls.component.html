@@ -242,7 +242,10 @@
             </div>
 
             <div class="mt-4 chat-container twd-flex twd-flex-row" [ngClass]="{ nometa: HideChatMetaData }">
-                <div class="pt-4 twd-flex twd-flex-col twd-items-center">
+                <div
+                    class="pt-4 twd-flex twd-flex-col twd-items-center"
+                    *ngIf="!HideInteractionSelector || !(HideInteractionSelector && interactionList.length <= 1)"
+                >
                     <div class="w-60 h-100-p mt-4 pt-8 interactions custom-scroll-adjust twd-flex twd-flex-col twd-items-start">
                         <avatar
                             *ngFor="let item of interactionList"
