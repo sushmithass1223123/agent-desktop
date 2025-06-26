@@ -1610,7 +1610,8 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                    "StandaloneAv": false,
+                                                    "HideChatMetaData": false,
+                                                    "StandaloneAv": true,
                                                     "ExternalAVWidget": {
                                                         "Enabled": true,
                                                         "Url": "https://dicedev.tetherfi.cloud/adavui?agentId=$agentId&stationId=$stationId"

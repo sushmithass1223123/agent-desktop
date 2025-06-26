@@ -220,6 +220,10 @@ export type TwChatControlsData = {
      */
     StandaloneAv?: boolean;
     /**
+     * Configuration to hide / show chat controls metadata section
+     */
+    HideChatMetaData?: boolean;
+    /**
      * Transfer configurations
      */
     Transfer: AgentSkillConfig;
