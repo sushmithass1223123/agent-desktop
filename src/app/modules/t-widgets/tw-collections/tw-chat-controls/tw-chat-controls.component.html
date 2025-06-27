@@ -219,7 +219,7 @@
         *transloco="let locale"
     >
         <div class="w-100-p h-100-p chat-controls">
-            <div class="w-100-p px-12 py-4 border-radius-20 interaction-details tw-flex twd-flex-col">
+            <div class="w-100-p px-12 py-4 border-radius-20 interaction-details tw-flex twd-flex-col" *ngIf="!HideChatMetaData">
                 <div class="twd-flex twd-justify-between">
                     <div class="twd-flex twd-items-center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'dd/MM/yyyy hh:mm:ss a' }}</div>
                     <div class="twd-flex twd-items-center"><mat-icon>construction</mat-icon> {{ sessionID + '|' + interaction.InteractionID }}</div>

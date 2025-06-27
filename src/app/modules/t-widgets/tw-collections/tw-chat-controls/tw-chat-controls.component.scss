@@ -15,6 +15,10 @@ tw-chat-controls {
 
             .chat-container {
                 height: calc(100% - 60px);
+
+                &.nometa {
+                    height: 100%;
+                }
             }
         }
 
