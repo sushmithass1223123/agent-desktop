@@ -224,6 +224,14 @@ export type TwChatControlsData = {
      */
     HideChatMetaData?: boolean;
     /**
+     * Configuration to hide / show end interaction button
+     */
+    DisableEndInteraction?: boolean;
+    /**
+     * Configuration to hide / show interaction selectors
+     */
+    HideInteractionSelector?: boolean;
+    /**
      * Transfer configurations
      */
     Transfer: AgentSkillConfig;
