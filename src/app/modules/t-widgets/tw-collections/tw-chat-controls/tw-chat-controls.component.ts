@@ -763,10 +763,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.StandaloneAv = this.widgetData?.StandaloneAv;
         this.HideChatMetaData = this.widgetData?.HideChatMetaData;
         this.DisableEndInteraction = this.widgetData?.DisableEndInteraction;
-<<<<<<< HEAD
-=======
         this.HideInteractionSelector = this.widgetData?.HideInteractionSelector;
->>>>>>> f05390ea8da57c2e31149d7a42f7e90e2ddee14b
 
         this.xssSymbolEntityMap = this.data.Data.XssSymbolEntityMap ?? {
             '&': '&amp;',
