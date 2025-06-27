@@ -1701,9 +1701,9 @@
                                                         "RequestScreenShare": true
                                                     },
                                                     "AudioEscalateAllowed": true,
-                                                    "RequestAudioCallAllowed": true,
+                                                    "RequestAudioCallAllowed": false,
                                                     "VideoEscalateAllowed": true,
-                                                    "RequestVideoCallAllowed": true,
+                                                    "RequestVideoCallAllowed": false,
                                                     "SignatureAllowed": true,
                                                     "EmojiAllowed": true,
                                                     "ReplyOnChatAllowed": true,
@@ -1715,7 +1715,7 @@
                                                     "ScreenShareAllowed": true,
                                                     "ReqScreenShareAllowed": false,
                                                     "InteractionCommentAllowed": true,
-                                                    "HoldInteractionAllowed": true,
+                                                    "HoldInteractionAllowed": false,
                                                     "MuteAudioHidden": false,
                                                     "ReplyOnSMM": { "channels": "Whatsapp" },
                                                     "Whiteboard": {
@@ -1724,7 +1724,7 @@
                                                         "CustomerUrl": "https://dicedev.tetherfi.cloud/Whiteboard/ui/index.html?host=true"
                                                     },
                                                     "Cobrowse": {
-                                                        "Allowed": true,
+                                                        "Allowed": false,
                                                         "AgentUrl": "https://dicedev.tetherfi.cloud/Whiteboard/ui/index.html",
                                                         "CustomerUrls": [
                                                             {
