@@ -203,7 +203,7 @@
             ]
         },
         "Navbar": {
-            "Hidden": false,
+            "Hidden": true,
             "HoldInteractionOnTabChange": false,
             "Widgets": {
                 "Top": [
@@ -1602,16 +1602,16 @@
                                                     "Position": { "X": 2, "Y": 1 },
                                                     "Actions": ["maximize", "collapse", "float"],
                                                     "ViewState": "restore",
-                                                    "Header": false,
+                                                    "Header": true,
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                    "HideInteractionSelector": true,
+                                                    "HideInteractionSelector": false,
                                                     "DisableEndInteraction": true,
-                                                    "HideChatMetaData": true,
-                                                    "StandaloneAv": true,
+                                                    "HideChatMetaData": false,
+                                                    "StandaloneAv": false,
                                                     "ExternalAVWidget": {
-                                                        "Enabled": true,
+                                                        "Enabled": false,
                                                         "Url": "https://dicedev.tetherfi.cloud/adavui?agentId=$agentId&stationId=$stationId"
                                                     },
                                                     "IsPhoneAudio": false,
@@ -1696,12 +1696,12 @@
                                                         "RequestVideoCall": false,
                                                         "RequestScreenShare": true
                                                     },
-                                                    "AudioEscalateAllowed": true,
+                                                    "AudioEscalateAllowed": false,
                                                     "RequestAudioCallAllowed": false,
-                                                    "VideoEscalateAllowed": true,
+                                                    "VideoEscalateAllowed": false,
                                                     "RequestVideoCallAllowed": false,
-                                                    "SignatureAllowed": true,
-                                                    "EmojiAllowed": true,
+                                                    "SignatureAllowed": false,
+                                                    "EmojiAllowed": false,
                                                     "ReplyOnChatAllowed": true,
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
@@ -1735,7 +1735,7 @@
                                                     },
                                                     "Snapshot": {
                                                         "Allowed": true,
-                                                        "Source": "remote",
+                                                        "Source": "local",
                                                         "RemoteResponseTimeout": 10,
                                                         "RemoteRequestTimeout": 10
                                                     },
@@ -1746,14 +1746,14 @@
                                                         "FilterByTime": false
                                                     },
                                                     "WebRTCTest": {
-                                                        "Allowed": true,
+                                                        "Allowed": false,
                                                         "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
-                                                        "Customer": true
+                                                        "Customer": false
                                                     },
                                                     "ConversationService": { "Url": "", "Limit": 50, "Label": false },
                                                     "ReplyAllowed": true,
-                                                    "EndInteractionOnAVEnd": false,
-                                                    "CloseInteractionOnEnd": false,
+                                                    "EndInteractionOnAVEnd": true,
+                                                    "CloseInteractionOnEnd": true,
                                                     "MuteAVOnHold": {
                                                         "enabled": true,
                                                         "AgentAudio": true,
@@ -3261,5 +3261,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.12.0"
+    "Version": "5.12.0-fullav.test.2"
 }

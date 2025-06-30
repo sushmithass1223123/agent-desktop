@@ -1431,7 +1431,7 @@
                                                     },
                                                     "Snapshot": {
                                                         "Allowed": true,
-                                                        "Source": "remote",
+                                                        "Source": "local",
                                                         "RemoteResponseTimeout": 10,
                                                         "RemoteRequestTimeout": 10
                                                     },
@@ -3035,5 +3035,5 @@
             ]
         }
     },
-    "Version": "5.12.0"
+    "Version": "5.12.0-fullav.test.2"
 }

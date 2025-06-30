@@ -2102,7 +2102,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         const confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
         const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).pipe(take(1)).toPromise();
         if (dialogResult) {
-            this.endCall(true);
+            this.endCall();
             this.destroyWidget();
             this.endInteraction();
         }  

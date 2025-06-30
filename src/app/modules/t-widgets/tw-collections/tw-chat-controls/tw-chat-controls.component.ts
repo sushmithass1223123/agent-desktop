@@ -3181,8 +3181,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To process custom ConfirmEndInteractionEvent and confirm end chat
      * this method is not going to be used hereafter 
      */
-    ConfirmEndInteractionEvent(): void {
-        this.confirmEndChat();
+    async ConfirmEndInteractionEvent() {
+        // End chat logic
+        await this.endChat('AgentChatDisconnected');
+        // Destroy whiteboard widget
+        this._aotWidgetService.destroyWidget(this.whiteBoardWidgetId);
     }
 
     /**
