@@ -3566,10 +3566,7 @@
             ]
         },
         "Urls": {
-            "DashboardServerUrls": [
-                "https://dicedev.tetherfi.cloud/SignalRDashboard1",
-                "https://dicedev.tetherfi.cloud/SignalRDashboard2"
-            ],
+            "DashboardServerUrls": ["https://mxdocker1.tetherfi.cloud/tmacdataserver/signalr"],
             "FileServerUrl": {
                 "MediaUploader": "https://dicepoc.tetherfi.cloud:13019/upload",
                 "MediaStreamer": "https://dicepoc.tetherfi.cloud:13022",
@@ -3644,7 +3641,7 @@
                 "timeout": 60
             },
             "signalRProxy": {
-                "enabled": false,
+                "enabled": true,
                 "logging": true,
                 "protocol": "webSockets",
                 "timeout": 10,
@@ -3653,7 +3650,7 @@
                 "signalRReconnectThresholdCount": 3,
                 "signalRReconnectThresholdTime": 120,
                 "customApiURL": "",
-                "useDotNet6Wrapper": false
+                "useDotNet6Wrapper": true
             },
             "logging": {
                 "enabled": true,
