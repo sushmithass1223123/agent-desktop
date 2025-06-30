@@ -2155,7 +2155,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // check the channel
         this.channel = evt.Channel.toLowerCase() || 'textchat';
         // assign attachment constraints
-        this.attachmentConstraints = this.widgetData.AttachmentConstraints?.[this.channel?.charAt(0)?.toUpperCase() + this.channel?.slice(1)] ?? [];
+        this.attachmentConstraints = this.getAttachementConstraint(this.channel);
         // check social media
         this.isSMM = evt.IsSMM || false;
         // validate agent features again as some of the features depeneds on this event data parameters
@@ -2245,6 +2245,21 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const deviceInfo = JSON.parse(jsonDataObj.JsonData);
         if(this.DisableAvConstraints?.Devices?.length) {
             this.customerDevice = this.DisableAvConstraints.Devices.includes(deviceInfo.info.osver?.toLowerCase()); 
+        }
+    }
+
+    /**
+     * Function to get the Attachement constraints by Dynamic channel name
+     * @param channel string
+     * @returns string[]
+     */
+    private getAttachementConstraint(channel: string) : any {
+        const regex = /whatsapp/i;
+
+        if(regex.test(channel)) {
+            this.widgetData.AttachmentConstraints?.['Whatsapp'] ?? []
+        } else {
+            return this.widgetData.AttachmentConstraints?.[this.channel?.charAt(0)?.toUpperCase() + this.channel?.slice(1)] ?? []
         }
     }
     

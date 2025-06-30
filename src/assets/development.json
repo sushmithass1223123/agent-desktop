@@ -1704,7 +1704,8 @@
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
                                                     "AttachmentConstraints": {
-                                                        "Instagram": ["audio/aac", "audio/mp4", "audio/wav"]
+                                                        "Instagram": ["audio/aac", "audio/mp4", "audio/wav"],
+                                                        "Whatsapp": ["audio/aac", "audio/mp4", "audio/wav", "video/mp4", "audio/mpeg", "video/3gpp"]
                                                     },
                                                     "ScreenShareAllowed": true,
                                                     "ReqScreenShareAllowed": false,
@@ -3632,7 +3633,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://15.206.182.15:8445/api/v1/TmacProxy"],
+                "urls": ["http://44.207.168.202:5019/api/v1/TmacProxy"],
                 "type": "soap",
                 "timeout": 60
             },
