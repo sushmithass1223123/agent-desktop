@@ -2259,7 +2259,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if(regex.test(channel)) {
             this.widgetData.AttachmentConstraints?.['Whatsapp'] ?? []
         } else {
-            return this.widgetData.AttachmentConstraints?.[this.channel?.charAt(0)?.toUpperCase() + this.channel?.slice(1)] ?? []
+            return this.widgetData.AttachmentConstraints?.[channel?.charAt(0)?.toUpperCase() + channel?.slice(1)] ?? []
         }
     }
     
