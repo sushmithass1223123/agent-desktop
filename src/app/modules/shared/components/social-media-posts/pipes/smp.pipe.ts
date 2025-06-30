@@ -86,6 +86,17 @@ export class SMPPipe implements PipeTransform {
                     return value?.filter((commentData) => commentData?.nestLevel === 0)?.length ?? 0;
                 }
             }
+            case 'getWBItemCount': {
+                switch (value) {
+                    case 'channel': {
+                        return this.countItems(args[0], 'PostData');
+                    }
+                    case 'post':
+                    case 'skill': {
+                        return this.countItems(args, 'PostData');
+                    }
+                }
+            }
             case 'getFileType': {
                 const fileExtension = value.split('.').pop().toLowerCase();
                 const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'gif'];
@@ -110,5 +121,23 @@ export class SMPPipe implements PipeTransform {
                 );
             }
         }
+    }
+
+    countItems(obj: any, stopper: string): number {
+        let count = 0;
+
+        function traverse(node: any) {
+            if (Array.isArray(node)) {
+                node.forEach(traverse);
+            } else if (typeof node === 'object' && node !== null) {
+                if (stopper in node) {
+                    count++;
+                }
+                Object.values(node).forEach(traverse);
+            }
+        }
+
+        traverse(obj);
+        return count;
     }
 }

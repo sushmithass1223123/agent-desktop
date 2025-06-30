@@ -300,7 +300,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     isFullscreen: boolean = false;
     currentTheme: string = 'theme-default-2';
 
-
     /**
      * Holds the count of posts for paginator
      */
@@ -611,8 +610,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     global: 'GLOBAL',
                     socialMediaAccounts:
                         this._smpService.globalSmpWorkbenchState$.searchParams.value.socialMediaAccounts.join(','),
-                    subChannels:
-                        this._smpService.globalSmpWorkbenchState$.searchParams.value.subChannels.join(','),
+                    subChannels: this._smpService.globalSmpWorkbenchState$.searchParams.value.subChannels.join(','),
                     accountName: searchFields.accountName,
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
@@ -1319,62 +1317,47 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         }
     }
 
-    /**
-     * Method to segregate raw responses to UI friendly array
-     * @param {SMPost[]} response Raw response from server
-     */
     updateSegregatedPosts(response: SMPost[]): void {
         try {
             this.segregatedPosts = [];
-            let channelIdentifier = 'SubChannel';
-            let backupChannelIdentifier = 'EmailType';
-            let skillIdentifier = 'SkillName';
-            let backupSkillIdentifier = 'SkillId';
-            if (this.currentTab === 'sentitem' || this.currentTab === 'draft' || this.currentTab === 'posts')
-                skillIdentifier = 'Mailbox';
-            let availableChannels = Array.from(new Set(response.map((r: SMPost) => r[channelIdentifier])));
 
-            const getSegregatedPostsBySkill = (channel: string) => {
-                let filteredPostsByChannel: SMPost[] = response.filter(
-                    (res: SMPost) => (res[channelIdentifier] ?? res[backupChannelIdentifier]) === channel
-                );
+            const isSpecialTab = ['sentitem', 'draft', 'posts'].includes(this.currentTab);
+            const skillKey = isSpecialTab ? 'Mailbox' : 'SkillName';
+            const backupSkillKey = 'SkillId';
+            const channelKey = 'SubChannel';
+            const backupChannelKey = 'EmailType';
+            const postIdKey = 'PostId';
 
-                let availableSkills = Array.from(
-                    new Set(filteredPostsByChannel.map((r: SMPost) => r[skillIdentifier] ?? r[backupSkillIdentifier]))
-                );
+            const getValue = (obj: any, primary: string, backup: string) => obj?.[primary] ?? obj?.[backup];
 
-                let constructedPost: any = [];
-
-                availableSkills.forEach((skill: string) => {
-                    constructedPost.push({
-                        [skill]: filteredPostsByChannel.filter(
-                            (post: SMPost) => post[skillIdentifier] === skill || post[backupSkillIdentifier] === skill
-                        )
-                    });
-                });
-
-                return constructedPost;
+            const groupBy = <T>(items: T[], keyFn: (item: T) => string) => {
+                return items.reduce((map, item) => {
+                    const key = keyFn(item);
+                    if (!map.has(key)) map.set(key, []);
+                    map.get(key)!.push(item);
+                    return map;
+                }, new Map<string, T[]>());
             };
 
-            availableChannels.forEach((channel: string) => {
-                this.segregatedPosts.push({
-                    [channel]: getSegregatedPostsBySkill(channel)
-                });
-            });
+            const channels = groupBy(response, (r) => getValue(r, channelKey, backupChannelKey));
 
-            this.segregatedPosts.forEach((segPost: any) => {
-                let skillCount = 0;
+            for (const [channel, channelPosts] of channels.entries()) {
+                const skills = groupBy(channelPosts, (r) => getValue(r, skillKey, backupSkillKey));
+                const skillArray = [];
 
-                segPost[Object.keys(segPost)[0]].forEach((segPostSkill: any) => {
-                    segPostSkill.itemCount = segPostSkill[Object.keys(segPostSkill)[0]].length;
-                    skillCount += segPostSkill[Object.keys(segPostSkill)[0]].length;
-                });
+                for (const [skill, skillPosts] of skills.entries()) {
+                    const posts = groupBy(skillPosts, (r) => getValue(r.PostData, postIdKey, postIdKey));
+                    const postArray = Array.from(posts.entries()).map(([postId, postGroup]) => ({
+                        [postId]: postGroup
+                    }));
+                    skillArray.push({ [skill]: postArray });
+                }
 
-                segPost.skillCount = skillCount;
-            });
+                this.segregatedPosts.push({ [channel]: skillArray });
+            }
         } catch (e) {
             this.logger.error(
-                '[WorkbenchSmpComponent.updateSegregatedPosts] - Error occured while segregating posts:',
+                '[WorkbenchSmpComponent.updateSegregatedPosts] - Error occurred while segregating posts:',
                 JSON.stringify(e),
                 true
             );
@@ -2068,24 +2051,27 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         return Object.keys(item)[0];
     }
 
+    trackByPost(index: number, item: any): any {
+        return Object.keys(item)[0];
+    }
+
     trackByItem(index: number, item: SMPost): any {
         return item.PostData.SessionId;
     }
 
- 
     resetPaginator() {
         this.pageIndex = 0;
         this.pageSize = 10;
         this.totalPostCount = 0;
     }
 
-   /**
+    /**
      * Method to handle paginator page change
      * @param {PageEvent} $event Page event
-     */  
+     */
     onPageChange(event: PageEvent) {
         this.pageIndex = event.pageIndex; // assuming API is 1-based
         this.pageSize = event.pageSize;
         this.doAdvancedSearch(true);
-      }
+    }
 }
