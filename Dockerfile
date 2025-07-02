@@ -5,20 +5,22 @@ FROM node:18 AS builder
 WORKDIR /app
 
 # Copy package files and install dependencies
-COPY package*.json ./
+# COPY package*.json ./
 
-# Copy decorate-angular-cli file for post install actions
-COPY decorate-angular-cli.js ./
+# # Copy decorate-angular-cli file for post install actions
+# COPY decorate-angular-cli.js ./
 
-# Install node modules
-RUN npm install --force
+# # Install node modules
+# RUN npm install --force
 
-# Copy the rest of the application code and build it
-COPY . .
-RUN npm run build:prod
+# # Copy the rest of the application code and build it
+# COPY . .
+# RUN npm run build:prod
+
+COPY /dist /app/dist
 
 # Stage 2: Serve the Angular app using Nginx
-FROM nginx:1.24-alpine
+FROM nginx:1.29.0-alpine
 
 # Copy built app from the builder stage to Nginx's HTML directory
 COPY --from=builder /app/dist/agent-desktop /usr/share/nginx/html/agent-desktop
