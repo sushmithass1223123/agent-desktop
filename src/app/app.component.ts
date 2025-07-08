@@ -11,16 +11,6 @@ import * as TMACSDK from '@tmac/sdk';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-// declare global
-declare global {
-    interface Window {
-        /**
-         * SDK Client global
-         */
-        __TMACSDK: typeof TMACSDK;
-    }
-}
-
 /**
  * App / root component
  */
